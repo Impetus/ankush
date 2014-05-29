@@ -1,0 +1,2 @@
+apt-get -qq -y update
+apt-get -qq -y install openjdk-6-jdk

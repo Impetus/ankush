@@ -1,0 +1,7 @@
+yum -q -y install kernel-devel
+yum -q -y install gcc
+yum -q -y install make
+yum -q -y install autoconf
+yum -q -y install ruby
+yum -q -y install ruby-lib
+yum -q -y install ruby-rdoc

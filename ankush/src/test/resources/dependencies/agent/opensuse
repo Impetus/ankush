@@ -1,0 +1,4 @@
+zypper -q install -y rpm-devel
+zypper -q install -y gcc
+zypper -q install -y make
+zypper -q install -y autoconf

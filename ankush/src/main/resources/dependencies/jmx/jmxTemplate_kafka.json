@@ -1,0 +1,36 @@
+{"servers": [{
+    "port": "JMX_PORT_KAFKA",
+    "host": "${hostprivateip}",
+    "alias" : "${serveralias}",
+    "queries":     [
+        {
+            "outputWriters": [            {
+                "@class": "com.googlecode.jmxtrans.model.output.GangliaWriter",
+                "settings":                 {
+                    "groupName": "kafka",
+                    "host": "${gangliamasterip}",
+                    "port": "${gangliaport}"
+                }
+            }],
+            "obj": "kafka:type=kafka.SocketServerStats",
+            "resultAlias": "RESULT_ALIAS",
+            "attr": [
+                "ProduceRequestsPerSecond",
+                "FetchRequestsPerSecond",
+                "AvgProduceRequestMs",
+                "MaxProduceRequestMs",
+                "AvgFetchRequestMs",
+                "MaxFetchRequestMs",
+                "BytesReadPerSecond",
+                "BytesWrittenPerSecond",
+                "NumFetchRequests",
+                "NumProduceRequests",
+                "TotalBytesRead",
+                "TotalBytesWritten",
+                "TotalFetchRequestMs",
+                "TotalProduceRequestMs"
+            ]
+        }
+        
+    ]
+}]}

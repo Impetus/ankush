@@ -1,0 +1,492 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<property>
+		<name>agent.dir</name>
+		<value>.ankush/agent/</value>
+		<description>Directory path for the agent after USER_HOME directory
+		</description>
+	</property>
+	<property>
+		<name>ganglia.dir</name>
+		<value>.ankush/monitoring/</value>
+		<description>Directory path for the ganglia after USER_HOME directory
+		</description>
+	</property>
+	
+	<property>
+		<name>ganglia.port</name>
+		<value>8649</value>
+	</property>
+	
+	<property>
+		<name>agent.jsvcDaemonBundleFile.name</name>
+		<value>commons-daemon-1.0.10-src.tar.gz</value>
+		<description>Name of the jsvc daemon bundle file</description>
+	</property>
+	<property>
+		<name>agent.daemon.class</name>
+		<value>com.impetus.ankush.agent.daemon.AnkushAgent</value>
+		<description>Class name of daemon class to start the agent execution
+		</description>
+	</property>
+	<property>
+		<name>ankush.connectiontimeout</name>
+		<value>7000</value>
+	</property>
+	<!-- Oracle NoSQL DB Cluster Properties Start -->	
+	<property>
+		<name>oracle.nosql.snpoolname</name>
+		<value>AllStorageNodes</value>
+		<description>Default StorageNode pool Name.</description>
+	</property>
+	<property>
+		<name>oracle.nosql.topologychecktimeout</name>
+		<value>120000</value>
+		<description>Timeout value in milliseconds for checking Oracle NoSQL
+			technology data.
+		</description>
+	</property>
+	<property>
+		<name>oracle.nosql.topologychecksleeptime</name>
+		<value>15000</value>
+		<description>Sleep time in milliseconds between two topology check
+			cycles.
+		</description>
+	</property>
+	<property>
+		<name>oracle.nosql.servicechecktimeout</name>
+		<value>120000</value>
+		<description>Timeout value in milliseconds for checking Oracle NoSQL
+			service on Nodes.
+		</description>
+	</property>
+	<property>
+		<name>oracle.nosql.servicechecksleeptime</name>
+		<value>5000</value>
+		<description>Sleep time in milliseconds between two checking cycles of
+			Oracle NoSQL service on Nodes.
+		</description>
+	</property>
+	<property>
+		<name>oracle.nosql.jmxtransconfigfile</name>
+		<value>/dependencies/oracle nosql database/kvstore.json</value>
+		<description>jmxtrans config file to capture oracle nosql performace
+			metrics.
+		</description>
+	</property>
+	<!-- Oracle NoSQL DB Cluster Properties End -->
+
+
+	<!-- Start Hadoop Cluster Properties -->
+	
+	<property>
+		<name>hadoop.non.editable.parameters</name>
+		<value>fs.default.name,dfs.http.address,dfs.secondary.http.address,mapred.job.tracker,fs.defaultFS,dfs.nameservices,yarn.resourcemanager.address,yarn.resourcemanager.resource-tracker.address,yarn.web-proxy.address,yarn.resourcemanager.scheduler.address,mapreduce.jobhistory.address,mapreduce.framework.name</value>
+	</property>
+	
+	<property>
+		<name>hbase.non.editable.parameters</name>
+		<value>hbase.master</value>
+	</property>
+	
+	<property>
+		<name>hadoop2.propname.mrshuffleclass.2.2.0</name>
+		<value>yarn.nodemanager.aux-services.mapreduce_shuffle.class</value>
+	</property>
+	<property>
+		<name>hadoop2.propval.auxservices.2.2.0</name>
+		<value>mapreduce_shuffle</value>
+	</property>
+	
+	<property>
+		<name>hadoop2.propname.mrshuffleclass.2.0.0-cdh4.4.0</name>
+		<value>yarn.nodemanager.aux-services.mapreduce.shuffle.class</value>
+	</property>
+	<property>
+		<name>hadoop2.propval.auxservices.2.0.0-cdh4.4.0</name>
+		<value>mapreduce.shuffle</value>
+	</property>
+	
+	<property>
+		<name>hadoop.conf.topology.data</name>
+		<value>topology.data</value>
+		<description>Contains host IP address to rack mapping</description>
+	</property>
+	<property>
+		<name>hadoop.conf.topology.script</name>
+		<value>topology.sh</value>
+		<description>Script used for Rack-awareness implementation
+		</description>
+	</property>
+
+	<property>
+		<name>hadoop.conf.topology.script.relpath</name>
+		<value>/Hadoop/topology.sh</value>
+		<description>Resource relative path for Script used for Rack-awareness
+			implementation(hadoop.conf.topology.script)
+		</description>
+	</property>
+	<property>
+		<name>hadoop.conf.propname.topology.script</name>
+		<value>topology.script.file.name</value>
+	</property>
+	
+	<property>
+		<name>hadoop2.conf.propname.topology.script</name>
+		<value>net.topology.script.file.name</value>
+	</property>
+
+	<property>
+		<name>hadoop2.javahome.yarnenv.targettext</name>
+		<value># export JAVA_HOME=/home/y/libexec/jdk1.6.0/</value>
+	</property>
+	
+	<property>
+		<name>hadoop2.javahome.hadoopenv.targettext</name>
+		<value>export JAVA_HOME=${JAVA_HOME}</value>
+	</property>
+	
+	<property>
+		<name>hadoop2.javahome.hadoopenv.replacementtext</name>
+		<value>export JAVA_HOME=JAVA_HOME_VALUE</value>
+	</property>
+	
+	<property>
+		<name>hadoop2.template.javahome.value</name>
+		<value>JAVA_HOME_VALUE</value>
+	</property>
+	
+
+	<!-- End Hadoop Cluster Properties -->
+
+	<!-- Cassandra Cluster Properties -->]
+	
+	<property>
+		<name>dependencies.cassandra.tokenGenerator</name>
+		<value>dependencies/cassandra/token-generator</value>
+		<description>Resource relative path for Script used for Rack-awareness
+			implementation(dependencies.cassandra.tokenGenerator)
+		</description>
+	</property>
+	
+	<property>
+		<name>cassandra.topologychecksleeptime</name>
+		<value>15000</value>
+		<description>Sleep time in milliseconds between two topology check
+			cycles.
+		</description>
+	</property>
+	
+	<property>
+		<name>cassandra.topologychecktimeout</name>
+		<value>240000</value>
+		<description>Timeout value in milliseconds for checking Cassandra
+			technology data.
+		</description>
+	</property>
+	
+	<!-- End Cassandra Cluster Properties -->
+	
+	<!-- Start JMX Monitoring Properties -->
+
+	<property>
+		<name>hadoop.jmxmonitoring.wait.time</name>
+		<value>3000</value>
+		<description>Wait time in milliseconds for response for Hadoop JMX data request</description>
+	</property>
+	
+	<property>
+		<name>jmxtrans.installation.relative.path</name>
+		<value>jmxtrans/</value>
+		<description>Relative path from Agent installation path for JmxTrans installation directory 
+		</description>
+	</property>
+
+	<property>
+		<name>jmxtrans.script.template.resultalias</name>
+		<value>RESULT_ALIAS</value>
+	</property>
+	
+	<property>
+		<name>jmxtrans.script.template.privateip</name>
+		<value>HOST_PRIVATE_IP</value>
+	</property>
+	
+	<property>
+		<name>jmxtrans.script.template.gangliaport</name>
+		<value>GANGLIA_PORT</value>
+	</property>
+	
+	<property>
+		<name>jmxtrans.script.template.serveralias</name>
+		<value>SERVER_ALIAS</value>
+	</property>
+	
+	<property>
+		<name>jmxtrans.script.template.gangliamasterip</name>
+		<value>GANGLIA_MASTER_IP</value>
+	</property>
+
+	<property>
+		<name>jmxtrans.json.template.path</name>
+		<value>/dependencies/jmx/jmxTemplate_</value>
+		<description>Resource relative path for directory with JmxTrans JSON templates for component specific monitoring
+		</description>
+	</property>
+	
+	<property>
+		<name>jmxtrans.json.filename.prefix</name>
+		<value>jmxJson_</value>
+		<description>FileName prefix for JmxTrans JSON files
+		</description>
+	</property>
+	
+	<property>
+		<name>jmxtrans.json.jmxport.prefix</name>
+		<value>JMX_PORT_</value>
+		<description>Prefix for JMX port text in the JSON template
+		</description>
+	</property>
+	
+	<property>
+		<name>jmxtrans.json.templatetext.host</name>
+		<value>hostprivateip</value>
+		<description>Text used for Host Value in the JSON template</description>
+	</property>
+	
+	<property>
+		<name>jmxtrans.json.templatetext.gangliaport</name>
+		<value>gangliaport</value>
+		<description>Text used for Host Value in the JSON template</description>
+	</property>
+	
+	<property>
+		<name>jmx.opts.targetText</name>
+		<value>$JMXTRANS_OPTS -Djmxtrans.log.level=${LOG_LEVEL} -Djmxtrans.log.dir=$LOG_DIR</value>
+	</property>
+	
+	<property>
+		<name>jmx.opts.replacementText</name>
+		<value>$JMXTRANS_OPTS -Djmxtrans.log.level=${LOG_LEVEL} -Djmxtrans.log.dir=$LOG_DIR -Dserveralias=SERVER_ALIAS -Dhostprivateip=HOST_PRIVATE_IP -Dgangliaport=GANGLIA_PORT -Dgangliamasterip=GANGLIA_MASTER_IP</value>
+	</property>
+	
+	<property>
+		<name>jmx.quorumpeermain.targetText</name>
+		<value>ZOOMAIN="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.local.only=$JMXLOCALONLY org.apache.zookeeper.server.quorum.QuorumPeerMain</value>
+	</property>
+	
+	<property>
+		<name>jmx.quorumpeermain.replacementText</name>
+		<value>ZOOMAIN="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.port=JMX_PORT_QUORUMPEERMAIN org.apache.zookeeper.server.quorum.QuorumPeerMain</value>
+	</property>
+	
+	<property>
+		<name>jmx.kafka.targetText</name>
+		<value>export JMX_PORT=${JMX_PORT:-9999}</value>
+	</property>
+	
+	<property>
+		<name>jmx.kafka.replacementText</name>
+		<value>export JMX_PORT=${JMX_PORT:-JMX_PORT_KAFKA}</value>
+	</property>
+	
+	<property>
+		<name>jmx.yaml.childopts.supervisor</name>
+		<value>-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.port=JMX_PORT_SUPERVISOR</value>
+	</property>
+	
+	<property>
+		<name>jmx.yaml.childopts.nimbus</name>
+		<value>-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.port=JMX_PORT_NIMBUS</value>
+	</property>
+	
+	<property>
+		<name>jmx.dir.targetText.json</name>
+		<value>${JSON_DIR:-"."}</value>
+	</property>
+	
+	<property>
+		<name>jmx.dir.targetText.log</name>
+		<value>${LOG_DIR:-"."}</value>
+	</property>
+	
+	<property>
+		<name>jmx.dir.targetText.jarfile</name>
+		<value>${JAR_FILE:-"jmxtrans-all.jar"}</value>
+	</property>
+	
+	<property>
+		<name>jmx.dir.jarfile.name</name>
+		<value>jmxtrans-all.jar</value>
+	</property>
+	
+	
+	<property>
+		<name>jmx.default.port.kafka</name>
+		<value>9999</value>
+	</property>
+	
+	<property>
+		<name>jmx.default.port.quorumpeermain</name>
+		<value>12345</value>
+	</property>
+	
+	<property>
+		<name>jmx.default.port.supervisor</name>
+		<value>12346</value>
+	</property>
+	
+	<property>
+		<name>jmx.default.port.nimbus</name>
+		<value>12347</value>
+	</property>
+	
+	
+	
+	<property>
+		<name>jmx.command.service.start</name>
+		<value>start</value>
+	</property>
+	
+	<property>
+		<name>jmx.command.service.stop</name>
+		<value>stop</value>
+	</property>
+	
+	<property>
+		<name>jmx.command.service.restart</name>
+		<value>restart</value>
+	</property>
+	
+	<property>
+		<name>jmx.command.service.status</name>
+		<value>status</value>
+	</property>
+	
+	<property>
+		<name>jmx.script.file.name</name>
+		<value>jmxtrans.sh</value>
+	</property>
+	
+	<!-- End JMX Monitoring Properties -->
+	
+	
+	<!-- Component Process List Start -->
+	<property>
+		<name>java.process.list.cassandra</name>
+		<value>cassandradaemon</value>
+	</property>
+	
+	<property>
+		<name>java.process.list.kafka</name>
+		<value>kafka</value>
+	</property>
+	
+	<property>
+		<name>java.process.list.storm</name>
+		<value>nimbus,supervisor</value>
+	</property>
+	
+	<property>
+		<name>java.process.list.zookeeper</name>
+		<value>quorumpeermain</value>
+	</property>
+	<!-- End Component Process List -->
+	
+	<!-- Ankush Server metadata directory Start -->
+	<property>
+		<name>server</name>
+		<value>/.ankush/server/</value>
+		<description>Directory path for the server metadata dir after
+			USER_HOME directory
+		</description>
+	</property>
+	<property>
+		<name>log</name>
+		<value>/.ankush/server/log/</value>
+		<description>Directory path for the server log dir after USER_HOME
+			directory
+		</description>
+	</property>
+	<property>
+		<name>repo</name>
+		<value>/.ankush/server/repo/</value>
+		<description>Directory path for the server repository metadata dir
+			after USER_HOME directory
+		</description>
+	</property>
+	<property>
+		<name>license</name>
+		<value>/.ankush/server/license/</value>
+		<description>Directory path for the license dir
+			after USER_HOME directory
+		</description>
+	</property>
+	<property>
+		<name>job</name>
+		<value>/.ankush/server/jobs/</value>
+		<description>Directory path for the server jobs metadata dir after
+			USER_HOME directory
+		</description>
+	</property>
+	<property>
+		<name>key</name>
+		<value>/.ankush/server/keys/</value>
+		<description>Directory path for the server keys metadata dir after
+			USER_HOME directory
+		</description>
+	</property>
+	<property>
+		<name>appconf</name>
+		<value>/.ankush/server/appconf/</value>
+		<description>Directory path for the server App conf metadata dir after
+			USER_HOME directory
+		</description>
+	</property>
+	<property>
+		<name>node</name>
+		<value>/.ankush/server/tmp/</value>
+		<description>Directory path for the server tmp metadata dir after
+			USER_HOME directory
+		</description>
+	</property>
+	<property>
+		<name>uploadpath</name>
+		<value>/.ankush/server/uploads/</value>
+		<description>Directory path for uploading the all type of documents.
+		</description>
+	</property>
+	<property>
+		<name>graphcache</name>
+		<value>/.ankush/server/graph-cache/</value>
+		<description>Directory path for the monitoring cache after USER_HOME
+			directory
+		</description>
+	</property>
+	<!-- Ankush Server metadata directory End -->
+
+
+	<!-- Ankush Configurator Keys Start -->
+	<property>
+		<name>ankush.configurator.email</name>
+		<value>email</value>
+		<description>Ankush Configurator Key Email</description>
+	</property>
+	<property>
+		<name>ankush.configurator.serverip</name>
+		<value>serverIP</value>
+		<description>Ankush Configurator Key ServerIP</description>
+	</property>
+	<!-- Ankush Configurator Keys End -->
+
+
+	<!-- Cloud connect wait time -->
+	<property>
+		<name>ankush.cloud.wait</name>
+		<value>120000</value>
+		<description>Cloud connect wait time</description>
+	</property>
+	<!--  Cloud connect wait time End -->
+	
+</configuration>
+

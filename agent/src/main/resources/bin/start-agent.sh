@@ -1,0 +1,1 @@
+(jps | grep AnkushAgent || java -Dlog4j.configuration=file:$HOME/.ankush/agent/conf/log4j.properties -cp $HOME/.ankush/agent/libs/*:$HOME/.ankush/agent/libs/agent-0.1.jar com.impetus.ankush.agent.daemon.AnkushAgent) > /dev/null &

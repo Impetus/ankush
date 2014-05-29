@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:beans="http://www.springframework.org/schema/beans"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+              http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+
+	<!-- Non Authenticated paths from UserController -->
+	<http pattern="/admin/user/forgotpassword" security="none" />
+	<http pattern="/admin/user/forgotuserid" security="none" />
+	<!-- Non Authenticated paths from AppConfController -->
+	<http pattern="/app/state" security="none" />
+
+	<http pattern="/monitor/node/**" security="none" />
+	<http pattern="/auth/login" security="none" />
+	<http pattern="/uploadFile" security="none" />
+	<http pattern="/auth/config" security="none" />
+	<http pattern="/app/conf/request" security="none" />
+	<http pattern="/user/forgotpassword" security="none"/>
+	<http pattern="/user/forgotuserid" security="none"/>
+	
+	<!-- Non Authenticated paths from /oClusterMonitoring -->
+
+	<http pattern="/public/**" security="none" />
+	<!-- <http pattern="/upload/**" security="none" /> -->
+	<http pattern="/mailConf/configure" security="none" />
+	<!-- <http pattern="/cluster/{clusterId}/**" security="none" /> -->
+
+	<beans:bean id="loginSuccessHandlerBean"
+		class="com.impetus.ankush.common.controller.listener.AjaxAuthenticationSuccessHandler">
+		<beans:property name="defaultTargetUrl" value="/dashboardnew/home" />
+	</beans:bean>
+	<beans:bean id="loginFailureHandlerBean"
+		class="com.impetus.ankush.common.controller.listener.AjaxAuthenticationFailureHandler" />
+
+	<beans:bean id="logoutSuccessHandlerBean"
+		class="com.impetus.ankush.common.controller.listener.AjaxLogoutSuccessHandler" />
+
+
+	<http auto-config="true" access-denied-page="/auth/denied">
+		<intercept-url pattern="/main/admin"
+			access="ROLE_SUPER_USER,ROLE_ADMIN,ROLE_USER" />
+		<intercept-url pattern="/main/common"
+			access="ROLE_SUPER_USER,ROLE_ADMIN,ROLE_USER" />
+		<intercept-url pattern="/admin/**"
+			access="ROLE_SUPER_USER,ROLE_ADMIN,ROLE_USER" />
+		<intercept-url pattern="/**"
+			access="ROLE_SUPER_USER,ROLE_ADMIN,ROLE_USER" />
+		
+		<form-login login-page="/auth/login"
+			authentication-success-handler-ref="loginSuccessHandlerBean"
+			authentication-failure-handler-ref="loginFailureHandlerBean"
+			authentication-failure-url="/auth/login?error=true"
+			default-target-url="/dashboardnew/home" />
+
+		<logout invalidate-session="true" logout-url="/auth/logout"
+			success-handler-ref="logoutSuccessHandlerBean" />
+	</http>
+
+	<authentication-manager>
+		<authentication-provider user-service-ref="userDao">
+			<password-encoder ref="passwordEncoder" />
+		</authentication-provider>
+	</authentication-manager>
+
+	<global-method-security>
+		<protect-pointcut expression="execution(* *..service.UserManagerImpl.getUsers(..))"
+			access="ROLE_ADMIN,ROLE_SUPER_USER" />
+		<protect-pointcut expression="execution(* *..service.UserManagerImpl.removeUser(..))"
+			access="ROLE_ADMIN,ROLE_SUPER_USER" />
+	</global-method-security>
+</beans:beans>

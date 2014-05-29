@@ -1,0 +1,7 @@
+yum -q -y install rrdtool 
+yum -q -y install ganglia-gmetad
+yum -q -y install ganglia-gmond
+cp -r /usr/lib64/ganglia /usr/lib/ganglia || echo ""
+cp /usr/sbin/gmetad /usr/bin/ || echo ""
+cp /usr/sbin/gmond /usr/bin/ || echo ""
+killall -9 gmond gmetad || echo ""

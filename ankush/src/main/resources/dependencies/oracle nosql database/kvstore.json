@@ -1,0 +1,57 @@
+{
+    "servers": [
+        {
+            "host": "localhost",
+            "port": "registryPort",
+            "queries": [                
+                {
+                    "obj": "Oracle NoSQL Database:type=RepNode,id=*",
+                    "resultAlias": "RepNode",
+                    "attr": [                        
+                        "CumulativeLatAvg",
+                        "CumulativeLatMax",
+                        "CumulativeLatMin",
+                        "CumulativePct95",
+                        "CumulativePct99",
+                        "CumulativeThroughput",
+                        "CumulativeTotalOps",
+                        "IntervalLatAvg",
+                        "IntervalLatMax",
+                        "IntervalLatMin",
+                        "IntervalPct95",
+                        "IntervalPct99",
+                        "IntervalThroughput",
+                        "IntervalTotalOps",
+                        "MultiCumulativeLatAvg",
+                        "MultiCumulativeLatMax",
+                        "MultiCumulativeLatMin",
+                        "MultiCumulativePct95",
+                        "MultiCumulativePct99",
+                        "MultiCumulativeThroughput",
+                        "MultiCumulativeTotalOps",
+                        "MultiIntervalLatAvg",
+                        "MultiIntervalLatMax",
+                        "MultiIntervalLatMin",
+                        "MultiIntervalPct95",
+                        "MultiIntervalPct99",
+                        "MultiIntervalThroughput",
+                        "MultiIntervalTotalOps"
+                    ],
+                    "outputWriters": [
+                        {
+                            "@class": "com.googlecode.jmxtrans.model.output.GangliaWriter",
+                            "settings": {
+                                "groupName": "RepNode",
+                                "typeNames": [
+                                    "id"
+                                ],
+                                "host": "GangliaMasterPrivateIP",
+                                "port": 8649
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

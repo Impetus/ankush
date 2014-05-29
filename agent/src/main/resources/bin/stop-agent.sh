@@ -1,0 +1,1 @@
+kill -9 `jps | grep AnkushAgent | cut -d' ' -f 1`

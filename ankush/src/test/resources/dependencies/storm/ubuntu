@@ -1,0 +1,10 @@
+apt-get -qq -y install libdpkg-perl
+apt-get -qq -y install dpkg-dev
+apt-get -qq -y install build-essential
+apt-get -qq -y install gcc
+apt-get -qq -y install make
+apt-get -qq -y install autoconf
+apt-get -qq -y install daemontools
+apt-get -qq -y install uuid-dev
+apt-get -qq -y install git
+apt-get -qq -y install libtool

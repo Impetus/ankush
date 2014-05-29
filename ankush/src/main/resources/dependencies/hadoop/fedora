@@ -1,0 +1,3 @@
+yum -q -y install zip
+yum -q -y install unzip
+yum -q -y install sshpass

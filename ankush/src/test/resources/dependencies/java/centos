@@ -1,0 +1,2 @@
+yum -q -y update
+yum -q -y install java-1.6.0-openjdk-devel

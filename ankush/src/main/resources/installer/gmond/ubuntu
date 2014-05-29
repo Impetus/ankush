@@ -1,0 +1,2 @@
+apt-get -qq -y install ganglia-monitor
+killall -9 gmond || echo ""

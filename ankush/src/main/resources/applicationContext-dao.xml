@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+	default-lazy-init="true">
+
+	<bean
+		class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driverClassName}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="maxActive" value="100" />
+		<property name="maxWait" value="1000" />
+		<property name="poolPreparedStatements" value="true" />
+		<property name="defaultAutoCommit" value="true" />
+		<property name="timeBetweenEvictionRunsMillis" value="600000" />
+	</bean>
+
+	<!-- EntityManagerFactory -->
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="persistenceUnitManager" ref="persistenceUnitManager" />
+		<property name="jpaProperties">
+			<value>
+				hibernate.dialect=${jdbc.dialect}
+				hibernate.query.substitutions=true 'Y', false 'N'
+			</value>
+		</property>
+	</bean>
+	
+	<!--  Hibernate Session Factory -->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="hibernateProperties">
+			<value>
+				hibernate.dialect=${jdbc.dialect}
+				hibernate.query.substitutions=true 'Y', false 'N'
+			</value>
+		</property>    	
+  	</bean>
+  	
+	<bean id="persistenceUnitManager"
+		class="org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager">
+		<property name="persistenceXmlLocations">
+			<list>
+				<value>classpath:persistence.xml</value>
+			</list>
+		</property>
+		<property name="defaultDataSource" ref="dataSource" />
+	</bean>
+
+	<!-- Needed so the @PersistenceUnit annotation is recognized -->
+	<bean
+		class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+
+	<!-- Transaction manager for a single EntityManagerFactory (alternative 
+		to JTA) -->
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+
+	<!-- Activates scanning of @Autowired -->
+	<context:annotation-config />
+
+	<!-- Activates scanning of @Repository -->
+	<context:component-scan base-package="com.impetus.ankush.common.dao" />
+
+	<!-- DAO Definitions -->
+	<bean id="eventDao" class="com.impetus.ankush.common.dao.impl.GenericDaoJpa">
+		<constructor-arg value="com.impetus.ankush.common.domain.Event" />
+	</bean>
+	
+	<bean id="eventHistoryDao" class="com.impetus.ankush.common.dao.impl.GenericDaoJpa">
+		<constructor-arg value="com.impetus.ankush.common.domain.EventHistory" />
+	</bean>
+	
+	<bean id="tileDao" class="com.impetus.ankush.common.dao.impl.GenericDaoJpa">
+    	<constructor-arg value="com.impetus.ankush.common.domain.Tile" />
+  	</bean>
+  	
+	<bean id="clusterDao" class="com.impetus.ankush.common.dao.impl.GenericDaoJpa">
+		<constructor-arg value="com.impetus.ankush.common.domain.Cluster" />
+	</bean>
+	
+	<bean id="nodeDao" class="com.impetus.ankush.common.dao.impl.GenericDaoJpa">
+		<constructor-arg value="com.impetus.ankush.common.domain.Node" />
+	</bean>
+	
+	<bean id="nodeMonitoringDao" class="com.impetus.ankush.common.dao.impl.GenericDaoJpa">
+		<constructor-arg value="com.impetus.ankush.common.domain.NodeMonitoring" />
+	</bean>
+	
+	<bean id="configurationDao" class="com.impetus.ankush.common.dao.impl.GenericDaoJpa">
+		<constructor-arg value="com.impetus.ankush.common.domain.Configuration" />
+	</bean>
+	
+	<bean id="logDao" class="com.impetus.ankush.common.dao.impl.GenericDaoJpa">
+   	 	<constructor-arg value="com.impetus.ankush.common.domain.Log" />
+  	</bean>
+	
+	<bean id="roleDao" class="com.impetus.ankush.common.dao.impl.GenericDaoJpa">
+		<constructor-arg value="com.impetus.ankush.common.domain.Role" />
+	</bean>
+
+	<bean id="appConfDao" class="com.impetus.ankush.common.dao.impl.GenericDaoJpa">
+		<constructor-arg value="com.impetus.ankush.common.domain.AppConf" />
+	</bean>
+
+	<!-- Manager Definitions -->
+	<bean id="eventManager" class="com.impetus.ankush.common.service.impl.GenericManagerImpl">
+		<constructor-arg ref="eventDao" />
+	</bean>
+	
+	<bean id="eventHistoryManager" class="com.impetus.ankush.common.service.impl.GenericManagerImpl">
+		<constructor-arg ref="eventHistoryDao" />
+	</bean>
+
+	<bean id="tileManager"
+	    class="com.impetus.ankush.common.service.impl.GenericManagerImpl">
+	    <constructor-arg ref="tileDao" />
+  	</bean>
+	
+	<bean id="clusterManager"
+		class="com.impetus.ankush.common.service.impl.GenericManagerImpl">
+		<constructor-arg ref="clusterDao" />
+	</bean>
+	
+	<bean id="nodeManager"
+		class="com.impetus.ankush.common.service.impl.GenericManagerImpl">
+		<constructor-arg ref="nodeDao" />
+	</bean>
+	
+	<bean id="nodeMonitoringManager"
+		class="com.impetus.ankush.common.service.impl.GenericManagerImpl">
+		<constructor-arg ref="nodeMonitoringDao" />
+	</bean>
+	
+	<bean id="configurationManager"
+		class="com.impetus.ankush.common.service.impl.GenericManagerImpl">
+		<constructor-arg ref="configurationDao" />
+	</bean>
+	
+	<bean id="logManager"
+    	class="com.impetus.ankush.common.service.impl.GenericManagerImpl">
+    	<constructor-arg ref="logDao" />
+  	</bean>
+
+	<bean id="roleManager"
+		class="com.impetus.ankush.common.service.impl.GenericManagerImpl">
+		<constructor-arg ref="roleDao" />
+	</bean>
+	
+	<bean id="appConfManager"
+		class="com.impetus.ankush.common.service.impl.GenericManagerImpl">
+		<constructor-arg ref="appConfDao" />
+	</bean>
+
+</beans>

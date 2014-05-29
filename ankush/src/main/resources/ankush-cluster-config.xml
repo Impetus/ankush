@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<clusters>
+	<cluster id="Hadoop">
+		<class>com.impetus.ankush.hadoop.HadoopCluster</class>
+	</cluster>
+	<cluster id="Oracle NoSQL Database">
+    <class>com.impetus.ankush.oraclenosql.OracleNoSQLCluster</class>
+  </cluster>
+  <cluster id="Cassandra">
+    <class>com.impetus.ankush.cassandra.CassandraCluster</class>
+  </cluster>
+  <cluster id="Storm">
+    <class>com.impetus.ankush.storm.StormCluster</class>
+  </cluster> 
+  <cluster id="Kafka">
+    <class>com.impetus.ankush.kafka.KafkaCluster</class>
+  </cluster>
+  <cluster id="ElasticSearch">
+    <class>com.impetus.ankush.elasticsearch.ElasticSearchCluster</class>
+  </cluster> 		
+</clusters>

@@ -1,0 +1,3 @@
+zypper -q install -y zip
+zypper -q install -y unzip
+zypper -q install -y sshpass

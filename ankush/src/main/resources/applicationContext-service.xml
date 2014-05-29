@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+            http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd"
+       default-lazy-init="true">
+
+    <!-- =================================================================== -->
+    <!-- AOP: Configuration and Aspects                                      -->
+    <!-- =================================================================== -->
+    <aop:config>
+        <aop:advisor id="managerTx" advice-ref="txAdvice" pointcut="execution(* *..service.*Manager.*(..))" order="2"/>
+    </aop:config>
+
+    <!-- Enable @Transactional support -->
+    <tx:annotation-driven/>
+
+    <!-- Enable @AspectJ support -->
+    <aop:aspectj-autoproxy/>
+
+    <!-- Activates scanning of @Autowired -->
+    <context:annotation-config/>
+
+    <!-- Activates scanning of @Service -->
+    <context:component-scan base-package="com.impetus.ankush.common.service"/>
+
+    <tx:advice id="txAdvice">
+        <tx:attributes>
+            <!-- Read-only commented out to make things easier for end-users -->
+            <!-- http://issues.appfuse.org/browse/APF-556 -->
+            <!--tx:method name="get*" read-only="true"/-->
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
+    
+    <task:annotation-driven executor="pooledExecutor" scheduler="pooledScheduler"/>
+    
+    <bean id="pooledExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="daemon" value="true"></property>
+		<property name="threadNamePrefix" value="springTPTExecThread"></property>
+		<property name="corePoolSize" value="5"/>
+    </bean>
+    
+    <bean id="pooledScheduler" class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler">
+    	<property name="threadNamePrefix" value="springTPTSchedThread"/>
+    	<property name="poolSize" value="1000"/>
+    	<property name="daemon" value="true"/>
+    </bean>
+
+    <!-- =================================================================== -->
+    <!-- Security class from Spring Security - used to configure Password    -->
+    <!-- Encryption in UserManagerImpl. Can override in security.xml.        -->
+    <!-- =================================================================== -->
+    <bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder"/>
+    
+    <!-- File Upload Support  -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- the maximum file size in bytes  (1 GB currently)-->
+		<property name="maxUploadSize" value="1073741824" />
+	</bean>
+	
+	<bean id="userManager" class="com.impetus.ankush.common.service.impl.UserManagerImpl"/>
+	
+	<bean id="appConfService" class="com.impetus.ankush.common.service.impl.AppConfServiceImpl"/>
+    
+    <bean id="asyncExecutorService" class="com.impetus.ankush.common.service.impl.AsyncExecutorServiceImpl" />
+    
+    <bean id="parameterConfigService" class="com.impetus.ankush.hadoop.service.impl.ParameterConfigServiceImpl" />
+    
+</beans>

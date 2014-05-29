@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+	version="1.0">
+
+	<persistence-unit name="application" transaction-type="RESOURCE_LOCAL">
+
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<properties>
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect" />
+			<property name="hibernate.format_sql" value="true" />
+			<property name="hibernate.hbm2ddl.auto" value="update" />
+			<property name="hibernate.ejb.event.post-insert"
+				value="org.hibernate.envers.event.AuditEventListener" />
+			<property name="hibernate.ejb.event.post-update"
+				value="org.hibernate.envers.event.AuditEventListener" />
+			<property name="hibernate.ejb.event.post-delete"
+				value="org.hibernate.envers.event.AuditEventListener" />
+			<property name="hibernate.ejb.event.pre-collection-update"
+				value="org.hibernate.envers.event.AuditEventListener" />
+			<property name="hibernate.ejb.event.pre-collection-remove"
+				value="org.hibernate.envers.event.AuditEventListener" />
+			<property name="hibernate.ejb.event.post-collection-recreate"
+				value="org.hibernate.envers.event.AuditEventListener" />
+			<property name="org.hibernate.envers.store_data_at_delete"
+				value="true" />
+		</properties>
+
+		<class>com.impetus.ankush.common.domain.Node</class>
+		<class>com.impetus.ankush.common.domain.Cluster</class>
+		<class>com.impetus.ankush.common.domain.Tile</class>
+		<class>com.impetus.ankush.common.domain.Log</class>
+		<class>com.impetus.ankush.common.domain.User</class>
+		<class>com.impetus.ankush.common.domain.Role</class>
+		<class>com.impetus.ankush.common.domain.NodeMonitoring</class>
+		<class>com.impetus.ankush.common.domain.Configuration</class>
+		<class>com.impetus.ankush.common.domain.Event</class>
+		<class>com.impetus.ankush.common.domain.AppConf</class>
+		<class>com.impetus.ankush.common.domain.EventHistory</class>
+		<exclude-unlisted-classes>true</exclude-unlisted-classes>
+
+	</persistence-unit>
+
+</persistence>

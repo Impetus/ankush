@@ -1,0 +1,54 @@
+{
+  "Kafka": {
+    "Defaults": {
+      "installationPath": "/home/${user}/kafka/",
+      "port": 9092,
+      "jmxPort": 9999,
+      "logDir": "/home/${user}/kafka/kafka_logs",
+      "replicationFactor": 1,
+      "numOfNetworkThreads": 3,
+      "numOfIOThreads": 8,
+      "queuedMaxRequests": 500,
+      "numPartitions": 1,
+      "logRetentionHours": 168,
+      "logRetentitionBytes": 1073741824,
+      "logCleanupIntervalMins": 10,
+      "logFlushIntervalMessage": 10000,
+      "logFlushSchedularIntervalMs": 3000,
+      "logFlushIntervalMs": 3000,
+      "controlledShutdownEnable": false,
+      "controlledShutdownMaxRetries": 3,
+      "advancedConf": {
+        "logLevel": "INFO,WARN,DEBUG,ERROR,FATAL,TRACE,ALL,OFF"
+      }
+    },
+    "Vendors": {
+      "Apache": {
+        "2.8.0-0.8.0": {
+          "url": "http://archive.apache.org/dist/kafka/0.8.0/kafka_2.8.0-0.8.0.tar.gz"
+        }
+      }
+    }
+  },
+  "Zookeeper": {
+    "Defaults": {
+      "installationHomePath": "/home/${user}/zookeeper/",
+      "clientPort": 2181,
+      "jmxPort": "12345",
+      "dataDir": "/home/${user}/zookeeper/zk_data_dir/",
+      "syncLimit": 2,
+      "initLimit": 5,
+      "tickTime": 2000
+    },
+    "Vendors": {
+      "Apache": {
+        "3.4.5": {
+          "url": "http://archive.apache.org/dist/zookeeper/zookeeper-3.4.5/zookeeper-3.4.5.tar.gz"
+        },
+        "3.3.5": {
+          "url": "http://archive.apache.org/dist/zookeeper/zookeeper-3.3.5/zookeeper-3.3.5.tar.gz"
+        }
+      }
+    }
+  }
+}

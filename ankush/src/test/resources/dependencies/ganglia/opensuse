@@ -1,0 +1,12 @@
+zypper -q install -y rpm-devel
+zypper -q install -y gcc
+zypper -q install -y make
+zypper -q install -y autoconf
+zypper -q install -y libapr1-devel
+zypper -q install -y libconfuse-devel
+zypper -q install -y libexpat-devel
+zypper -q install -y python-devel
+zypper -q install -y rrdtool
+zypper -q install -y rrdtool-devel
+zypper -q install -y libpcrecpp0
+zypper -q install -y pcre-devel

@@ -1,0 +1,13 @@
+{
+  "replicationFactor": "3",
+  "registryPort": "5000",
+  "haPortRangeStart": "5010",
+  "haPortRangeEnd": "5020",
+  "baseDir": "/home/oracle",
+  "installationDir": "/home/oracle/kv",
+  "dataDir": "/home/oracle/kv/kvroot",
+  "adminPort": "5001",
+  "memory": "0",
+  "capacity": "1",
+  "cpuNo": "0"
+}

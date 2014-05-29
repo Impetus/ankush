@@ -1,0 +1,4 @@
+yum -q -y install ganglia-gmond
+cp -r /usr/lib64/ganglia /usr/lib/ganglia || echo ""
+cp /usr/sbin/gmond /usr/bin/ || echo ""
+killall -9 gmond || echo ""

@@ -1,0 +1,33 @@
+{"servers": [{
+    "port": "JMX_PORT_QUORUMPEERMAIN",
+    "host": "${hostprivateip}",
+    "alias" : "${serveralias}",
+    "queries": [
+        {
+            "outputWriters": [            {
+                "@class": "com.googlecode.jmxtrans.model.output.GangliaWriter",
+                "settings":                 {
+                	"groupName": "quorumpeermain",
+                    "host": "${gangliamasterip}",
+                    "port": "${gangliaport}"
+                }
+            }],
+            "obj": "org.apache.ZooKeeperService:name0=*",
+	    	"resultAlias": "RESULT_ALIAS",
+            "attr": [
+                "TickTime",
+                "MinSessionTimeout",
+                "MaxSessionTimeout",
+                "InitLimit",
+                "SyncLimit",
+                "Tick",
+                "ElectionType",
+                "MaxClientCnxnsPerHost",
+				"NodeCount",
+                "WatchCount",
+				"QuorumSize"
+            ]
+        }
+    ]
+}]}
+

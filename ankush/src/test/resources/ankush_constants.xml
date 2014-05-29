@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+ <property>
+    <name>distributed</name>
+    <value>true</value>
+    <description>test</description>
+  </property>
+  <property>
+    <name>agent.dir</name>
+    <value>.ankush/agent/</value>
+    <description>Directory path for the agent after USER_HOME directory</description>
+  </property>
+  <property>
+    <name>ganglia.dir</name>
+    <value>.ankush/monitoring/</value>
+    <description>Directory path for the ganglia after USER_HOME directory</description>
+  </property>
+  <property>
+    <name>agent.jsvcDaemonBundleFile.name</name>
+    <value>commons-daemon-1.0.10-src.tar.gz</value>
+    <description>Name of the jsvc daemon bundle file</description>
+  </property>
+  <property>
+    <name>agent.daemon.class</name>
+    <value>com.impetus.ankush.agent.daemon.AnkushAgent</value>
+    <description>Class name of daemon class to start the agent execution</description>
+  </property>
+  <property>
+    <name>ankush.connectiontimeout</name>
+    <value>5000</value>
+  </property>
+  <!-- Oracle NoSQL DB Cluster Properties Start -->
+  <property>
+    <name>oracle.nosql.versionstring</name>
+    <value>11gR2.2.0.22 2012-11-18 02:22:09 UTC  Build id: ef004b0765f2</value>
+    <description>Oracle NoSQL version string.</description>
+  </property>
+  <property>
+    <name>oracle.nosql.snpoolname</name>
+    <value>AllStorageNodes</value>
+    <description>Default StorageNode pool Name.</description>
+  </property>
+  <property>
+    <name>oracle.nosql.validationscript</name>
+    <value>oracle_nosql_validation</value>
+    <description>Script file used for Node level Oracle NoSQL validations.</description>
+  </property>
+  <property>
+    <name>oracle.nosql.servicechecktimeout</name>
+    <value>120000</value>
+    <description>Timeout value in milliseconds for checking Oracle NoSQL service on Nodes.</description>
+  </property>
+  <property>
+    <name>oracle.nosql.servicechecksleeptime</name>
+    <value>5000</value>
+    <description>Sleep time in milliseconds between two checking cycles of Oracle NoSQL service on Nodes.</description>
+  </property>  
+  <!-- Oracle NoSQL DB Cluster Properties End -->
+  
+  
+  <!-- Start Hadoop Cluster Properties  -->
+  <property>
+    <name>hadoop.conf.core</name>
+    <value>core-site.xml</value>
+    <description>Conf File Name for Hadoop Core-site</description>
+  </property>
+  <property>
+    <name>hadoop.conf.mapred</name>
+    <value>mapred-site.xml</value>
+    <description>Conf File Name for Hadoop Mapred-site</description>
+  </property>
+  <property>
+    <name>hadoop.conf.hdfs</name>
+    <value>hdfs-site.xml</value>
+    <description>Conf File Name for Hadoop HDFS-site</description>
+  </property>
+  <property>
+    <name>hadoop.conf.env</name>
+    <value>hadoop-env.sh</value>
+    <description>Conf File Name for Hadoop Env Setting</description>
+  </property>
+  <property>
+    <name>hadoop.conf.slaves</name>
+    <value>slaves</value>
+    <description>Conf File Name for Hadoop Slaves</description>
+  </property>
+  <property>
+    <name>hadoop.conf.masters</name>
+    <value>masters</value>
+    <description>Conf File Name for Hadoop Masters</description>
+  </property>
+  <!--  End Hadoop Cluster Properties  -->
+  
+  <!-- Ankush Server metadata directory Start -->
+  <property>
+    <name>server</name>
+    <value>/.ankush/server/</value>
+    <description>Directory path for the server metadata dir after USER_HOME directory</description>
+  </property>
+  <property>
+    <name>repo</name>
+    <value>/.ankush/server/repo/</value>
+    <description>Directory path for the server repository metadata dir after USER_HOME directory</description>
+  </property>
+  <property>
+    <name>license</name>
+    <value>/.ankush/server/license/</value>
+    <description>Directory path for the server license metadata dir after USER_HOME directory</description>
+  </property>
+  <property>
+    <name>job</name>
+    <value>/.ankush/server/jobs/</value>
+    <description>Directory path for the server jobs metadata dir after USER_HOME directory</description>
+  </property>
+    <property>
+    <name>key</name>
+    <value>/.ankush/server/keys/</value>
+    <description>Directory path for the server keys metadata dir after USER_HOME directory</description>
+  </property>
+  <property>
+    <name>appconf</name>
+    <value>/.ankush/server/appconf/</value>
+    <description>Directory path for the server App conf metadata dir after USER_HOME directory</description>
+  </property>
+  <property>
+    <name>node</name>
+    <value>/.ankush/server/tmp/</value>
+    <description>Directory path for the server tmp metadata dir after USER_HOME directory</description>
+  </property>
+     <property>
+    <name>graphcache</name>
+    <value>/.ankush/server/graph-cache/</value>
+    <description>Directory path for the monitoring cache after USER_HOME directory</description>
+  </property>
+  <!-- Ankush Server metadata directory End -->
+</configuration>
+

@@ -1,0 +1,36 @@
+.tile{
+	box-shadow:4px 4px 4px #888888;
+	border: 1px solid #888888;
+	border-radius: 2px 2px 2px 2px;
+	margin-top:20px;
+	padding-top: 5px;
+}
+
+.add-tech-tile{
+	background:url('../img/plus_black.gif') no-repeat center center;
+	height:16px;
+	width:16px;
+}
+
+/* css for heatmap */
+
+/* ******************************************* */
+
+.day {
+  fill: #fff;
+  stroke: #ccc;
+}
+
+.month {
+  fill: none;
+  stroke: #000;
+  stroke-width: 2px;
+}
+
+
+.RdYlGn .q0-11{fill:rgb(244,109,67)}
+.RdYlGn .q1-11{fill:rgb(255,255,191)}
+.RdYlGn .q2-11{fill:rgb(166,217,106)}
+
+
+/* ******************************************* */

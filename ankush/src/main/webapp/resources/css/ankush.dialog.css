@@ -1,0 +1,27 @@
+.box-dialog{
+    font-size:14px;
+	font-family:Franklin Gothic;
+	margin-top:30px;
+	margin-left:20px;
+	line-height:2.7;
+    color:#1A1A1A; 
+} 
+
+	
+
+.alert{
+	box-shadow: 5px 5px 5px 5px #888888;
+	background-color:#FFFFFF;
+	border:1px solid #FFFFFF;
+	border-radius: 0 0 0 0;
+	z-index:500;
+	color:black;
+}
+
+.dialog-heading{
+	font-weight: bold;
+}
+.imageIcon{
+	width:40px;
+	height:40px;
+}

@@ -1,0 +1,45 @@
+{
+  "installationPath": "/home/${user}/cassandra",
+  "logDir": "/home/${user}/cassandra/log",
+  "dataDir": "/home/${user}/cassandra/data",
+  "savedCachesDir": "/home/${user}/cassandra/saved_caches",
+  "commitlogDir": "/home/${user}/cassandra/commitlog",
+  "vendors": {
+    "Apache": {
+      "2.0.3": {
+        "downloadUrl": "http://apache.mirrors.tds.net/cassandra/2.0.3/apache-cassandra-2.0.3-bin.tar.gz"
+      },
+      "2.0.1": {
+        "downloadUrl": "http://apache.osuosl.org/cassandra/2.0.1/apache-cassandra-2.0.1-bin.tar.gz"
+      },
+      "1.2.10": {
+        "downloadUrl": "http://apache.osuosl.org/cassandra/1.2.10/apache-cassandra-1.2.10-bin.tar.gz"
+      }
+    },
+    "Datastax": {
+      "2.0.3": {
+        "downloadUrl": "http://downloads.datastax.com/community/dsc-cassandra-2.0.3-bin.tar.gz"
+      },
+      "2.0.1": {
+        "downloadUrl": "http://downloads.datastax.com/community/dsc-cassandra-2.0.1-bin.tar.gz"
+      },
+      "1.2.10": {
+        "downloadUrl": "http://downloads.datastax.com/community/dsc-cassandra-1.2.10-bin.tar.gz"
+      }
+    }
+  },
+  "storagePort": "7000",
+  "rpcPort": "9160",
+  "partitioners": {
+    "Murmur3Partitioner": "org.apache.cassandra.dht.Murmur3Partitioner",
+    "ByteOrderedPartitioner": "org.apache.cassandra.dht.ByteOrderedPartitioner",
+    "RandomPartitioner": "org.apache.cassandra.dht.RandomPartitioner"
+  },
+  "snitch": {
+    "SimpleSnitch": "",
+    "RackInferringSnitch": "",
+    "PropertyFileSnitch": "",
+    "GossipingPropertyFileSnitch": ""
+  },
+  "vNodeCount": "256"
+}

@@ -1,0 +1,4 @@
+apt-get -qq -y install rrdtool
+apt-get -qq -y install gmetad 
+apt-get -qq -y install ganglia-monitor
+killall -9 gmond gmetad || echo ""

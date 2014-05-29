@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<monitors>
+	<monitor id="Hadoop">
+		<class>com.impetus.ankush.hadoop.HadoopClusterMonitor</class>
+	</monitor>
+	<monitor id="Oracle NoSQL">
+		<class>com.impetus.ankush.oraclenosql.OracleNoSQLMonitor</class>
+	</monitor>
+	<monitor id="Cassandra">
+		<class>com.impetus.ankush.cassandra.CassandraClusterMonitor</class>
+	</monitor>
+	<monitor id="Storm">
+		<class>com.impetus.ankush.storm.StormClusterMonitor</class>
+	</monitor>
+</monitors>

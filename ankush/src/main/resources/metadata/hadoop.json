@@ -1,0 +1,201 @@
+{
+  "Hadoop": {
+    "Defaults": {
+      "mapRedTmpDir": "/home/${user}/hes/hadoopDirs/mrtmp",
+      "nameNodePath": "/home/${user}/hes/hadoopDirs/name",
+      "hadoopTmpDir": "/home/${user}/hes/hadoopDirs/hadooptmp",
+      "includeMasterAsSlave": "true",
+      "includeDFSFilePath": "/home/${user}/hes/hadoop/$VERSION/conf/includeDFS",
+      "javaHome": "/usr/lib/jvm/java-6-openjdk",
+      "excludeDFSFilePath": "/home/${user}/hes/hadoop/$VERSION/conf/excludeDFS",
+      "includeMRFilePath": "/home/${user}/hes/hadoop/$VERSION/conf/includeMR",
+      "includeMasterAsSNN": "true",
+      "excludeMRFilePath": "/home/${user}/hes/hadoop/$VERSION/conf/excludeMR",
+      "includeS3nSupportProperties": "false",
+      "startServices": "true",
+      "includeS3SupportProperties": "false",
+      "dataDir": "/home/${user}/hes/hadoopDirs/data",
+      "replicationFactorDFS": "3",
+      "formatNameNode": "true",
+      "installationHomePath": "/home/${user}/hes/hadoop/",
+      "journalNodeEditsDir": "/home/${user}/hes/hadoopDirs/jndata",
+      "nameNodeId1": "nn1",
+      "nameNodeId2": "nn2",
+      "webAppProxyPort": "8035"
+    },
+    "Vendors": {
+      "Apache": {
+        "2.2.0": {
+          "url": "http://archive.apache.org/dist/hadoop/core/hadoop-2.2.0/hadoop-2.2.0.tar.gz",
+          "CertifiedData": {}
+        },
+        "1.2.1": {
+          "url": "http://archive.apache.org/dist/hadoop/core/hadoop-1.2.1/hadoop-1.2.1.tar.gz",
+          "CertifiedData": {}
+        },
+        "1.1.1": {
+          "url": "http://archive.apache.org/dist/hadoop/core/hadoop-1.1.1/hadoop-1.1.1.tar.gz",
+          "CertifiedData": {}
+        },
+        "1.0.4": {
+          "url": "http://archive.apache.org/dist/hadoop/core/hadoop-1.0.4/hadoop-1.0.4.tar.gz",
+          "CertifiedData": {}
+        }
+      }
+    }
+  },
+  "Hive": {
+    "Defaults": {
+      "javax.jdo.option.ConnectionPassword": "Mine",
+      "javax.jdo.option.ConnectionURL": "jdbc:derby:;databaseName=metastore_db;create=true",
+      "javax.jdo.option.ConnectionDriverName": "org.apache.derby.jdbc.EmbeddedDriver",
+      "javax.jdo.option.ConnectionUserName": "APP",
+      "installationHomePath": "/home/${user}/hes/hive/"
+    },
+    "Vendors": {
+      "Apache": {
+        "0.11.0": {
+          "url": "http://archive.apache.org/dist/hive/hive-0.11.0/hive-0.11.0-bin.tar.gz"
+        },
+        "0.9.0": {
+          "url": "http://archive.apache.org/dist/hive/hive-0.9.0/hive-0.9.0.tar.gz"
+        }
+      }
+    }
+  },
+  "Zookeeper": {
+    "Defaults": {
+      "installationHomePath": "/home/${user}/hes/zookeeper/",
+      "clientPort": "2182",
+      "dataDir": "/home/${user}/hes/zookeeper/zk_data_dir/",
+      "syncLimit": "2",
+      "initLimit": "5",
+      "tickTime": "2000"
+    },
+    "Vendors": {
+      "Apache": {
+        "3.4.5": {
+          "url": "http://archive.apache.org/dist/zookeeper/zookeeper-3.4.5/zookeeper-3.4.5.tar.gz"
+        },
+        "3.3.5": {
+          "url": "http://mirror.tcpdiag.net/apache/zookeeper/zookeeper-3.3.5/zookeeper-3.3.5.tar.gz"
+        }
+      }
+    }
+  },
+  "Hbase": {
+    "Defaults": {
+      "hbase.hstore.compactionThreshold": "3",
+      "hfile.block.cache.size": "0.25",
+      "hbase.hregion.max.filesize": "10737418240",
+      "hbase.client.scanner.caching": "1",
+      "zookeeper.session.timeout": "180000",
+      "hbase.hregion.memstore.block.multiplier": "2",
+      "hbase.hregion.majorcompaction": "86400000",
+      "hbase.client.keyvalue.maxsize": "10485760",
+      "hbase.hregion.memstore.flush.size": "134217728",
+      "hbase.regionserver.handler.count": "10",
+      "installationHomePath": "/home/${user}/hes/hbase/"
+    },
+    "Vendors": {
+      "Apache": {
+        "0.98.0-hadoop2": {
+          "url": "http://archive.apache.org/dist/hbase/hbase-0.98.0/hbase-0.98.0-hadoop2-bin.tar.gz"
+        },
+        "0.94.11": {
+          "url": "http://archive.apache.org/dist/hbase/hbase-0.94.11/hbase-0.94.11.tar.gz"
+        },
+        "0.94.2": {
+          "url": "http://archive.apache.org/dist/hbase/hbase-0.94.2/hbase-0.94.2.tar.gz"
+        },
+        "0.92.0": {
+          "url": "http://archive.apache.org/dist/hbase/hbase-0.92.0/hbase-0.92.0.tar.gz"
+        }
+      }
+    }
+  },
+  "Mahout": {
+    "Defaults": {
+      "installationHomePath": "/home/${user}/hes/mahout/"
+    },
+    "Vendors": {
+      "Apache": {
+        "0.7": {
+          "url": "http://apache.mirrors.tds.net/mahout/0.7/mahout-distribution-0.7.zip"
+        }
+      }
+    }
+  },
+  "Pig": {
+    "Defaults": {
+      "installationHomePath": "/home/${user}/hes/pig/"
+    },
+    "Vendors": {
+      "Apache": {
+        "0.11.1": {
+          "url": "http://archive.apache.org/dist/pig/pig-0.11.1/pig-0.11.1.tar.gz"
+        },
+        "0.9.2": {
+          "url": "http://www.globalish.com/am/pig/pig-0.9.2/pig-0.9.2.tar.gz"
+        }
+      }
+    }
+  },
+  "Oozie": {
+    "Defaults": {
+      "installationHomePath": "/home/${user}/hes/oozie/"
+    },
+    "Vendors": {
+      "Yahoo": {
+        "3.0.0": {
+          "url": "http://cloud.github.com/downloads/yahoo/oozie/oozie-3.0.0-distro.tar.gz"
+        }
+      }
+    }
+  },
+  "Solr": {
+    "Defaults": {
+      "installationHomePath": "/home/${user}/hes/solr/"
+    },
+    "Vendors": {
+      "Apache": {
+        "4.0.0-BETA": {
+          "url": "http://archive.apache.org/dist/lucene/solr/4.0.0-BETA/apache-solr-4.0.0-BETA.zip"
+        },
+        "3.6.1": {
+          "url": "http://archive.apache.org/dist/lucene/solr/3.6.1/apache-solr-3.6.1.zip"
+        }
+      }
+    }
+  },
+  "Flume": {
+    "Defaults": {
+      "installationHomePath": "/home/${user}/hes/flume/"
+    },
+    "Vendors": {
+      "Apache": {
+        "1.4.0-bin": {
+          "url": "http://archive.apache.org/dist/flume/1.4.0/apache-flume-1.4.0-bin.tar.gz"
+        },
+        "1.2.0": {
+          "url": "http://archive.apache.org/dist/flume/1.2.0/apache-flume-1.2.0-bin.tar.gz"
+        }
+      }
+    }
+  },
+  "Sqoop": {
+    "Defaults": {
+      "installationHomePath": "/home/${user}/hes/sqoop/"
+    },
+    "Vendors": {
+      "Apache": {
+        "1.4.4.bin__hadoop-2.0.4-alpha": {
+          "url": "http://archive.apache.org/dist/sqoop/1.4.4/sqoop-1.4.4.bin__hadoop-2.0.4-alpha.tar.gz"
+        },
+        "1.4.4.bin__hadoop-1.0.0": {
+          "url": "http://archive.apache.org/dist/sqoop/1.4.4/sqoop-1.4.4.bin__hadoop-1.0.0.tar.gz"
+        }
+      }
+    }
+  }
+}

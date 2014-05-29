@@ -1,0 +1,26 @@
+{
+  "ElasticSearch": {
+    "Defaults": {
+      "dataPath": "/home/${user}/es/data",
+      "actionAutoCreateIndex": false,
+      "bootstrapMlockall": true,
+      "heapSize": "256m",
+      "nodeMaxLocalStorageNodes": 1,
+      "indexNumberOfShards": "5",
+      "indexNumberOfReplicas": "1",
+      "httpPort": "9200",
+      "transportTcpPort": "9300",
+      "installationPath": "/home/${user}/es/"
+    },
+    "Vendors": {
+      "ElasticSearch": {
+        "0.90.9": {
+          "url": "https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.90.9.tar.gz"
+        },
+        "0.90.2": {
+          "url": "https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.90.2.tar.gz"
+        }
+      }
+    }
+  }
+}

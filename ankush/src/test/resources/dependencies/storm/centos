@@ -1,0 +1,8 @@
+yum -q -y install kernel-devel
+yum -q -y install gcc
+yum -q -y install make
+yum -q -y install autoconf
+yum -q -y install daemontools
+yum -q -y install uuid-dev
+yum -q -y install git
+yum -q -y install libtool

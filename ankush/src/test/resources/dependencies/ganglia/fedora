@@ -1,0 +1,14 @@
+yum -q -y install kernel-devel
+yum -q -y install gcc
+yum -q -y install gcc-c++
+yum -q -y install make
+yum -q -y install autoconf
+yum -q -y install apr-devel
+yum -q -y install libconfuse
+yum -q -y install libconfuse-devel
+yum -q -y install expat-devel
+yum -q -y install python-devel
+yum -q -y install rrdtool
+yum -q -y install rrdtool-devel
+yum -q -y install pcre
+yum -q -y install pcre-devel

@@ -1,0 +1,9 @@
+zypper -q install -y rpm-devel
+zypper -q install -y gcc
+zypper -q install -y make
+zypper -q install -y autoconf
+zypper -q install -y daemontools
+zypper -q install -y uuid-dev
+zypper -q install -y git
+zypper -q install -y libtool
+zypper -q install -y sshpass

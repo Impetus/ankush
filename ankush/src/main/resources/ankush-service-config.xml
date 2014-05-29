@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<services>
+  
+  <service id="Agent">
+    <priority>0</priority>
+    <class>com.impetus.ankush.common.agent.GenericServiceMonitor</class>
+  </service>
+  
+  <service id="GangliaMaster">
+    <priority>1</priority>
+    <class>com.impetus.ankush.common.agent.GenericServiceMonitor</class>
+  </service>
+  
+  <service id="gmond">
+    <priority>2</priority>
+    <class>com.impetus.ankush.common.agent.GenericServiceMonitor</class>
+  </service>
+  
+   <service id="Zookeeper">
+    <priority>3</priority>
+    <class>com.impetus.ankush.common.zookeeper.ZookeeperServiceMonitor</class>
+  </service>
+  
+  <service id="Supervisor">
+    <priority>4</priority>
+    <class>com.impetus.ankush.storm.StormServiceMonitor</class>
+  </service>
+  
+  <service id="Nimbus">
+    <priority>5</priority>
+    <class>com.impetus.ankush.storm.StormServiceMonitor</class>
+  </service>
+  
+  <service id="CassandraDaemon">
+    <priority>6</priority>
+    <class>com.impetus.ankush.cassandra.CassandraServiceMonitor</class>
+  </service>
+  
+  
+  <service id="ElasticSearch">
+    <priority>7</priority>
+    <class>com.impetus.ankush.elasticsearch.ElasticSearchServiceMonitor</class>
+  </service>
+  
+  <service id="Oracle NoSQL Database">
+    <priority>6</priority>
+    <class>com.impetus.ankush.oraclenosql.OracleNoSQLService</class>
+  </service>
+  
+   <service id="Kafka">
+    <priority>8</priority>
+    <class>com.impetus.ankush.kafka.KafkaServiceMonitor</class>
+  </service>
+  
+  <service id="HiveServer">
+    <priority>10</priority>
+    <class>com.impetus.ankush.hadoop.HadoopServiceMonitor</class>
+  </service>
+  
+  <service id="HBaseRegionServer">
+    <priority>11</priority>
+    <class>com.impetus.ankush.hadoop.HadoopServiceMonitor</class>
+  </service>
+  
+    <service id="HBaseMaster">
+    <priority>12</priority>
+    <class>com.impetus.ankush.hadoop.HadoopServiceMonitor</class>
+  </service>
+  
+  <service id="DataNode">
+    <priority>13</priority>
+    <class>com.impetus.ankush.hadoop.HadoopServiceMonitor</class>
+  </service>
+  
+  <service id="SecondaryNameNode">
+    <priority>14</priority>
+    <class>com.impetus.ankush.hadoop.HadoopServiceMonitor</class>
+  </service>
+  
+  <service id="NameNode">
+    <priority>15</priority>
+    <class>com.impetus.ankush.hadoop.HadoopServiceMonitor</class>
+  </service>
+  
+  <service id="TaskTracker">
+    <priority>16</priority>
+    <class>com.impetus.ankush.hadoop.HadoopServiceMonitor</class>
+  </service>
+  
+  <service id="JobTracker">
+    <priority>17</priority>
+    <class>com.impetus.ankush.hadoop.HadoopServiceMonitor</class>
+  </service>
+  
+  <service id="NodeManager">
+    <priority>18</priority>
+    <class>com.impetus.ankush.hadoop.HadoopServiceMonitor</class>
+  </service>
+  
+  <service id="WebAppProxyServer">
+    <priority>19</priority>
+    <class>com.impetus.ankush.hadoop.HadoopServiceMonitor</class>
+  </service>
+  
+    <service id="JobHistoryServer">
+    <priority>20</priority>
+    <class>com.impetus.ankush.hadoop.HadoopServiceMonitor</class>
+  </service>
+  
+  <service id="ResourceManager">
+    <priority>21</priority>
+    <class>com.impetus.ankush.hadoop.HadoopServiceMonitor</class>
+  </service>
+  
+  <service id="zkfc">
+    <priority>22</priority>
+    <class>com.impetus.ankush.hadoop.HadoopServiceMonitor</class>
+  </service>
+  
+  <service id="JournalNode">
+    <priority>23</priority>
+    <class>com.impetus.ankush.hadoop.HadoopServiceMonitor</class>
+  </service>
+  
+  <service id="OozieServer">
+    <priority>24</priority>
+    <class>com.impetus.ankush.hadoop.HadoopServiceMonitor</class>
+  </service>
+  
+  <service id="SolrService">
+    <priority>25</priority>
+    <class>com.impetus.ankush.hadoop.HadoopServiceMonitor</class>
+  </service>
+</services>
