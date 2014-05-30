@@ -30,10 +30,7 @@ git clone https://github.com/impetus-opensource/ankush.git
 ````
 Or you can download source from https://github.com/impetus-opensource/ankush/archive/master.zip and extract it.
 
-Move to ankush folder
-````
-mv ankush
-````
+Change directory to the repository folder.
 
 Build package
 ````
@@ -43,7 +40,7 @@ You will get package at target/ankush-x.y.z.tar.gz. Copy the package to the loca
 
 Extract package
 ````
-tar –xf ankush-x.y.z.tar.gz
+tar -xvf ankush-x.y.z.tar.gz
 ````
 
 ### How to use
