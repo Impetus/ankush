@@ -136,14 +136,14 @@
 			<artifactId>kvstore</artifactId>
 			<version>11gR2.2.0.26</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/kvstore.jar</systemPath>
+			<systemPath>${project.basedir}/../ankush/src/main/webapp/WEB-INF/lib/kvstore.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>com.sleepycat.je</groupId>
 			<artifactId>je</artifactId>
 			<version>5.0.74</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/je.jar</systemPath>
+			<systemPath>${project.basedir}/../ankush/src/main/webapp/WEB-INF/lib/je.jar</systemPath>
 		</dependency>
 		<!-- Oracle end -->
 
