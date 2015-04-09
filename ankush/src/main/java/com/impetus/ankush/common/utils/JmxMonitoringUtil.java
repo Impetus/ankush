@@ -23,6 +23,9 @@
  */
 package com.impetus.ankush.common.utils;
 
+import java.util.Iterator;
+import java.util.Map;
+
 import net.neoremind.sshxcute.core.Result;
 import net.neoremind.sshxcute.core.SSHExec;
 
@@ -31,6 +34,7 @@ import com.impetus.ankush.common.config.ConfigurationReader;
 import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.scripting.AnkushTask;
 import com.impetus.ankush.common.scripting.impl.ReplaceText;
+import com.impetus.ankush2.framework.config.AuthConfig;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -78,7 +82,7 @@ public class JmxMonitoringUtil {
 	 * @return true, if successful
 	 */
 	public static boolean configureJmxPort(String processName,
-			SSHExec connection, String filePath, String jmxPort, String password) {
+			SSHExec connection, String filePath, int jmxPort, String password) {
 		try {
 			final String portText = "JMX_PORT_" + processName.toUpperCase();
 			final String targetText = JmxMonitoringUtil.ankushConf
@@ -87,7 +91,8 @@ public class JmxMonitoringUtil {
 			String replacementText = JmxMonitoringUtil.ankushConf
 					.getStringValue("jmx." + processName.toLowerCase()
 							+ ".replacementText");
-			replacementText = replacementText.replaceAll(portText, jmxPort);
+			replacementText = replacementText.replaceAll(portText,
+					String.valueOf(jmxPort));
 			Result res = null;
 			final AnkushTask updateFile = new ReplaceText(targetText,
 					replacementText, filePath, true, password);
@@ -123,14 +128,82 @@ public class JmxMonitoringUtil {
 	public static boolean copyJmxTransJson(SSHExec connection, String userName,
 			String password, String componentName, String processName,
 			String jmxPort, String privateIp) {
+		return copyJmxTransJson(connection, userName, password, componentName,
+				processName, jmxPort, privateIp, null);
+	}
+
+	public static boolean copyJmxTransJson(SSHExec connection,
+			AuthConfig authConfig, String componentName, String processName,
+			int jmxPort, String agentHomeDir) {
+		return copyJmxTransJson(connection, authConfig.getUsername(),
+				authConfig.getPassword(), componentName, processName,
+				String.valueOf(jmxPort), agentHomeDir, null, null, null);
+	}
+
+	/**
+	 * Copy jmx trans json.
+	 * 
+	 * @param connection
+	 *            the connection
+	 * @param userName
+	 *            the user name
+	 * @param password
+	 *            the password
+	 * @param componentName
+	 *            the component name
+	 * @param processName
+	 *            the process name
+	 * @param jmxPort
+	 *            the jmx port
+	 * @param privateIp
+	 *            the private ip
+	 * @param jsonTemplateSourcePath
+	 *            the source path for jmx json template
+	 * @return true, if successful
+	 */
+	public static boolean copyJmxTransJson(SSHExec connection, String userName,
+			String password, String componentName, String processName,
+			String jmxPort, String privateIp, String jsonTemplateSourcePath) {
+		return copyJmxTransJson(connection, userName, password, componentName,
+				processName, jmxPort, privateIp, jsonTemplateSourcePath, null,
+				null);
+	}
+
+	/**
+	 * Copy jmx trans json.
+	 * 
+	 * @param connection
+	 *            the connection
+	 * @param userName
+	 *            the user name
+	 * @param password
+	 *            the password
+	 * @param componentName
+	 *            the component name
+	 * @param processName
+	 *            the process name
+	 * @param jmxPort
+	 *            the jmx port
+	 * @param privateIp
+	 *            the private ip
+	 * @param jsonTemplateSourcePath
+	 *            the source path for jmx json template
+	 * @param prmMap
+	 *            the parameter map for jmx json template
+	 * @return true, if successful
+	 */
+	public static boolean copyJmxTransJson(SSHExec connection, String userName,
+			String password, String componentName, String processName,
+			String jmxPort, String agentHomeDir, String privateIp,
+			String jsonTemplateSourcePath, Map prmMap) {
 		try {
-			final String jsonTemplatePath_Source = AppStoreWrapper
+			final String jsonTemplatePath_Source = jsonTemplateSourcePath == null ? (AppStoreWrapper
 					.getResourcePath()
 					+ JmxMonitoringUtil.ankushConf
 							.getStringValue("jmxtrans.json.template.path")
-					+ processName.toLowerCase() + ".json";
-			final String jmxTransInstallPath = CommonUtil.getUserHome(userName)
-					+ JmxMonitoringUtil.ankushConf.getStringValue("agent.dir")
+					+ processName.toLowerCase() + ".json")
+					: jsonTemplateSourcePath;
+			final String jmxTransInstallPath = agentHomeDir
 					+ JmxMonitoringUtil.ankushConf
 							.getStringValue("jmxtrans.installation.relative.path");
 			final String jsonTemplatePath_Destination = jmxTransInstallPath
@@ -164,10 +237,34 @@ public class JmxMonitoringUtil {
 			if (!res.isSuccess) {
 				return false;
 			}
+			if (prmMap != null) {
+				Iterator itr = prmMap.keySet().iterator();
+				while (itr.hasNext()) {
+					String key = (String) itr.next();
+					targetText = "${" + key + "}";
+					replacementText = (String) prmMap.get(key);
+					updateJmxJsonFile = new ReplaceText(targetText,
+							replacementText, jsonTemplatePath_Destination,
+							false, password);
+					res = connection.exec(updateJmxJsonFile);
+					if (!res.isSuccess) {
+						return false;
+					}
+				}
+			}
 		} catch (final Exception e) {
 			return false;
 		}
 		return true;
+	}
+
+	public static boolean copyJmxTransJsonForComponent(SSHExec connection,
+			AuthConfig authConfig, String componentName, String processName,
+			String jmxPort, String agentHomeDir) {
+		return copyJmxTransJson(connection, authConfig.getUsername(),
+				authConfig.getPassword(), componentName, processName,
+				String.valueOf(jmxPort), agentHomeDir,
+				authConfig.getPrivateKey(), null, null);
 	}
 
 	/**

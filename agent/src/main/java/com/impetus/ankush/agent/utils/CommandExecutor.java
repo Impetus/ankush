@@ -41,6 +41,34 @@ public class CommandExecutor {
 	private static final int SLEEP_TIME = 5000;
 
 	/**
+	 * Method to execute command arrays.
+	 * 
+	 * @param command
+	 * @return
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	public static Result executeCommand(String... command) throws IOException,
+			InterruptedException {
+		Result rs = new Result();
+		Runtime rt = Runtime.getRuntime();
+		Process proc = rt.exec(command);
+		StreamWrapper error = new StreamWrapper(proc.getErrorStream());
+		StreamWrapper output = new StreamWrapper(proc.getInputStream());
+
+		error.start();
+		output.start();
+		error.join(SLEEP_TIME);
+		output.join(SLEEP_TIME);
+		proc.waitFor();
+		rs.setExitVal(proc.exitValue());
+		rs.setOutput(output.getMessage());
+		rs.setError(error.getMessage());
+		proc.destroy();
+		return rs;
+	}
+
+	/**
 	 * Method executeCommand.
 	 * 
 	 * @param command
@@ -67,7 +95,6 @@ public class CommandExecutor {
 		rs.setExitVal(proc.exitValue());
 		rs.setOutput(output.getMessage());
 		rs.setError(error.getMessage());
-		rs.setCommand(command);
 		proc.destroy();
 		return rs;
 	}

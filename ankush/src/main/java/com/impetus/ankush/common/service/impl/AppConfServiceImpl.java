@@ -21,12 +21,14 @@
 package com.impetus.ankush.common.service.impl;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +42,9 @@ import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.domain.AppConf;
 import com.impetus.ankush.common.domain.User;
 import com.impetus.ankush.common.exception.UserExistsException;
+import com.impetus.ankush.common.mail.MailClient;
+import com.impetus.ankush.common.mail.MailConf;
+import com.impetus.ankush.common.mail.MailMsg;
 import com.impetus.ankush.common.service.AppConfService;
 import com.impetus.ankush.common.service.GenericManager;
 import com.impetus.ankush.common.service.UserManager;
@@ -68,6 +73,9 @@ public class AppConfServiceImpl implements AppConfService {
 
 	/** The Constant KEY_CONFKEY. */
 	private static final String KEY_CONFKEY = "confKey";
+
+	private static final String KEY_FLAG_MAIL_CONF_VERIFIED = "mailConfVerified";
+	private static final String KEY_MAIL_CONF_VERIFIED_BY = "mailConfVerifiedBy";
 
 	/** The logger. */
 	private static AnkushLogger logger = new AnkushLogger(
@@ -166,24 +174,25 @@ public class AppConfServiceImpl implements AppConfService {
 	 * (com.impetus.ankush.common.service.impl.AnkushApplicationConf)
 	 */
 	@Override
-	public Map manageCommonConfiguration(AnkushApplicationConf commonConf) {
+	public Map manageCommonConfiguration(AnkushApplicationConf commonConf,
+			boolean unauthenticated) {
 		clearResult();
 
 		Map map = new HashMap();
 		try {
 
 			// Managing Email and Server IP Configuration
-			manageAppConf(commonConf);
+			manageAppConf(commonConf, unauthenticated);
 
 			// Managing Users
 			map.put("user",
 					manageAnkushUsers(commonConf.getUsers(),
 							commonConf.getLoggedUser()));
-
 		} catch (Exception e) {
 			addError("Error in managing Common configuration, Reson : "
 					+ e.getMessage());
 		}
+
 		result.putAll(map);
 		return returnResult();
 	}
@@ -195,28 +204,32 @@ public class AppConfServiceImpl implements AppConfService {
 	 * com.impetus.ankush.common.service.AppConfService#getCommonConfiguration()
 	 */
 	@Override
-	public Map getCommonConfiguration() {
+	public Map getCommonConfiguration(boolean unauthenticated) {
 		Map<String, Object> ankushAppConf = new HashMap<String, Object>();
 		try {
 			List<User> ankushUsers = userManager.getUsers();
 			Map serverIpInfo = getAppConf(KEY_SERVERIP);
 
 			Object emailConf = getAppConf(KEY_EMAIL);
-			Map<String, String> emailMap = new HashMap<String, String>();
+			Map<String, Object> emailMap = new HashMap<String, Object>();
 			if (emailConf != null
 					&& (getAppConf(KEY_EMAIL).get(KEY_EMAIL) != null)) {
 				emailConf = getAppConf(KEY_EMAIL).get(KEY_EMAIL);
 				emailMap = (Map) emailConf;
-				String encryptedPassword = emailMap.get(KEY_PASSWORD);
+				String encryptedPassword = (String) emailMap.get(KEY_PASSWORD);
 				String decryptedPassword = new PasswordUtil()
 						.decrypt(encryptedPassword);
 				emailMap.put(KEY_PASSWORD, decryptedPassword);
+				if (emailMap.get(KEY_FLAG_MAIL_CONF_VERIFIED) == null) {
+					emailMap.put(KEY_FLAG_MAIL_CONF_VERIFIED, false);
+				}
 			}
 			Map serverIpMap = new HashMap();
 			if ((serverIpInfo != null)
 					&& serverIpInfo.get(KEY_SERVERIP) != null) {
 				serverIpMap = (Map) serverIpInfo.get(KEY_SERVERIP);
 			}
+
 			ankushAppConf.put(KEY_EMAIL, emailMap);
 			ankushAppConf.put(KEY_SERVERIP, serverIpMap);
 			ankushAppConf.put(KEY_USER, ankushUsers);
@@ -280,7 +293,7 @@ public class AppConfServiceImpl implements AppConfService {
 			if (appConf != null) {
 				res.put(key, appConf.getObject());
 			} else {
-				res.put(Constant.Keys.ERROR, "Unable to fetch " + key);
+				res.put("error", "Unable to fetch " + key);
 			}
 
 		} catch (Exception e) {
@@ -319,21 +332,18 @@ public class AppConfServiceImpl implements AppConfService {
 	 * com.impetus.ankush.common.service.AppConfService#getAppAccessPublicURL()
 	 */
 	public String getAppAccessPublicURL() {
-		Map m = (Map) getAppConf(AppConfServiceImpl.KEY_SERVERIP).get(
-				AppConfServiceImpl.KEY_SERVERIP);
-		String serverIP = "";
-		String port = "";
-		if ((m != null) && m.size() > 0 && (m.get("error") == null)) {
-			serverIP = (String) m.get("publicIp");
-			port = (String) m.get("port");
-		}
-
-		String appURL = "http://" + serverIP + ":" + port + "/ankush/";
-		String accessURL = null;
-		if ((serverIP != null) && !serverIP.equals("")) {
-			accessURL = appURL;
-		}
-		return accessURL;
+		return AppStoreWrapper.getAppAccessURL();
+		/*
+		 * Map m = (Map) getAppConf(AppConfServiceImpl.KEY_SERVERIP).get(
+		 * AppConfServiceImpl.KEY_SERVERIP); String serverIP = ""; String port =
+		 * ""; if ((m != null) && m.size() > 0 && (m.get("error") == null)) {
+		 * serverIP = (String) m.get("publicIp"); port = (String) m.get("port");
+		 * }
+		 * 
+		 * String appURL = "http://" + serverIP + ":" + port + "/ankush/";
+		 * String accessURL = null; if ((serverIP != null) &&
+		 * !serverIP.equals("")) { accessURL = appURL; } return accessURL;
+		 */
 	}
 
 	/**
@@ -343,7 +353,8 @@ public class AppConfServiceImpl implements AppConfService {
 	 *            the app conf
 	 * @return the map
 	 */
-	private Map manageAppConf(AnkushApplicationConf appConf) {
+	private Map manageAppConf(AnkushApplicationConf appConf,
+			boolean unauthenticated) {
 		Map<String, String> responseMap = new HashMap<String, String>();
 		try {
 			Object email = appConf.getEmail();
@@ -358,6 +369,9 @@ public class AppConfServiceImpl implements AppConfService {
 			AppStoreWrapper.setupMail(appMail);
 
 			setAppConf(KEY_SERVERIP, appConf.getServerIP());
+			Object serverConf = appConf.getServerIP();
+			Map appServerConf = (Map) serverConf;
+			AppStoreWrapper.setAppAccessURL(appServerConf);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			addError("Error in saving App conf information");
@@ -476,6 +490,15 @@ public class AppConfServiceImpl implements AppConfService {
 			// fetching existing appconf object if exists.
 			AppConf appConf = appConfManager.getByPropertyValueGuarded(
 					KEY_CONFKEY, KEY_SERVERIP);
+
+			// Server port.
+			String port = System.getenv("ANKUSH_SERVER_PORT");
+
+			// port is not available in environment variable.
+			if (port == null) {
+				port = DEFAULT_SERVER_PORT;
+			}
+
 			// if not exists.
 			if (appConf == null) {
 				// Fetching the host ip address.
@@ -483,8 +506,9 @@ public class AppConfServiceImpl implements AppConfService {
 
 				// creating a hash map object.
 				HashMap map = new HashMap();
-				map.put(Constant.Keys.PUBLICIP, addr.getHostAddress());
-				map.put(Constant.Keys.PORT, DEFAULT_SERVER_PORT);
+				map.put(com.impetus.ankush2.constant.Constant.Keys.PUBLICIP,
+						addr.getHostAddress());
+				map.put(com.impetus.ankush2.constant.Constant.Keys.PORT, port);
 
 				// setting key and value in app conf.
 				appConf = new AppConf();
@@ -505,9 +529,46 @@ public class AppConfServiceImpl implements AppConfService {
 		String fileName = AppStoreWrapper.getResourcePath() + "metadata/"
 				+ file + ".json";
 		try {
-			result.put(file, new ObjectMapper().readValue(new File(fileName),
-					new TypeReference<Object>() {
-					}));
+			Map techMetadataMap = new ObjectMapper().readValue(new File(
+					fileName), new TypeReference<Object>() {
+			});
+
+			final String key_defaults = "Defaults";
+			final String key_xpConf = "xpConf";
+			Iterator itr = techMetadataMap.keySet().iterator();
+			while (itr.hasNext()) {
+				String techNameKey = (String) itr.next();
+				Object obj = techMetadataMap.get(techNameKey);
+				if (obj != null && obj instanceof Map) {
+					Map techMap = (Map) techMetadataMap.get(techNameKey);
+					obj = techMap.get(key_defaults);
+					if (obj != null && obj instanceof Map) {
+						Map techDefaultsMap = (Map) techMap.get(key_defaults);
+
+						Boolean xpConf = (Boolean) techDefaultsMap
+								.get(key_xpConf);
+						if ((xpConf != null) && xpConf) {
+							String techXconfFile = AppStoreWrapper
+									.getServerRepoPath()
+									+ "/metadata."
+									+ techNameKey + "/" + techNameKey + ".json";
+							System.out.println(techNameKey + " "
+									+ techXconfFile);
+							File xConfFile = new File(techXconfFile);
+							if (xConfFile.exists()) {
+								System.out.println(techNameKey
+										+ " Loading From  " + techXconfFile);
+								Map<String, Object> customConf = new ObjectMapper()
+										.readValue(xConfFile,
+												new TypeReference<Object>() {
+												});
+								techDefaultsMap.putAll(customConf);
+							}
+						}
+					}
+				}
+			}
+			result.put(file, techMetadataMap);
 		} catch (Exception e) {
 			result.put("error", "Failed to get " + file);
 			logger.error(e.getMessage(), e);
@@ -515,4 +576,51 @@ public class AppConfServiceImpl implements AppConfService {
 
 		return result;
 	}
+
+	private String getMailConfVerificationUpdateURL(String toUser) {
+		String url = "";
+		Map serverIpInfo = getAppConf(KEY_SERVERIP);
+		serverIpInfo = (Map) serverIpInfo.get(KEY_SERVERIP);
+		if (serverIpInfo != null) {
+			url = "http://" + (String) serverIpInfo.get("publicIp") + ":"
+					+ (String) serverIpInfo.get("port") + "/ankush/"
+					+ "app/conf/mailConfVerified/" + toUser;
+		}
+		return url;
+	}
+
+	public Map testMailConf(MailConf mailConf, String toUser) {
+		MailClient mc = new MailClient(mailConf);
+		MailMsg mailMsg = new MailMsg();
+		mailMsg.setTo(toUser);
+		mailMsg.setSubject("Ankush Mail Configuration Test mail");
+		String msg = "This is a test mail sent from Ankush Server to verify proper working of configured mail server configuration. Click below URL to confirm working of Mail Configuration. \n";
+		msg += getMailConfVerificationUpdateURL(toUser);
+		mailMsg.setMessage(msg);
+		boolean sent = false;
+		try {
+			sent = mc.sendMail(mailMsg);
+		} catch (Exception e) {
+			System.out
+					.println("Error in verifing mail send using provided mail conf");
+		}
+		Map m = new HashMap();
+		m.put("mailSendStatus", sent);
+		m.put("sentTo", toUser);
+		return m;
+	}
+
+	public Map updateMailConfVerificationStatus(String toUser) {
+		boolean updated = false;
+		Map mailConf = (Map) getAppConf(KEY_EMAIL);
+		mailConf = (Map) mailConf.get(KEY_EMAIL);
+		mailConf.put(KEY_MAIL_CONF_VERIFIED_BY, toUser);
+		mailConf.put(KEY_FLAG_MAIL_CONF_VERIFIED, true);
+		updated = setAppConf(KEY_EMAIL, mailConf);
+		Map m = new HashMap();
+		m.put("mailVerificationStatus", updated);
+		m.put("updatedBy", toUser);
+		return m;
+	}
+
 }

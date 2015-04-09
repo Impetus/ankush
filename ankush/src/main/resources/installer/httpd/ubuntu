@@ -1,0 +1,2 @@
+apt-get -qq -y install apache2
+apt-get -qq -y install libapache2-mod-jk

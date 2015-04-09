@@ -20,15 +20,17 @@
  ******************************************************************************/
 package com.impetus.ankush.agent.utils;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.IOException;
+import java.util.Date;
 
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import com.impetus.ankush.agent.utils.CommandExecutor;
-import com.impetus.ankush.agent.utils.Result;
-
-import static org.junit.Assert.*;
 
 /**
  * The class <code>CommandExecutorTest</code> contains tests for the class
@@ -43,10 +45,10 @@ public class CommandExecutorTest {
 	public ExpectedException exception = ExpectedException.none();
 
 	/**
-	 * Perform pre-test initialization.
+	 * Perform pre-test initialisation.
 	 * 
 	 * @throws Exception
-	 *             if the initialization fails for some reason
+	 *             if the initialisation fails for some reason
 	 */
 	@Before
 	public void setUp() throws Exception {
@@ -54,19 +56,21 @@ public class CommandExecutorTest {
 
 	/**
 	 * Run the CommandExecutor() constructor test.
-	 *
-	 * @throws Exception the exception
+	 * 
+	 * @throws Exception
+	 *             the exception
 	 */
 	@Test
 	public void testCommandExecutorObjectNotNull() throws Exception {
 		CommandExecutor result = new CommandExecutor();
 		assertNotNull(result);
 	}
-	
+
 	/**
 	 * Run the Result executeCommand(String) method test.
-	 *
-	 * @throws Exception the exception
+	 * 
+	 * @throws Exception
+	 *             the exception
 	 */
 	@Test
 	public void testExecute_JPS_Command() throws Exception {
@@ -80,8 +84,9 @@ public class CommandExecutorTest {
 
 	/**
 	 * Run the Result executeCommand(String) method test.
-	 *
-	 * @throws Exception the exception
+	 * 
+	 * @throws Exception
+	 *             the exception
 	 */
 	@Test
 	public void testExecute_LS_Command() throws Exception {
@@ -95,8 +100,9 @@ public class CommandExecutorTest {
 
 	/**
 	 * Run the Result executeCommand(String) method test.
-	 *
-	 * @throws Exception the exception
+	 * 
+	 * @throws Exception
+	 *             the exception
 	 */
 	@Test
 	public void testExecute_ABCD_Command() throws Exception {
@@ -111,38 +117,32 @@ public class CommandExecutorTest {
 
 	/**
 	 * Run the Result executeCommand(String) method test.
-	 *
-	 * @throws Exception the exception
+	 * 
+	 * @throws Exception
+	 *             the exception
 	 */
 	@Test
-	public void testExecute_MkTestDir_Command() throws Exception {
-		String command = "mkdir test";
+	public void testExecute_MkRemoveTestDir_Command() throws Exception {
+		String dir = new Date().getTime() + "-test";
+		String createCommand = "mkdir " + dir;
 
-		Result result = CommandExecutor.executeCommand(command);
+		Result result = CommandExecutor.executeCommand(createCommand);
 
+		assertEquals(0, result.getExitVal());
+		assertNotNull(result);
+
+		String removeCommand = "rm -r " + dir;
+
+		result = CommandExecutor.executeCommand(removeCommand);
 		assertEquals(0, result.getExitVal());
 		assertNotNull(result);
 	}
 
 	/**
 	 * Run the Result executeCommand(String) method test.
-	 *
-	 * @throws Exception the exception
-	 */
-	@Test
-	public void testExecute_RmTestDir_Command() throws Exception {
-		String command = "rm -r test";
-
-		Result result = CommandExecutor.executeCommand(command);
-
-		assertEquals(0, result.getExitVal());
-		assertNotNull(result);
-	}
-	
-	/**
-	 * Run the Result executeCommand(String) method test.
-	 *
-	 * @throws Exception the exception
+	 * 
+	 * @throws Exception
+	 *             the exception
 	 */
 	@Test
 	public void testExecute_Empty_Command() throws Exception {
@@ -154,11 +154,12 @@ public class CommandExecutorTest {
 		assertEquals(1, result.getExitVal());
 		assertNotNull(result);
 	}
-	
+
 	/**
 	 * Run the Result executeCommand(String) method test.
-	 *
-	 * @throws Exception the exception
+	 * 
+	 * @throws Exception
+	 *             the exception
 	 */
 	@Test
 	public void testExecute_Null_Command() throws Exception {

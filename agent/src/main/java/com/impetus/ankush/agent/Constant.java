@@ -23,15 +23,16 @@
  */
 package com.impetus.ankush.agent;
 
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * The Interface Constants.
  * 
  * @author Hokam Chauhan
  */
 public interface Constant {
+	
+//	String ANKUSH="Ankush";
+	
+	String AGENT="Agent";
 
 	/** The prop name node id. */
 	String PROP_NAME_NODE_ID = "NODE_ID";
@@ -39,8 +40,11 @@ public interface Constant {
 	/** The prop name url part. */
 	String PROP_NAME_URL_PART = "URL_PART";
 
+	/** The prop name url part. */
+	String PROP_NAME_CLUSTER_MONITORING_URL = "CLUSTER_MONITORING_URL";
+
 	/** The prop name host. */
-	String PROP_NAME_HOST = "HOST";
+	String PROP_SERVER_IP = "SERVER_IP";
 
 	/** The prop name port. */
 	String PROP_NAME_PORT = "PORT";
@@ -89,12 +93,9 @@ public interface Constant {
 
 	/** The prop name process port list. */
 	String PROP_NAME_PROCESS_PORT_MAP = "PROCESS_PORT_MAP";
-	
+
 	/** The technology hadoop. */
 	String TECHNOLOGY_HADOOP = "Hadoop";
-
-	/** The technology oracle nosql. */
-	String TECHNOLOGY_ORACLE_NOSQL = "Oracle NoSQL";
 
 	/** The technology linux. */
 	String TECHNOLOGY_LINUX = "Linux";
@@ -116,42 +117,30 @@ public interface Constant {
 
 	/** The prop name job url status. */
 	String PROP_NAME_JOB_URL_STATUS = "URL_JOB_STATUS";
-	
+
 	String PROP_NAME_NAMENODE_ROLE = "URL_NAMENODE_ROLE";
-	
 
 	/** The prop namenode port. */
-	String PROP_NAMENODE_PORT = "NAMENODE_PORT";
+	String PROP_NAMENODE_RPC_PORT = "NAMENODE_RPC_PORT";
+	
+	String PROP_JOBTRACKER_RPC_PORT = "JOBTRACKER_RPC_PORT";
 
 	/** The prop dfs port. */
 	String PROP_DFS_PORT = "DFS_PORT";
 
+	String PROP_JOBTRACKER_HOST = "JOBTRACKER_HOST";
+	
 	/** The prop namenode host. */
-	String PROP_NAMENODE_HOST = "NAMENODE_IP";
+	String PROP_NAMENODE_HOST = "NAMENODE_HOST";
 
 	/** The prop namenode host. */
-	String PROP_RESOURCEMANAGER_IP = "RESOURCEMANAGER_IP";
-
-	/** The prop hostname. */
-	String PROP_HOSTNAME = "HOSTNAME";
-
-	/** The prop registry port. */
-	String PROP_REGISTRY_PORT = "REGISTRY_PORT";
+	String PROP_RESOURCEMANAGER_HOST = "RESOURCEMANAGER_HOST";
 
 	/** The prop jarpath. */
 	String PROP_JARPATH = "JARPATH";
 
-	/** The prop snid. */
-	String PROP_SNID = "SNID";
-
-	/** The prop admin. */
-	String PROP_ADMIN = "ADMIN";
-
 	/** The prop seednode. */
 	String PROP_SEEDNODE = "SEEDNODE";
-
-	/** The kv jar path. */
-	String KV_JAR_PATH = "KVJAR";
 
 	/** The prop name upload file url. */
 	String PROP_NAME_UPLOAD_FILE_URL = "UPLOAD_FILE_URL";
@@ -160,11 +149,17 @@ public interface Constant {
 	String PROP_NAME_MONITORING_URL = "URL_MONITORING";
 
 	/** The host ip. */
+	String HOST_PUBLIC_IP = "HOST_PUBLIC_IP";
+	
+	/** The host ip. */
 	String HOST_IP = "HOST_IP";
+
+	/** The host ip. */
+	String HOST_PRIVATE_IP = "HOST_PRIVATE_IP";
 
 	/** The cassandra home. */
 	String CASSANDRA_HOME = "CASSANDRA_HOME";
-	
+
 	/** The node ip list. */
 	String NODE_IP_LIST = "NODE_IP_LIST";
 
@@ -197,13 +192,25 @@ public interface Constant {
 
 	/** user home key **/
 	String USER_HOME = "user.home";
-
+	
+	/** The agent install dir. */
+	String AGENT_INSTALL_DIR = "agent.install.dir";
 	/** rrd dir group **/
 	String RRD_GROUP = "RRD_GROUP";
 
 	String PROP_HADOOP_REST_PORT = "HADOOP_REST_PORT";
 
 	String PROP_NAMENODE_HTTP_PORT = "NAMENODE_HTTP_PORT";
+
+	String PROP_SERVICE_CONF_DIR = "SERVICE_CONF_DIR";
+
+	String PROP_HA_SERVICE_FILE_RELATIVE_PATH = "HA_SERVICE_FILE_RELATIVE_PATH";
+
+	String PROP_NAME_URL_SERVICE_PART_1 = "SERVICE_MANAGE_PART_1";
+
+	String PROP_NAME_CLUSTER_ID = "CLUSTER_ID";
+
+	String PROP_NAME_URL_SERVICE_PART_2 = "SERVICE_MANAGE_PART_2";
 
 	/**
 	 * The splitter interface.
@@ -255,331 +262,5 @@ public interface Constant {
 
 		/** The yaml. */
 		String YAML = "yaml";
-	}
-
-	/**
-	 * The Interface OracleNoSQL.
-	 */
-	interface OracleNoSQL {
-
-		/**
-		 * The Interface StorageNode.
-		 */
-		interface StorageNode {
-
-			/** The editable parameters. */
-			List<String> EDITABLE_PARAMETERS = Arrays.asList("haPortRange",
-					"servicePortRange", "capacity", "numCPUs", "memoryMB",
-					"mgmtClass", "mgmtPollPort", "mgmtTrapHost",
-					"mgmtTrapPort", "serviceLogFileCount",
-					"serviceLogFileLimit", "rnHeapPercent");
-		}
-
-		/**
-		 * The Interface RepNode.
-		 */
-		interface RepNode {
-
-			/** The editable parameters. */
-			List<String> EDITABLE_PARAMETERS = Arrays.asList(
-					"configProperties", "cacheSize", "javaMiscParams",
-					"loggingConfigProps", "cacheMode", "rnMountPoint",
-					"rnCachePercent", "maxTrackedLatency", "statsInterval",
-					"collectEnvStats", "throughputFloor");
-		}
-
-		/**
-		 * The Interface Admin.
-		 */
-		interface Admin {
-
-			/** The editable parameters. */
-			List<String> EDITABLE_PARAMETERS = Arrays.asList(
-					"adminLogFileCount", "adminLogFileLimit", "eventExpiryAge",
-					"configProperties", "javaMiscParams", "loggingConfigProps",
-					"collectorPollPeriod");
-		}
-
-		/**
-		 * The Interface Policy.
-		 */
-		interface Policy {
-
-			/** The editable parameters. */
-			List<String> EDITABLE_PARAMETERS = Arrays.asList(
-					"adminLogFileCount", "adminLogFileLimit", "cacheSize",
-					"collectEnvStats", "collectorPollPeriod",
-					"configProperties", "eventExpiryAge", "javaMiscParams",
-					"latencyCeiling", "loggingConfigProps",
-					"maxTrackedLatency", "rnCachePercent", "rnHeapPercent",
-					"serviceLogFileCount", "serviceLogFileLimit",
-					"statsInterval", "throughputFloor");
-		}
-
-		/**
-		 * The Interface AllRepNodes.
-		 */
-		interface AllRepNodes {
-
-			/** The editable parameters. */
-			List<String> EDITABLE_PARAMETERS = Arrays.asList("cacheSize",
-					"collectEnvStats", "configProperties", "javaMiscParams",
-					"loggingConfigProps", "maxTrackedLatency", "statsInterval");
-		}
-
-	}
-	
-	interface ElasticSearch{
-		/**
-		 * The Interface Cluster_Health.
-		 */
-		interface ClusterHealth_Keys{
-			
-			/** The active primary shards. */
-			String ACTIVE_PRIMARY_SHARDS = "active_primary_shards";
-			
-			String ACTIVE_SHARDS = "active_shards";
-			
-			/** The initializing shards. */
-			String INITIALIZING_SHARDS = "initializing_shards";
-			
-			/** The relocating shards. */
-			String RELOCATING_SHARDS = "relocating_shards";
-			
-			/** The unassigned shards. */
-			String UNASSIGNED_SHARDS = "unassigned_shards";
-			
-			/** The number of nodes. */
-			String NUMBER_OF_NODES = "number_of_nodes";
-			
-			/** The number of data nodes. */
-			String NUMBER_OF_DATA_NODES = "number_of_data_nodes";
-			
-			/** The status. */
-			String STATUS = "status";
-			
-			/** The timed out. */
-			String TIMED_OUT = "timed_out";
-		}
-		/**
-		 * The Interface Cluster_Health.
-		 */
-		interface ClusterHealth_Table_Keys{
-			
-			/** The active primary shards. */
-			String PRIMARY_SHARDS = "Primary Shards";
-			
-			/** The initializing shards. */
-			String INITIALIZING_SHARDS = "Initializing Shards";
-			
-			/** The relocating shards. */
-			String RELOCATING_SHARDS = "Relocating Shards";
-			
-			/** The unassigned shards. */
-			String UNASSIGNED_SHARDS = "Unassigned Shards";
-			
-			/** The number of nodes. */
-			String NODES = "Nodes";
-			
-			/** The number of data nodes. */
-			String DATA_NODES = "Data Nodes";
-			
-			/** The status. */
-			String STATUS = "Status";
-			
-			/** The timed out. */
-			String ACTIVE_SHARDS = "Active Shards";
-		}
-		
-		interface Document_Keys {
-			String NUM_DOCS = "num_docs"; 
-			String MAX_DOCS = "max_doc"; 
-			String DELETED_DOCS = "deleted_docs"; 
-			String PRIMARY_SIZE = "primary_size";
-			String SIZE = "size";
-		}
-		/**
-		 * The Interface Documents.
-		 */
-		interface Documents_Table_Keys{
-			
-			/** The docs. */
-			String DOCS = "Documents";
-			
-			/** The max docs. */
-			String MAX_DOCS = "Max Documents";
-			
-			/** The deleted docs. */
-			String DELETED_DOCS = "Deleted Documents";
-			
-			/** The primary size. */
-			String PRIMARY_SIZE = "Primary Size";
-			
-			/** The total size. */
-			String TOTAL_SIZE = "Total Size";
-		}
-		
-		interface Operations_Keys{
-			String TOTAL = "total";
-			String TOTAL_TIME = "total_time"; 
-		}
-		
-		/**
-		 * The Interface Operations.
-		 */
-		interface Operations_Table_Keys {
-			
-			/** The refresh total. */
-			String REFRESH_TOTAL = "Refresh Total";
-			
-			/** The refresh time. */
-			String REFRESH_TIME = "Refresh Time";
-			
-			/** The flush total. */
-			String FLUSH_TOTAL = "Flush Total";
-			
-			/** The flush time. */
-			String FLUSH_TIME = "Flush Time";
-		}
-		
-		interface MergeActivity_Keys{
-			
-			String TOTAL = "total";
-			String TOTAL_TIME = "total_time";
-			String TOTAL_DOCS = "total_docs";
-			String TOTAL_SIZE = "total_size";
-//			"total","total_time","total_docs","total_size"
-		}
-		
-		/**
-		 * The Interface Merge_Activity.
-		 */
-		interface MergeActivity_Table_Keys {
-			
-			/** The merge total. */
-			String MERGE_TOTAL = "Merge Total";
-			
-			/** The merge total time. */
-			String MERGE_TOTAL_TIME = "Merge Total Time";
-			
-			/** The merge total docs. */
-			String MERGE_TOTAL_DOCS = "Merge Total Docs";
-			
-			/** The merge total size. */
-			String MERGE_TOTAL_SIZE = "Merge Total Size";
-		}
-		
-		interface SearchTotal{
-			String QUERY_TOTAL = "query_total";
-			String QUERY_TIME = "query_time";
-			String FETCH_TOTAL = "fetch_total";
-			String FETCH_TIME = "fetch_time";
-//			"query_total","query_time","fetch_total","fetch_time"
-		}
-		
-		/**
-		 * The Interface Search_Total.
-		 */
-		interface SearchTotal_Table_Keys {
-			
-			/** The query total. */
-			String QUERY_TOTAL = "Query Total";
-			
-			/** The query time. */
-			String QUERY_TIME = "Query Time";
-			
-			/** The fetch total. */
-			String FETCH_TOTAL = "Fetch Total";
-			
-			/** The fetch time. */
-			String FETCH_TIME = "Fetch Time";
-		}
-		
-		interface IndexingTotal { 
-			String INDEX_TOTAL = "index_total"; 
-			String INDEX_TIME = "index_time"; 
-			String DELETE_TOTAL = "delete_total";
-			String DELETE_TIME = "delete_time";
-//			"index_total","index_time","delete_total","delete_time"
-		}
-		
-		/**
-		 * The Interface Indexing_Total.
-		 */
-		interface IndexingTotal_Table_Keys {
-			
-			/** The index total. */
-			String INDEX_TOTAL = "Index Total";
-			
-			/** The index time. */
-			String INDEX_TIME = "Index Time";
-			
-			/** The delete total. */
-			String DELETE_TOTAL = "Delete Total";
-			
-			/** The delete time. */
-			String DELETE_TIME = "Delete Time";
-		}
-		
-		interface GetTotal_Keys {
-			String TOTAL = "total";
-			String GET_TIME = "get_time"; 
-			String EXISTS_TOTAL = "exists_total"; 
-			String EXISTS_TIME = "exists_time";
-			String MISSING_TOTAL = "missing_total";
-			String MISSING_TIME = "missing_time";
-//			"total","get_time","exists_total","exists_time","missing_total","missing_time"
-		}
-		
-		/**
-		 * The Interface Get_Total.
-		 */
-		interface GetTotal_Table_Keys {
-			
-			/** The get total. */
-			String GET_TOTAL = "Get Total";
-			
-			/** The get time. */
-			String GET_TIME = "Get Time";
-			
-			/** The exists total. */
-			String EXISTS_TOTAL = "Exists Total";
-			
-			/** The exists time. */
-			String EXISTS_TIME = "Exists Time";
-			
-			/** The missing total. */
-			String MISSING_TOTAL = "Missing Total";
-			
-			/** The missing time. */
-			String MISSING_TIME = "Missing Time";
-		}
-		
-		interface Shard_Keys{
-			String ROUTING = "routing"; 
-			String SHARD = "shard";
-			String STATE = "state";
-			String PRIMARY = "primary";
-			String DOCS = "docs";
-			String NUM_DOCS = "num_docs";
-			String INDEX = "index";
-			String SIZE = "size";
-			String NODE = "node";
-//			"routing","shard","state","primary","docs","num_docs","index","size","node"
-		}
-		
-		interface Shard_Table_Keys{
-			
-			String SHARD = "Shard"; 
-			String STATE = "State"; 
-			String PRIMARY = "Primary?"; 
-			String NO_DOCS = "# Docs";
-			String SIZE = "Size";
-			String NODE = "Node";
-			
-//			"Shard","State","Primary?","# Docs","Size","Node"
-			
-		}
-		
 	}
 }

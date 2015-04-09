@@ -41,7 +41,7 @@ public class KillJPSProcessByNameTest {
 		KillJPSProcessByName result = new KillJPSProcessByName(name);
 
 		assertNotNull(result);
-		assertEquals("kill -9 `jps | grep java | cut -d' ' -f 1`", result.getCommand());
+		assertEquals("kill -9 `jps -m | grep java | cut -d' ' -f 1`", result.getCommand());
 		assertEquals("Ankush Task Info...", result.getInfo());
 	}
 
@@ -57,6 +57,6 @@ public class KillJPSProcessByNameTest {
 
 		String result = fixture.getCommand();
 
-		assertEquals("kill -9 `jps | grep java | cut -d' ' -f 1`", result);
+		assertEquals("kill -9 `jps -m | grep java | cut -d' ' -f 1`", result);
 	}
 }

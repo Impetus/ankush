@@ -27,49 +27,59 @@ import net.neoremind.sshxcute.core.SSHExec;
 import net.neoremind.sshxcute.task.CustomTask;
 import net.neoremind.sshxcute.task.impl.ExecCommand;
 
+import com.impetus.ankush.AppStoreWrapper;
+import com.impetus.ankush.common.config.ConfigurationReader;
 import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.framework.ServiceMonitorable;
 import com.impetus.ankush.common.framework.config.ClusterConf;
 import com.impetus.ankush.common.utils.AnkushLogger;
+import com.impetus.ankush.common.utils.CommonUtil;
 import com.impetus.ankush.common.utils.SSHUtils;
 
 /**
  * @author root
- *
+ * 
  */
 public class GenericServiceMonitor implements ServiceMonitorable {
 
 	/** The logger. */
 	private AnkushLogger logger = new AnkushLogger(GenericServiceMonitor.class);
-	
-	/* (non-Javadoc)
-	 * @see com.impetus.ankush.common.framework.ServiceMonitorable#manageService(com.impetus.ankush.common.framework.config.ClusterConf, net.neoremind.sshxcute.core.SSHExec, java.lang.String, java.lang.String)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.impetus.ankush.common.framework.ServiceMonitorable#manageService(
+	 * com.impetus.ankush.common.framework.config.ClusterConf,
+	 * net.neoremind.sshxcute.core.SSHExec, java.lang.String, java.lang.String)
 	 */
 	@Override
 	public boolean manageService(ClusterConf conf, SSHExec connection,
 			String processName, String action) {
-		
+
 		boolean result = true;
 		try {
-			
-			if(action.equals(Constant.ServiceAction.START)) {
-				if(processName.equals(Constant.RoleProcessName.getProcessName(Constant.Role.AGENT))) {
+
+			if (action.equals(Constant.ServiceAction.START)) {
+				if (processName.equals(Constant.RoleProcessName
+						.getProcessName(Constant.Role.AGENT))) {
 					result = this.startagent(connection, conf);
-				}
-				else if(processName.equals(Constant.RoleProcessName.getProcessName(Constant.Role.GMETAD))) {
+				} else if (processName.equals(Constant.RoleProcessName
+						.getProcessName(Constant.Role.GMETAD))) {
 					result = this.startgmetad(connection, conf);
-				}
-				else if(processName.equals(Constant.RoleProcessName.getProcessName(Constant.Role.GMOND))) {
+				} else if (processName.equals(Constant.RoleProcessName
+						.getProcessName(Constant.Role.GMOND))) {
 					result = this.startgmond(connection, conf);
 				}
 			} else {
-				if(processName.equals(Constant.RoleProcessName.getProcessName(Constant.Role.AGENT))) {
+				if (processName.equals(Constant.RoleProcessName
+						.getProcessName(Constant.Role.AGENT))) {
 					result = this.stopagent(connection, conf);
-				}
-				else if(processName.equals(Constant.RoleProcessName.getProcessName(Constant.Role.GMETAD))) {
+				} else if (processName.equals(Constant.RoleProcessName
+						.getProcessName(Constant.Role.GMETAD))) {
 					result = this.stopgmetad(connection, conf);
-				}
-				else if(processName.equals(Constant.RoleProcessName.getProcessName(Constant.Role.GMOND))) {
+				} else if (processName.equals(Constant.RoleProcessName
+						.getProcessName(Constant.Role.GMOND))) {
 					result = this.stopgmond(connection, conf);
 				}
 			}
@@ -79,7 +89,7 @@ public class GenericServiceMonitor implements ServiceMonitorable {
 		}
 		return result;
 	}
-	
+
 	public boolean startagent(SSHExec connection, ClusterConf conf) {
 		String startAgent = "sh " + Constant.Agent.AGENT_START_SCRIPT;
 		CustomTask task = new ExecCommand(startAgent);
@@ -96,23 +106,36 @@ public class GenericServiceMonitor implements ServiceMonitorable {
 
 	public boolean stopgmetad(SSHExec connection, ClusterConf conf) {
 		String stopGmetadCmd = "killall -9 gmetad";
-		return SSHUtils.action(conf.getPassword(), connection, stopGmetadCmd);
+		return SSHUtils.action(connection, stopGmetadCmd);
 	}
 
 	public boolean stopgmond(SSHExec connection, ClusterConf conf) {
 		String stopGmondCmd = "killall -9 gmond";
-		return SSHUtils.action(conf.getPassword(), connection, stopGmondCmd);
+		return SSHUtils.action(connection, stopGmondCmd);
 	}
 
 	public boolean startgmetad(SSHExec connection, ClusterConf conf) {
-		String startGmetadCmd = "gmetad --conf=.ankush/monitoring/conf/gmetad.conf";
-		return SSHUtils.action(conf.getPassword(), connection, startGmetadCmd);
+		// getting config reader object.
+		ConfigurationReader ankushConf = AppStoreWrapper.getAnkushConfReader();
+
+		// Getting gmetad configuration path.
+		String gmetadConfPath = CommonUtil.getUserHome(conf.getUsername())
+				+ ankushConf.getStringValue("gmetad.conf");
+		// start gmetad command.
+		String startGmetadCmd = "gmetad --conf=" + gmetadConfPath;
+		return SSHUtils.action(connection, startGmetadCmd);
 	}
 
 	public boolean startgmond(SSHExec connection, ClusterConf conf) {
-		String startGmondCmd = "gmond --conf=.ankush/monitoring/conf/gmond.conf";
-		return SSHUtils.action(conf.getPassword(), connection, startGmondCmd);
+		// getting config reader object.
+		ConfigurationReader ankushConf = AppStoreWrapper.getAnkushConfReader();
+
+		// Getting gmond configuration path.
+		String gmondConfPath = CommonUtil.getUserHome(conf.getUsername())
+				+ ankushConf.getStringValue("gmond.conf");
+		// start gmond command
+		String startGmondCmd = "gmond --conf=" + gmondConfPath;
+		return SSHUtils.action(connection, startGmondCmd);
 	}
-	
 
 }

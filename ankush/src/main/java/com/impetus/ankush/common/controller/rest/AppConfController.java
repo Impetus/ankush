@@ -37,8 +37,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.impetus.ankush.common.exception.ControllerException;
+import com.impetus.ankush.common.mail.MailConf;
 import com.impetus.ankush.common.service.AppConfService;
 import com.impetus.ankush.common.service.impl.AnkushApplicationConf;
+import com.impetus.ankush.common.utils.ParserUtil;
 import com.impetus.ankush.common.utils.ResponseWrapper;
 
 /**
@@ -70,8 +72,10 @@ public class AppConfController extends BaseController {
 	 */
 	@RequestMapping(value = { "/conf/request", "/conf" }, method = RequestMethod.GET)
 	@ResponseBody
-	public ResponseEntity<ResponseWrapper<Map>> getAnkushAppConf() {
-		return wrapResponse(appConfService.getCommonConfiguration(),
+	public ResponseEntity<ResponseWrapper<Map>> getAnkushAppConf(HttpServletRequest request) {
+		boolean unauthenticated = request.getRequestURI().endsWith(
+				"/conf/request");
+		return wrapResponse(appConfService.getCommonConfiguration(unauthenticated),
 				HttpStatus.OK, HttpStatus.OK.toString(),
 				"Get application configuration.");
 	}
@@ -104,7 +108,7 @@ public class AppConfController extends BaseController {
 						+ e.getMessage());
 			}
 		}
-		Map result = appConfService.manageCommonConfiguration(ankushConfig);
+		Map result = appConfService.manageCommonConfiguration(ankushConfig,unauthenticated);
 		return wrapResponse(result, HttpStatus.OK, HttpStatus.OK.toString(),
 				"Set application configuration.");
 	}
@@ -177,5 +181,33 @@ public class AppConfController extends BaseController {
 		}
 		return wrapResponse(result, HttpStatus.OK, HttpStatus.OK.toString(),
 				"Get application configuration.");
+	}
+	
+	/**
+	 * Tests Mail conf.
+	 *
+	 * @return Mail send status
+	 */
+	@RequestMapping(value = { "/conf/testMailConf/{to:.+}"}, method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<ResponseWrapper<Map>> testMailConf(HttpServletRequest request,
+			@RequestBody MailConf mailConf, @PathVariable String to) {
+		return wrapResponse(appConfService.testMailConf(mailConf, to),
+				HttpStatus.OK, HttpStatus.OK.toString(),
+				"Mail configuration test status");
+	}
+	
+	/**
+	 * Tests Mail conf.
+	 *
+	 * @return Mail send status
+	 */
+	@RequestMapping(value = { "/conf/mailConfVerified/{to:.+}"}, method = RequestMethod.GET)
+	@ResponseBody
+	public ResponseEntity<ResponseWrapper<Map>> testMailConf(HttpServletRequest request,
+			@PathVariable String to) {
+		return wrapResponse(appConfService.updateMailConfVerificationStatus(to),
+				HttpStatus.OK, HttpStatus.OK.toString(),
+				"Mail configuration verification status updated");
 	}
 }

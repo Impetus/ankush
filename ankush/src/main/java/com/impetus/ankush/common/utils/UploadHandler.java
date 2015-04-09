@@ -53,21 +53,29 @@ public class UploadHandler {
 
 	/** The Constant REPO_PATH. */
 	private static final String REPO_PATH;
+
+	/** The Constant PATCH_REPO_PATH. */
+	private static final String PATCHES_REPO_PATH;
 	
 	/** The Constant LICENSE_PATH. */
 	private static final String LICENSE_PATH;
-	
-	private static String LICENSE = "license"; 
 
 	/** The category. */
 	private String category = new String();
+	
+	/** The license. */
+	private static String LICENSE = "license"; 
 
+	/** The patch. */
+	private static String PATCHES = "patches";
+	
 	static {
 		String userHome = System.getProperty("user.home");
 		ConfigurationReader reader = AppStoreWrapper.getAnkushConfReader();
 		UPLOAD_PATH = userHome + reader.getStringValue("uploadpath");
 
 		REPO_PATH = userHome + reader.getStringValue("repo");
+		PATCHES_REPO_PATH = AppStoreWrapper.getServerPatchesRepoPath();
 		
 		LICENSE_PATH = userHome + reader.getStringValue(LICENSE);
 	}
@@ -137,11 +145,15 @@ public class UploadHandler {
 
 			// Getting the cluster folder path.
 			path = clustersFolderPath + "/logs/";
-		} else if(category.equals(LICENSE)){
+		}else if(category.equals(LICENSE)){
 			path = LICENSE_PATH;
 		}else {
-			// other paths.
-			path = UPLOAD_PATH + getHash() + File.separator;
+			if(category.equals(PATCHES)){
+				path = PATCHES_REPO_PATH;
+			} else {
+				// other paths.
+				path = UPLOAD_PATH + getHash() + File.separator;
+			}
 		}
 		// Create file.
 		File file = new File(path);

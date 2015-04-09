@@ -160,7 +160,7 @@ public class UserManagerImpl extends GenericManagerImpl<User, Long> implements
 					currentPassword = userDao.getUserPassword(user
 							.getUsername());
 				} catch (Exception e) {
-					logger.error(e.getMessage());
+					logger.error(e.getMessage(), e);
 				}
 				if (currentPassword == null) {
 					passwordChanged = true;
@@ -208,6 +208,7 @@ public class UserManagerImpl extends GenericManagerImpl<User, Long> implements
 		Set<Role> userRole = new HashSet<Role>();
 		userRole.add(roleManager.get(1L));
 		user.setRoles(userRole);
+		user.setForcePasswordChange(true);
 
 		String generatedPassword = "";
 		if ((user.getPassword() == null)
@@ -235,11 +236,7 @@ public class UserManagerImpl extends GenericManagerImpl<User, Long> implements
 		msgBuff.append("User Id: ").append(user.getUsername()).append("\n");
 		msgBuff.append("Password: ").append(generatedPassword).append("\n");
 		msgBuff.append(
-				"\t - The above password is a system generated password. Change it the next time you login.")
-				.append("\n");
-		msgBuff.append(
-				"\t - Choose a password of minimum 8 characters. A strong password must contain alphabets in upper case, lower case, numbers and special characters.")
-				.append("\n");
+				"\t - The above password is a system generated password. It is recommended that you change it after login. \n");
 		String msg = msgBuff.toString();
 
 		message.setMessage(msg);
@@ -332,8 +329,7 @@ public class UserManagerImpl extends GenericManagerImpl<User, Long> implements
 		content.append(getUserSalutation(user));
 		content.append("A password reset request was received for this Used ID.  The new password is as below: \n");
 		content.append("Password : ").append(newPassword).append("\n");
-		content.append("\t - The above password is a system generated password. Change the password the next time you login.\n");
-		content.append("\t - Choose a password of minimum 8 characters. A strong password must contain alphabets in upper case, lower case, numbers and and special characters.\n\n");
+		content.append("\t - The above password is a system generated password. It is recommended that you change it after login. \n");
 		message.setMessage(content.toString());
 		message.setContentType("text/plain");
 
@@ -403,14 +399,16 @@ public class UserManagerImpl extends GenericManagerImpl<User, Long> implements
 						currentPassword, null);
 				if (user.getPassword().equals(currentPassword)) {
 					user.setPassword(newPassword);
+					user.setForcePasswordChange(false);
 					saveUser(user);
 				} else {
-					throw new Exception("User existing password mismatch");
+					throw new Exception(
+							"Existing password is wrong. Please specify the correct password.");
 				}
 			}
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(e.getMessage());
-			throw new Exception("User not found");
+			throw new Exception("User does not exists.");
 		}
 	}
 
@@ -537,12 +535,42 @@ public class UserManagerImpl extends GenericManagerImpl<User, Long> implements
 				user.setEmail("admin@company.com");
 				user.setFirstName("Admin");
 				user.setLastName("User");
+				user.setForcePasswordChange(true);
 
 				user = this.saveUser(user);
 			} catch (Exception e) {
 				logger.error("Unable to create 'admin' user.", e);
 			}
 		}
+	}
+	
+	@Override
+	public boolean doesPasswordMatch(String userName, String password) throws Exception {
+		boolean status = false;
+		if ((userName == null) || (userName.length() == 0)) {
+			return status;
+		}
+
+		User user = null;
+		Map<String, Object> queryMap = new HashMap<String, Object>();
+		queryMap.put("username", userName);
+		try {
+			user = userDao.getByPropertyValue(queryMap);
+			if (user != null) {
+				password = passwordEncoder.encodePassword(
+						password, null);
+				if (user.getPassword().equals(password)) {
+					status = true;
+				} else {
+					throw new Exception(
+							"Given password is wrong. Please specify the correct password.");
+				}
+			}
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(e.getMessage(),e);
+			throw new Exception("User does not exists.");
+		}
+		return status;
 	}
 
 }

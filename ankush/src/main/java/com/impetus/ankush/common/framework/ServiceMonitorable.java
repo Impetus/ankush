@@ -25,7 +25,6 @@ package com.impetus.ankush.common.framework;
 
 import net.neoremind.sshxcute.core.SSHExec;
 
-import com.impetus.ankush.common.domain.Cluster;
 import com.impetus.ankush.common.framework.config.ClusterConf;
 
 /**

@@ -94,12 +94,13 @@ public class SSHConnection {
 				}
 			}
 		} catch (IOException e) {
-			logger.error(CONNECTION_PROBLEM_ERR_MSG + e.getMessage());
+			logger.error(CONNECTION_PROBLEM_ERR_MSG + e.getMessage(),e);
 			closeConnection();
 		} catch (Exception e) {
-			logger.error(CONNECTION_PROBLEM_ERR_MSG + e.getMessage());
+			logger.error(CONNECTION_PROBLEM_ERR_MSG + e.getMessage(),e);
 			closeConnection();
-		}
+
+		} 
 	}
 
 	/**
@@ -119,7 +120,7 @@ public class SSHConnection {
 		exitStatus = -1;
 		int timeout = AppStoreWrapper.getAnkushConfReader().getIntValue(
 				"ankush.connectiontimeout");
-//		int timeout = 3000;
+		// int timeout = 3000;
 		connection = new Connection(hostname);
 		try {
 			connection.connect(null, timeout, timeout);
@@ -136,10 +137,10 @@ public class SSHConnection {
 				}
 			}
 		} catch (IOException e) {
-			logger.error(CONNECTION_PROBLEM_ERR_MSG + e.getMessage());
+			logger.error(CONNECTION_PROBLEM_ERR_MSG + e.getMessage(),e);
 			closeConnection();
 		} catch (Exception e) {
-			logger.error(CONNECTION_PROBLEM_ERR_MSG + e.getMessage());
+			logger.error(CONNECTION_PROBLEM_ERR_MSG + e.getMessage(),e);
 			closeConnection();
 		}
 	}
@@ -226,10 +227,10 @@ public class SSHConnection {
 
 			if (this.exitStatus == 0) {
 				logger.debug("Execute successfully for command: " + command);
-//				logger.debug("Command Output: " + output);
+				// logger.debug("Command Output: " + output);
 			} else {
 				logger.debug("Execution failed for command: " + command);
-//				logger.debug("Command Output: " + output);
+				// logger.debug("Command Output: " + output);
 				logger.debug("Command Error: " + error);
 			}
 		} catch (IOException e) {

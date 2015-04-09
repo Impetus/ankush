@@ -64,8 +64,9 @@ public class GenericManagerImpl<T, P extends Serializable> implements
 
 	/**
 	 * Instantiates a new generic manager impl.
-	 *
-	 * @param genericDao the generic dao
+	 * 
+	 * @param genericDao
+	 *            the generic dao
 	 */
 	public GenericManagerImpl(GenericDao<T, P> genericDao) {
 		this.dao = genericDao;
@@ -106,7 +107,7 @@ public class GenericManagerImpl<T, P extends Serializable> implements
 	public T get(P id) {
 		return dao.get(id);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -358,19 +359,32 @@ public class GenericManagerImpl<T, P extends Serializable> implements
 		return dao.deleteAllByPropertyValue(propertyValueMap);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.impetus.ankush.common.service.GenericManager#getAllByNativeQuery(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.impetus.ankush.common.service.GenericManager#getAllByNativeQuery(
+	 * java.lang.String)
 	 */
 	@Override
 	public List<T> getAllByNativeQuery(String sql) {
 		return dao.getAllByNativeQuery(sql);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.impetus.ankush.common.service.GenericManager#executeNativeQuery(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.impetus.ankush.common.service.GenericManager#executeNativeQuery(java
+	 * .lang.String)
 	 */
 	@Override
 	public int executeNativeQuery(String sql) {
 		return dao.executeNativeQuery(sql);
+	}
+
+	@Override
+	public List getCustomQuery(String queryString) {
+		return dao.getCustomQuery(queryString);
 	}
 }

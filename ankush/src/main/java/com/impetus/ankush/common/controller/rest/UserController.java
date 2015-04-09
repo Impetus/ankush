@@ -21,6 +21,7 @@
 package com.impetus.ankush.common.controller.rest;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,6 +52,7 @@ import com.impetus.ankush.common.utils.ResponseWrapper;
 @RequestMapping("/")
 public class UserController extends BaseController {
 
+	private static final String USER_PASSWORD_CHANGED_SUCCESSFULLY = "User password changed successfully";
 	/** The app conf service. */
 	private AppConfService appConfService;
 
@@ -65,11 +67,12 @@ public class UserController extends BaseController {
 			@Qualifier("appConfService") AppConfService appConfService) {
 		this.appConfService = appConfService;
 	}
-	
+
 	/**
 	 * Gets the user id.
-	 *
-	 * @param request the request
+	 * 
+	 * @param request
+	 *            the request
 	 * @return the user id
 	 */
 	@RequestMapping(value = { "user/userid" }, method = RequestMethod.GET)
@@ -83,9 +86,9 @@ public class UserController extends BaseController {
 		}
 		if (userName != null) {
 			Map<String, Object> userInfo = new HashMap<String, Object>();
+			userInfo.put("username", userName);
 			String state = appConfService.getState();
 			userInfo.put("target", state);
-			userInfo.put("username", userName);
 			return wrapResponse(userInfo, HttpStatus.OK,
 					HttpStatus.OK.toString(), "User ID");
 		}
@@ -96,10 +99,13 @@ public class UserController extends BaseController {
 
 	/**
 	 * Gets the user by attribute.
-	 *
-	 * @param parameters the parameters
-	 * @param paramName the param name
-	 * @param attributeName the attribute name
+	 * 
+	 * @param parameters
+	 *            the parameters
+	 * @param paramName
+	 *            the param name
+	 * @param attributeName
+	 *            the attribute name
 	 * @return the user by attribute
 	 */
 	private User getUserByAttribute(Map<String, Object> parameters,
@@ -119,8 +125,9 @@ public class UserController extends BaseController {
 
 	/**
 	 * Forgot password.
-	 *
-	 * @param parameters the parameters
+	 * 
+	 * @param parameters
+	 *            the parameters
 	 * @return the response entity
 	 */
 	@RequestMapping(value = { "user/forgotpassword" }, method = RequestMethod.POST)
@@ -140,8 +147,9 @@ public class UserController extends BaseController {
 
 	/**
 	 * Forgot user id.
-	 *
-	 * @param parameters the parameters
+	 * 
+	 * @param parameters
+	 *            the parameters
 	 * @return the response entity
 	 */
 	@RequestMapping(value = { "user/forgotuserid" }, method = RequestMethod.POST)
@@ -161,37 +169,46 @@ public class UserController extends BaseController {
 
 	/**
 	 * Change password.
-	 *
-	 * @param parameters the parameters
-	 * @param request the request
+	 * 
+	 * @param parameters
+	 *            the parameters
+	 * @param request
+	 *            the request
 	 * @return the response entity
 	 */
 	@RequestMapping(value = { "user/changepassword" }, method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseEntity<ResponseWrapper<Object>> changePassword(
+	public ResponseEntity<ResponseWrapper<Map>> changePassword(
 			@RequestBody Map<String, Object> parameters,
 			HttpServletRequest request) {
 		String msg = null;
 		String userName = request.getUserPrincipal().getName();
 		String currentPassword = (String) parameters.get("password");
 		String newPassword = (String) parameters.get("newpassword");
+		Map map = new HashMap();
+		map.put(com.impetus.ankush2.constant.Constant.Keys.STATUS, false);
 		try {
 			userManager.changePassword(userName, currentPassword, newPassword);
-			return wrapResponse(null, HttpStatus.OK, HttpStatus.OK.toString(),
-					"User password changed successfully");
+			map.put(com.impetus.ankush2.constant.Constant.Keys.STATUS, true);
+			map.put(com.impetus.ankush2.constant.Constant.Keys.MESSAGE, USER_PASSWORD_CHANGED_SUCCESSFULLY);
+			return wrapResponse(map, HttpStatus.OK, HttpStatus.OK.toString(),
+					USER_PASSWORD_CHANGED_SUCCESSFULLY);
 		} catch (Exception e) {
+			map.put("errors", Collections.singletonList(e.getMessage()));
 			msg = e.getMessage();
 		}
-		return wrapResponse(null, HttpStatus.BAD_REQUEST,
-				HttpStatus.BAD_REQUEST.toString(), msg);
+
+		return wrapResponse(map, HttpStatus.OK, HttpStatus.OK.toString(), msg);
 	}
 
 	/**
 	 * Chek user existence.
-	 *
-	 * @param user the user
+	 * 
+	 * @param user
+	 *            the user
 	 * @return the response entity
-	 * @throws UserExistsException the user exists exception
+	 * @throws UserExistsException
+	 *             the user exists exception
 	 */
 	@RequestMapping(value = { "admin/validate" }, method = RequestMethod.POST)
 	@ResponseBody

@@ -39,7 +39,7 @@ import com.impetus.ankush.agent.action.Taskable;
 public class DirectoryUsageMonitor extends Taskable {
 
 	/** The log. */
-	private AgentLogger LOGGER = new AgentLogger(DirectoryUsageMonitor.class);
+	private static final AgentLogger LOGGER = new AgentLogger(DirectoryUsageMonitor.class);
 	/** Agent config object. **/
 	private AgentConf conf = null;
 
@@ -68,7 +68,7 @@ public class DirectoryUsageMonitor extends Taskable {
 		// getting execution period.
 		long period = conf.getIntValue(Constant.DIR_USAGE_RRD_UPDATE_TIME);
 		// ganglia gmond conf path.
-		final String confPath = System.getProperty(Constant.USER_HOME)
+		final String confPath = System.getProperty(Constant.AGENT_INSTALL_DIR)
 				+ conf.getStringValue(Constant.GANGLIA_CONF_PATH);
 
 		final String graphGroup = conf.getStringValue(Constant.RRD_GROUP);

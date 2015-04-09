@@ -1,2 +1,0 @@
-yum -q -y install ntpdate
-systemctl stop ntpdate.service || echo ""

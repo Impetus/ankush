@@ -26,6 +26,7 @@ package com.impetus.ankush.agent.action;
 import java.lang.reflect.Constructor;
 
 import com.impetus.ankush.agent.AgentConf;
+import com.impetus.ankush.agent.service.provider.ServiceProvider;
 
 /**
  * A factory for creating Action objects.
@@ -33,6 +34,9 @@ import com.impetus.ankush.agent.AgentConf;
  * @author mayur
  */
 public class ActionFactory {
+
+	// Create agent config.
+	private static AgentConf conf = new AgentConf();
 
 	/**
 	 * Gets the instance by id.
@@ -42,10 +46,6 @@ public class ActionFactory {
 	 * @return the instance by id
 	 */
 	public static Actionable getInstanceById(String id) {
-
-		// Create agent conf.
-		AgentConf conf = new AgentConf();
-
 		// Getting class name.
 		String className = conf.getProperties().getProperty(id);
 		return getActionableObject(className);
@@ -84,6 +84,29 @@ public class ActionFactory {
 			Class<?> clazz = Class.forName(className);
 			Constructor<?> co = clazz.getConstructor();
 			obj = (Taskable) (co.newInstance(null));
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
+		return obj;
+	}
+
+	/**
+	 * Gets the taskable object.
+	 * 
+	 * @param className
+	 *            the class name
+	 * @return the taskable object
+	 */
+	public static ServiceProvider getServiceProviderObject(String id) {
+
+		// Getting class name.
+		String className = conf.getProperties().getProperty(id);
+		// Service Provider object
+		ServiceProvider obj = null;
+		try {
+			Class<?> clazz = Class.forName(className);
+			Constructor<?> co = clazz.getConstructor();
+			obj = (ServiceProvider) (co.newInstance(null));
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}

@@ -51,12 +51,10 @@ import com.impetus.ankush.common.utils.JsonMapperUtil;
  * @author hokam
  */
 public class ConfigurationManager {
-	// configuration manager.
 	/** The configuration manager. */
 	private GenericManager<Configuration, Long> configurationManager = AppStoreWrapper
 			.getManager(Constant.Manager.CONFIGURATION, Configuration.class);
 
-	// Ankush logger.
 	/** The log. */
 	private AnkushLogger LOG = new AnkushLogger(ConfigurationManager.class);
 
@@ -77,9 +75,8 @@ public class ConfigurationManager {
 	 *            the property value
 	 * @return the configuration
 	 */
-	public Configuration saveConfiguration(Long clusterId, String username,
-			String fileName, String host, String propertyName,
-			String propertyValue) {
+	public Configuration saveConfiguration(Long clusterId,String username, String fileName,
+			String host, String propertyName, String propertyValue) {
 
 		// Get old configuration value if null return the empty object.
 		Configuration conf = getOldConfiguration(clusterId, host, fileName,
@@ -91,11 +88,11 @@ public class ConfigurationManager {
 		conf.setPropertyName(propertyName);
 		conf.setPropertyValue(propertyValue);
 		conf.setHost(host);
-
+		// saving configuration object.
 		LOG.debug("Saving Configuration " + conf);
 		return configurationManager.save(conf);
 	}
-
+	
 	/**
 	 * Save configuration.
 	 * 
@@ -123,7 +120,9 @@ public class ConfigurationManager {
 			conf.setUsername(username);
 			conf.setSource(fileName);
 			conf.setPropertyName(key.toString());
-			conf.setPropertyValue(params.get(key).toString());
+			if(params.get(key) != null){
+				conf.setPropertyValue(params.get(key).toString());
+			}
 			conf.setHost(host);
 			configurationManager.save(conf);
 		}
@@ -138,9 +137,8 @@ public class ConfigurationManager {
 	 */
 	public Configuration saveConfiguration(Configuration conf) {
 		// Saving configuration object.
-		return saveConfiguration(conf.getClusterId(), conf.getUsername(),
-				conf.getSource(), conf.getHost(), conf.getPropertyName(),
-				conf.getPropertyValue());
+		return saveConfiguration(conf.getClusterId(), conf.getUsername(),conf.getSource(),
+				conf.getHost(), conf.getPropertyName(), conf.getPropertyValue());
 	}
 
 	/**
@@ -160,7 +158,9 @@ public class ConfigurationManager {
 			Query query = em
 					.createQuery("delete from com.impetus.ankush.common.domain.Configuration_AUD where clusterId=:clusterId");
 			// setting the cluster id parameter in query.
-			query.setParameter(Constant.Keys.CLUSTERID, clusterId);
+			query.setParameter(
+					com.impetus.ankush2.constant.Constant.Keys.CLUSTERID,
+					clusterId);
 			// execute the query
 			query.executeUpdate();
 			// commit the transaction
@@ -185,23 +185,29 @@ public class ConfigurationManager {
 					Configuration.class, false, true);
 
 			// filter results besed on cluster id.
-			query.add(AuditEntity.property("clusterId").eq(clusterId));
-			query.addOrder(AuditEntity.revisionProperty("timestamp").desc());
+			query.add(AuditEntity.property(
+					com.impetus.ankush2.constant.Constant.Keys.CLUSTERID).eq(
+					clusterId));
+			query.addOrder(AuditEntity.revisionProperty(
+					com.impetus.ankush2.constant.Constant.Keys.TIMESTAMP)
+					.desc());
 
-			// getting result list.
+			// Getting Result list.
 			List list = query.getResultList();
 
-			// creating list object.
+			// Creating List Object.
 			List result = new ArrayList();
 			for (Object object : list) {
 				Object[] obj = (Object[]) object;
 				Map map = new HashMap();
-
+				// Mapping Revision Entity.
 				DefaultRevisionEntity ri = (DefaultRevisionEntity) obj[1];
 				map.putAll(JsonMapperUtil.mapFromObject(obj[0]));
-				map.put("date", ri.getRevisionDate());
-				map.put("revisionId", ri.getId());
-				map.put("type", obj[2]);
+				map.put(com.impetus.ankush2.constant.Constant.Keys.DATE,
+						ri.getRevisionDate());
+				map.put(com.impetus.ankush2.constant.Constant.Keys.REVISIONID,
+						ri.getId());
+				map.put(com.impetus.ankush2.constant.Constant.Keys.TYPE, obj[2]);
 				result.add(map);
 			}
 			return result;
@@ -227,12 +233,17 @@ public class ConfigurationManager {
 	 */
 	public Configuration getOldConfiguration(Long clusterId, String host,
 			String fileName, String propertyName) {
+		// props map for fetching the old configuration for the given
+		// parameters.
 		Map<String, Object> propsMap = new HashMap<String, Object>();
-		propsMap.put("clusterId", clusterId);
-		propsMap.put("host", host);
-		propsMap.put("source", fileName);
-		propsMap.put("propertyName", propertyName);
-
+		propsMap.put(com.impetus.ankush2.constant.Constant.Keys.CLUSTERID,
+				clusterId);
+		propsMap.put(com.impetus.ankush2.constant.Constant.Keys.HOST, host);
+		propsMap.put(com.impetus.ankush2.constant.Constant.Keys.SOURCE,
+				fileName);
+		propsMap.put(com.impetus.ankush2.constant.Constant.Keys.PROPERTYNAME,
+				propertyName);
+		// Getting configuration object from db.
 		Configuration configuration = configurationManager
 				.getByPropertyValueGuarded(propsMap);
 		if (configuration == null) {
@@ -256,12 +267,17 @@ public class ConfigurationManager {
 	 */
 	public void removeOldConfiguration(Long clusterId, String host,
 			String fileName, String propertyName) {
+		// props map for fetching the old configuration for the given
+		// parameters.
 		Map<String, Object> propsMap = new HashMap<String, Object>();
-		propsMap.put("clusterId", clusterId);
-		propsMap.put("host", host);
-		propsMap.put("source", fileName);
-		propsMap.put("propertyName", propertyName);
-
+		propsMap.put(com.impetus.ankush2.constant.Constant.Keys.CLUSTERID,
+				clusterId);
+		propsMap.put(com.impetus.ankush2.constant.Constant.Keys.HOST, host);
+		propsMap.put(com.impetus.ankush2.constant.Constant.Keys.SOURCE,
+				fileName);
+		propsMap.put(com.impetus.ankush2.constant.Constant.Keys.PROPERTYNAME,
+				propertyName);
+		// deleting all configuration related to given inputs.
 		configurationManager.deleteAllByPropertyValue(propsMap);
 	}
 }

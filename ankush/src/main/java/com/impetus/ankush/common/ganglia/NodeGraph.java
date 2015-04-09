@@ -18,9 +18,6 @@
  * along with this software; if not, write to the Free Software Foundation, 
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  ******************************************************************************/
-/**
- * 
- */
 package com.impetus.ankush.common.ganglia;
 
 import java.util.HashMap;
@@ -28,19 +25,25 @@ import java.util.Map;
 
 import net.sf.json.xml.XMLSerializer;
 
-import com.impetus.ankush.common.constant.Constant;
+import com.impetus.ankush.AppStoreWrapper;
+import com.impetus.ankush.common.config.ConfigurationReader;
 import com.impetus.ankush.common.constant.Constant.Graph.StartTime;
 import com.impetus.ankush.common.utils.AnkushLogger;
-import com.impetus.ankush.common.utils.HostOperation;
+import com.impetus.ankush.common.utils.CommonUtil;
+import com.impetus.ankush.common.utils.GangliaUtils;
 import com.impetus.ankush.common.utils.SSHConnection;
 
 /**
- * It is used to get the CPU and memory utilization graphs for the node.
+ * It is used to get the CPU and memory utilisation graphs for the node.
  * 
  * @author hokam
  * 
  */
 public class NodeGraph {
+
+	private static final String COULD_NOT_EXECUTE_COMMAND_MSG = "Could not execute the graph data fetch command.";
+
+	private static final String COULD_NOT_FETCH_DATA_MSG = "Could not fetch the graph data.";
 
 	/** The logger. */
 	private AnkushLogger logger = new AnkushLogger(NodeGraph.class);
@@ -60,14 +63,14 @@ public class NodeGraph {
 	/** The cluster name. */
 	private String clusterName;
 
-	/** The password **/
-	private String password;
-
-	/** The private **/
-	private String privateKey;
-
 	/** The time map. */
 	private static Map<Integer, String> timeMap = null;
+
+	// host name map.
+//	private Map<String, String> hostNames;
+
+	/** RRD directory path **/
+	private String rrdsDirectory;
 
 	// map for the time periods.
 	static {
@@ -97,8 +100,6 @@ public class NodeGraph {
 			String privateKey, String clusterName) {
 		this.hostname = hostname;
 		this.username = username;
-		this.password = password;
-		this.privateKey = privateKey;
 		if (password != null && !password.isEmpty()) {
 			this.authInfo = password;
 			this.authUsingPassword = true;
@@ -107,26 +108,36 @@ public class NodeGraph {
 			this.authUsingPassword = false;
 		}
 		this.clusterName = clusterName;
+
+		// getting config reader object.
+		ConfigurationReader ankushConf = AppStoreWrapper.getAnkushConfReader();
+
+		// setting rrds directory path
+		rrdsDirectory = CommonUtil.getUserHome(username)
+				+ ankushConf.getStringValue("ganglia.rrds");
+
+		// fetching host names.
+//		hostNames = GangliaUtils.getGangliaHostNames(hostname, username,
+//				password, privateKey);
 	}
 
 	/**
 	 * Method to extract json from the rrd file.
-	 * 
+	 * hostNames = GangliaUtils.getGangliaHostNames(hostname, username,
+//				password, privateKey);
 	 * @param startTime
 	 *            the start time
-	 * @param ip
-	 *            the ip
+	 * @param hostName
+	 *            the hostName
 	 * @return the map
 	 * @throws Exception
 	 *             the exception
 	 */
-	public Map extractRRD(StartTime startTime, String ip) throws Exception {
+	public Map extractRRD(StartTime startTime, String hostName) throws Exception {
 
 		Map result = new HashMap();
-	
 		// rrd director for the given ip address.
-		String rrdDir = Constant.Graph.RRD_BASH_PATH + clusterName + "/"
-				+ HostOperation.getAnkushHostName(ip) + "/";
+		String rrdDir = rrdsDirectory + clusterName + "/" + hostName + "/";
 
 		// making connection.
 		SSHConnection connection = new SSHConnection(this.hostname,
@@ -155,12 +166,15 @@ public class NodeGraph {
 			if (connection.exec(command.toString())) {
 				String output = connection.getOutput();
 				if (output == null) {
-					throw new Exception("Unable to fetch graph.");
+					throw new Exception(COULD_NOT_FETCH_DATA_MSG);
 				}
 
 				// puting json in result.
 				result.put("json",
 						new XMLSerializer().read(output.replaceAll("NaN", "0")));
+			} else {
+				throw new Exception(
+						COULD_NOT_EXECUTE_COMMAND_MSG);
 			}
 		}
 		return result;

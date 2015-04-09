@@ -47,7 +47,7 @@ import com.impetus.ankush.agent.utils.AgentLogger;
 public class AgentConf {
 
 	/** The log. */
-	private AgentLogger LOGGER = new AgentLogger(AgentConf.class);
+	private static final AgentLogger LOGGER = new AgentLogger(AgentConf.class);
 
 	/** The properties. */
 	private Properties properties = new Properties();
@@ -96,7 +96,7 @@ public class AgentConf {
 	 */
 	public AgentConf() {
 		try {
-			this.fileName = System.getProperty(Constant.USER_HOME)
+			this.fileName = System.getProperty(Constant.AGENT_INSTALL_DIR)
 					+ "/.ankush/agent/conf/agent.properties";
 			load();
 		} catch (Exception e) {
@@ -110,12 +110,12 @@ public class AgentConf {
 	 * @return the log upload file url
 	 */
 	public String getLogUploadFileUrl() {
-		String url = "http://";
-		url += properties.getProperty(Constant.PROP_NAME_HOST) + ":";
-		url += properties.getProperty(Constant.PROP_NAME_PORT);
-		url += properties.getProperty(Constant.PROP_NAME_UPLOAD_FILE_URL);
-		url += "?category=log";
-		return url;
+		StringBuilder url = new StringBuilder("http://");
+		url.append(properties.getProperty(Constant.PROP_SERVER_IP)).append(":");
+		url.append(properties.getProperty(Constant.PROP_NAME_PORT));
+		url.append(properties.getProperty(Constant.PROP_NAME_UPLOAD_FILE_URL));
+		url.append("?category=log");
+		return url.toString();
 	}
 
 	/**
@@ -248,13 +248,31 @@ public class AgentConf {
 	 * @return The URL to update the Node information
 	 */
 	public String getURL(String propertyName) {
-		String url = "http://";
-		url += properties.getProperty(Constant.PROP_NAME_HOST) + ":";
-		url += properties.getProperty(Constant.PROP_NAME_PORT);
-		url += properties.getProperty(Constant.PROP_NAME_URL_PART);
-		url += properties.getProperty(Constant.PROP_NAME_NODE_ID) + "/";
-		url += properties.getProperty(propertyName);
-		return url;
+		StringBuilder url = new StringBuilder("http://");
+		url.append(properties.getProperty(Constant.PROP_SERVER_IP)).append(":");
+		url.append(properties.getProperty(Constant.PROP_NAME_PORT));
+		url.append(properties.getProperty(Constant.PROP_NAME_URL_PART));
+		url.append(properties.getProperty(Constant.PROP_NAME_NODE_ID)).append("/");
+		url.append(properties.getProperty(propertyName));
+		return url.toString();
+	}
+
+	/**
+	 * Gets the node info send URL.
+	 * 
+	 * @param action
+	 *            the property name
+	 * @return The URL to update the Node information
+	 */
+	public String getClusterMonitoringURL(String action) {
+		StringBuilder url = new StringBuilder("http://");
+		url.append(properties.getProperty(Constant.PROP_SERVER_IP)).append(":");
+		url.append(properties.getProperty(Constant.PROP_NAME_PORT));
+		url.append(properties
+				.getProperty(Constant.PROP_NAME_CLUSTER_MONITORING_URL));
+		url.append(properties.getProperty(Constant.PROP_NAME_CLUSTER_ID))
+				.append("/").append(action);
+		return url.toString();
 	}
 
 	/**
@@ -284,7 +302,6 @@ public class AgentConf {
 		return getDataList(Constant.PROP_NAME_PROCESS_PORT_MAP, ",");
 	}
 
-	
 	/**
 	 * Gets the jPS services.
 	 * 
@@ -304,5 +321,18 @@ public class AgentConf {
 			LOGGER.error(e.getMessage(), e);
 		}
 		return procs;
+	}
+
+	public String getServiceManageURL() {
+		StringBuilder url = new StringBuilder("http://");
+		url.append(properties.getProperty(Constant.PROP_SERVER_IP)).append(":");
+		url.append(properties.getProperty(Constant.PROP_NAME_PORT));
+		url.append(properties
+				.getProperty(Constant.PROP_NAME_URL_SERVICE_PART_1));
+		url.append(properties.getProperty(Constant.PROP_NAME_CLUSTER_ID))
+				.append("/");
+		url.append(properties
+				.getProperty(Constant.PROP_NAME_URL_SERVICE_PART_2));
+		return url.toString();
 	}
 }

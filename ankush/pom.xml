@@ -6,13 +6,13 @@
 	<artifactId>ankush</artifactId>
 	<name>ankush</name>
 	<url>http://www.impetus.com</url>
-	<version>1.5.0</version>
+	<version>2.0.10</version>
 	<packaging>war</packaging>
 
 	<parent>
 		<groupId>com.impetus.ankush</groupId>
 		<artifactId>ankushgroup</artifactId>
-		<version>1.5.0</version>
+		<version>2.0.10</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -153,6 +153,14 @@
 			<artifactId>commons-dbcp</artifactId>
 			<version>1.4</version>
 		</dependency>
+		
+		<!-- Hadoop -->
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-core</artifactId>
+			<version>1.2.1</version>
+		</dependency>
+		
 
 		<!-- MySQL driver -->
 		<dependency>
@@ -160,7 +168,7 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<version>5.1.18</version>
 		</dependency>
-		
+
 		<!-- Derby -->
 		<dependency>
 			<groupId>org.apache.derby</groupId>
@@ -262,9 +270,6 @@
 			<version>1</version>
 		</dependency>
 
-
-		<!-- Oracle NoSQL Dependency -->
-
 		<dependency>
 			<groupId>ch.ethz.ganymed</groupId>
 			<artifactId>ganymed-ssh2</artifactId>
@@ -303,23 +308,6 @@
 			<version>1.11</version>
 		</dependency>
 
-		<dependency>
-			<groupId>oracle.kv</groupId>
-			<artifactId>kvstore</artifactId>
-			<version>11gR2.2.0.26</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/kvstore.jar</systemPath>
-		</dependency>
-
-		<dependency>
-			<groupId>com.sleepycat</groupId>
-			<artifactId>je</artifactId>
-			<version>5.0.36</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/je.jar</systemPath>
-		</dependency>
-		<!-- Oracle NoSQL Dependency END -->
-
 		<!-- Servlet -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -340,10 +328,11 @@
 		</dependency>
 
 		<!-- Hadoop -->
+		
 		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-core</artifactId>
-			<version>1.0.4</version>
+		    <groupId>org.apache.hadoop</groupId>
+    		<artifactId>hadoop-core</artifactId>
+    		<version>1.2.1</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>jetty</artifactId>
@@ -482,6 +471,13 @@
 			<version>3.4.5</version>
 		</dependency>
 
+		<!-- ZkClient -->
+		<dependency>
+			<groupId>com.101tec</groupId>
+			<artifactId>zkclient</artifactId>
+			<version>0.2</version>
+		</dependency>
+
 		<!-- Apache Commons -->
 		<dependency>
 			<groupId>commons-fileupload</groupId>
@@ -508,6 +504,15 @@
 			<artifactId>json-simple</artifactId>
 			<version>1.1</version>
 		</dependency>
+		
+		<!-- To Hanle Zip Files -->
+		<dependency>
+   			<groupId>org.zeroturnaround</groupId>
+ 			<artifactId>zt-zip</artifactId>
+			<version>1.8</version>
+    		<type>jar</type>
+		</dependency>
+		
 	</dependencies>
 
 	<build>
@@ -607,7 +612,7 @@
 						<configuration>
 							<path>/${project.name}</path>
 							<enableNaming>true</enableNaming>
-							<finalName>${project.name}.jar</finalName>							
+							<finalName>${project.name}.jar</finalName>
 						</configuration>
 					</execution>
 				</executions>

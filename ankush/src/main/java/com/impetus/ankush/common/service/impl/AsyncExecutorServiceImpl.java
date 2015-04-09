@@ -46,17 +46,17 @@ public class AsyncExecutorServiceImpl extends ThreadPoolExecutor implements
 
 	/** The Constant MIN_THREAD_POOL_SIZE. */
 	private static final int MIN_THREAD_POOL_SIZE = 0;
-	
+
 	/** The Constant MAX_THREAD_POOL_SIZE. */
 	private static final int MAX_THREAD_POOL_SIZE = 100;
-	
+
 	/** The Constant KEEP_ALIVE_TIME. */
 	private static final long KEEP_ALIVE_TIME = 60L;
 
 	/** The log. */
 	private final Logger log = LoggerFactory
 			.getLogger(AsyncExecutorServiceImpl.class);
-	
+
 	/** The task scheduler. */
 	private TaskScheduler taskScheduler;
 
@@ -78,8 +78,9 @@ public class AsyncExecutorServiceImpl extends ThreadPoolExecutor implements
 
 	/**
 	 * Sets the task scheduler.
-	 *
-	 * @param taskScheduler the new task scheduler
+	 * 
+	 * @param taskScheduler
+	 *            the new task scheduler
 	 */
 	@Autowired
 	public void setTaskScheduler(
@@ -87,16 +88,24 @@ public class AsyncExecutorServiceImpl extends ThreadPoolExecutor implements
 		this.taskScheduler = taskScheduler;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.impetus.ankush.common.service.AsyncExecutorService#schedule(java.lang.Runnable, java.util.Date)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.impetus.ankush.common.service.AsyncExecutorService#schedule(java.
+	 * lang.Runnable, java.util.Date)
 	 */
 	@Override
 	public ScheduledFuture schedule(final Runnable runnable, final Date start) {
 		return taskScheduler.schedule(runnable, start);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.concurrent.ThreadPoolExecutor#afterExecute(java.lang.Runnable, java.lang.Throwable)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.util.concurrent.ThreadPoolExecutor#afterExecute(java.lang.Runnable,
+	 * java.lang.Throwable)
 	 */
 	@Override
 	protected void afterExecute(Runnable runnable, Throwable t) {
@@ -104,5 +113,11 @@ public class AsyncExecutorServiceImpl extends ThreadPoolExecutor implements
 			log.error(t.getMessage(), t);
 		}
 		super.afterExecute(runnable, t);
+	}
+
+	@Override
+	public ScheduledFuture scheduleWithFixedDelay(Runnable runnable,
+			long seconds) {
+		return taskScheduler.scheduleWithFixedDelay(runnable, seconds * 1000);
 	}
 }

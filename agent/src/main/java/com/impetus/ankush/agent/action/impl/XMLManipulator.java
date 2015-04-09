@@ -104,7 +104,7 @@ public class XMLManipulator implements Manipulatable{
 			File confFile = new File(file);
 
 			if (!confFile.exists()) {
-				System.err.println("File does not exist.");
+				System.err.println("File " + file + " does not exists.");
 				return false;
 			}
 			// create jaxb unmarshaller
@@ -188,7 +188,7 @@ public class XMLManipulator implements Manipulatable{
 			File confFile = new File(file);
 
 			if (!confFile.exists()) {
-				System.err.println("File does not exist.");
+				System.err.println("File " + file + " does not exists.");
 				return false;
 			}
 			// create jaxb unmarshaller
@@ -225,7 +225,7 @@ public class XMLManipulator implements Manipulatable{
 			File confFile = new File(file);
 
 			if (!confFile.exists()) {
-				System.err.println("File does not exist.");
+				System.err.println("File " + file + " does not exists.");
 				return null;
 			}
 

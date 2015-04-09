@@ -50,6 +50,29 @@ public class ReplaceText extends AnkushTask {
 	/** The flag for creating BackUp File. */
 	private boolean createBackUpFile = true;
 
+	private boolean addSudoOption = false;
+	
+	
+	public ReplaceText(String targetText, String replacementText,
+			String filePath, boolean createBackUpFile) {
+		this.targetText = StringUtils.replace(targetText, "/", "\\/");
+		this.replacementText = StringUtils.replace(replacementText, "/", "\\/");
+		this.filePath = filePath;
+		this.createBackUpFile = createBackUpFile;
+		this.password = null;
+		this.addSudoOption = false;
+	}
+	
+	public ReplaceText(String targetText, String replacementText,
+			String filePath, boolean createBackUpFile, String password) {
+		this.targetText = StringUtils.replace(targetText, "/", "\\/");
+		this.replacementText = StringUtils.replace(replacementText, "/", "\\/");
+		this.filePath = filePath;
+		this.createBackUpFile = createBackUpFile;
+		this.password = password;
+		this.addSudoOption = false;
+	}
+	
 	/**
 	 * Instantiates a new ReplaceText object.
 	 * 
@@ -63,14 +86,17 @@ public class ReplaceText extends AnkushTask {
 	 *            the createBackUpFile
 	 * @param password
 	 *            the password
+	 * @param addSudoOption
+	 *            the addSudoOption
 	 */
 	public ReplaceText(String targetText, String replacementText,
-			String filePath, boolean createBackUpFile, String password) {
+			String filePath, boolean createBackUpFile, String password, boolean addSudoOption) {
 		this.targetText = StringUtils.replace(targetText, "/", "\\/");
 		this.replacementText = StringUtils.replace(replacementText, "/", "\\/");
 		this.filePath = filePath;
 		this.createBackUpFile = createBackUpFile;
 		this.password = password;
+		this.addSudoOption = addSudoOption;
 	}
 
 	/*
@@ -84,10 +110,12 @@ public class ReplaceText extends AnkushTask {
 		final StringBuilder sb = new StringBuilder();
 		
 		String prependSudo = "";
-		if (this.password != null) {
-			prependSudo = "echo '" + this.password + "' | sudo -S ";
-		} else {
-			prependSudo = "sudo -S ";
+		if(addSudoOption) {
+			if (this.password != null) {
+				prependSudo = "echo '" + this.password + "' | sudo -S ";
+			} else {
+				prependSudo = "sudo -S ";
+			}	
 		}
 		sb.append(prependSudo);
 		if (this.createBackUpFile) {

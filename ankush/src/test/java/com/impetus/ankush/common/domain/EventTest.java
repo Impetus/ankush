@@ -29,6 +29,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.impetus.ankush.common.domain.Event.Severity;
+
 /**
  * The class <code>EventTest</code> contains tests for the class
  * <code>{@link Event}</code>.
@@ -52,13 +54,14 @@ public class EventTest {
 	public void testEquals_1() {
 		Event obj = new Event();
 		obj.setHost("");
-		obj.setType("");
-		obj.setCurrentValue("");
-		obj.setSeverity("");
+		obj.setType(Event.Type.SERVICE);
+		obj.setValue("");
+		obj.setSeverity(Event.Severity.NORMAL);
 		obj.setName("");
 		obj.setDate(new Date());
 		obj.setClusterId(new Long(1L));
-		obj.setDescription("");
+		obj.setCategory("");
+		
 		obj.setId(new Long(1L));
 
 		boolean result = fixture.equals(obj);
@@ -110,7 +113,6 @@ public class EventTest {
 	public void testEquals_5() {
 		Event obj = new Event();
 		obj.setDate(fixture.getDate());
-		obj.setDescription("description");
 
 		boolean result = fixture.equals(obj);
 
@@ -125,7 +127,6 @@ public class EventTest {
 		Event obj = new Event();
 		obj.setHost("host");
 		obj.setDate(fixture.getDate());
-		obj.setDescription("description");
 
 		boolean result = fixture.equals(obj);
 
@@ -141,7 +142,6 @@ public class EventTest {
 		obj.setHost("host");
 		obj.setName("name");
 		obj.setDate(fixture.getDate());
-		obj.setDescription("description");
 
 		boolean result = fixture.equals(obj);
 
@@ -156,15 +156,14 @@ public class EventTest {
 
 		Event obj = new Event();
 		obj.setHost("host");
-		obj.setType("type");
-		obj.setCurrentValue("value");
-		obj.setSeverity("severity");
+		obj.setType(Event.Type.SERVICE);
+		obj.setValue("value");
+		obj.setSeverity(Event.Severity.NORMAL);
 		obj.setName("name");
 		obj.setDate(new Date(1372406912786L));
-		obj.setClusterId(new Long(1L));
-		obj.setDescription("description");
+		obj.setClusterId(new Long(1L));		
 		obj.setId(new Long(1L));
-		obj.setSubType("subtype");
+		obj.setCategory("subtype");
 
 		boolean result = fixture.equals(obj);
 
@@ -197,46 +196,9 @@ public class EventTest {
 	 */
 	@Test
 	public void testGetCurrentValue_1() {
-		String result = fixture.getCurrentValue();
+		String result = fixture.getValue();
 
 		assertEquals("value", result);
-	}
-
-	/**
-	 * Run the String getCurrentValue() method test.
-	 */
-	@Test
-	public void testGetCurrentValue_2() {
-		fixture.setCurrentValue("%");
-
-		String result = fixture.getCurrentValue();
-
-		assertEquals("%", result);
-	}
-
-	/**
-	 * Run the String getCurrentValue() method test.
-	 */
-	@Test
-	public void testGetCurrentValue_3() {
-		fixture.setType("Usage");
-		fixture.setCurrentValue("%");
-
-		String result = fixture.getCurrentValue();
-
-		assertEquals("%", result);
-	}
-
-	/**
-	 * Run the String getCurrentValue() method test.
-	 */
-	@Test
-	public void testGetCurrentValue_4() {
-		fixture.setType("Usage");
-		fixture.setCurrentValue("value");
-		String result = fixture.getCurrentValue();
-
-		assertEquals("value %", result);
 	}
 
 	/**
@@ -250,16 +212,7 @@ public class EventTest {
 		assertEquals(new Date(1372406912786L).toString(), result.toString());
 	}
 
-	/**
-	 * Run the String getDescription() method test.
-	 */
-	@Test
-	public void testGetDescription_1() {
-		String result = fixture.getDescription();
-
-		assertEquals("description", result);
-	}
-
+	
 	/**
 	 * Run the String getHost() method test.
 	 */
@@ -296,9 +249,9 @@ public class EventTest {
 	 */
 	@Test
 	public void testGetSeverity_1() {
-		String result = fixture.getSeverity();
+		 Severity result = fixture.getSeverity();
 
-		assertEquals("severity", result);
+		assertEquals(Event.Severity.NORMAL, result);
 	}
 
 	/**
@@ -306,7 +259,7 @@ public class EventTest {
 	 */
 	@Test
 	public void testGetSubType_1() {
-		String result = fixture.getSubType();
+		String result = fixture.getCategory();
 
 		assertEquals("subtype", result);
 	}
@@ -316,11 +269,11 @@ public class EventTest {
 	 */
 	@Test
 	public void testGetSubject_1() {
-		fixture.setSeverity("Error");
+		fixture.setSeverity(Event.Severity.CRITICAL);
 
 		String result = fixture.getSubject();
 
-		assertEquals("Ankush Error : host name", result);
+		assertEquals("Ankush CRITICAL : host name(subtype)", result);
 	}
 
 	/**
@@ -328,11 +281,11 @@ public class EventTest {
 	 */
 	@Test
 	public void testGetSubject_2() {
-		fixture.setSeverity("Normal");
+		fixture.setSeverity(Event.Severity.NORMAL);
 
 		String result = fixture.getSubject();
 
-		assertEquals("name At host is back to normal", result);
+		assertEquals("name(subtype) At host is back to normal", result);
 	}
 
 	/**
@@ -340,9 +293,9 @@ public class EventTest {
 	 */
 	@Test
 	public void testGetType_1() {
-		String result = fixture.getType();
+		com.impetus.ankush.common.domain.Event.Type result = fixture.getType();
 
-		assertEquals("type", result);
+		assertEquals(Event.Type.SERVICE, result);
 	}
 
 	/**
@@ -352,15 +305,14 @@ public class EventTest {
 	public void setUp() {
 		fixture = new Event();
 		fixture.setHost("host");
-		fixture.setType("type");
-		fixture.setCurrentValue("value");
-		fixture.setSeverity("severity");
+		fixture.setType(Event.Type.SERVICE);
+		fixture.setValue("value");
+		fixture.setSeverity(Event.Severity.NORMAL);
 		fixture.setName("name");
 		fixture.setDate(new Date(1372406912786L));
-		fixture.setClusterId(new Long(1L));
-		fixture.setDescription("description");
+		fixture.setClusterId(new Long(1L));		
 		fixture.setId(new Long(1L));
-		fixture.setSubType("subtype");
+		fixture.setCategory("subtype");
 	}
 
 	/**

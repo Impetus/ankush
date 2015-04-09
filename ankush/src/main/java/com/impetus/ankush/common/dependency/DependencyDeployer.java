@@ -36,7 +36,6 @@ import net.neoremind.sshxcute.task.CustomTask;
 import net.neoremind.sshxcute.task.impl.ExecCommand;
 
 import com.impetus.ankush.AppStoreWrapper;
-import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.exception.AnkushException;
 import com.impetus.ankush.common.framework.Deployable;
 import com.impetus.ankush.common.framework.config.Configuration;
@@ -50,9 +49,10 @@ import com.impetus.ankush.common.scripting.impl.SetEnvVariable;
 import com.impetus.ankush.common.utils.AnkushLogger;
 import com.impetus.ankush.common.utils.CommonUtil;
 import com.impetus.ankush.common.utils.FileNameUtils;
+import com.impetus.ankush.common.utils.FileNameUtils.ONSFileType;
 import com.impetus.ankush.common.utils.FileUtils;
 import com.impetus.ankush.common.utils.SSHUtils;
-import com.impetus.ankush.common.utils.FileNameUtils.ONSFileType;
+import com.impetus.ankush2.constant.Constant.Component;
 
 /**
  * It is used the deploy the dependencies on nodes.
@@ -64,7 +64,7 @@ public class DependencyDeployer implements Deployable {
 
 	/** The logger. */
 	private AnkushLogger logger = new AnkushLogger(
-			Constant.Component.Name.DEPENDENCY, DependencyDeployer.class);
+			Component.Name.DEPENDENCY, DependencyDeployer.class);
 
 	/** The repo path. */
 	private static final String repoPath = AppStoreWrapper.getServerRepoPath();
@@ -225,6 +225,13 @@ public class DependencyDeployer implements Deployable {
 							javaInstallationPath, javabinFilePath, jdkbin,
 							newJavaHomePath, newJavaBinInPath, nodeConf);
 
+					// if success then set the java home path.
+					if (status) {
+						// setting java home.
+						conf.getClusterConf().getJavaConf()
+								.setJavaHomePath(newJavaHomePath);
+					}
+
 					// putting it in status installed java.
 					statusMap.put(nodeConf.getPublicIp(), status);
 
@@ -306,10 +313,9 @@ public class DependencyDeployer implements Deployable {
 			final String installationPath, final String javabinFilePath,
 			final String jdkbin, final String newJavaHomePath,
 			final String newJavaBinInPath, NodeConf nodeConf) {
-		
-		
+
 		ONSFileType fileType = FileNameUtils.getFileType(javabinFilePath);
-		
+
 		boolean status = true;
 		String msg = "Installing java";
 		try {
@@ -335,20 +341,21 @@ public class DependencyDeployer implements Deployable {
 				connection.uploadSingleDataToServer(javabinFilePath, jdkbin);
 
 				// execute command
-				if(fileType == ONSFileType.BIN){
+				if (fileType == ONSFileType.BIN) {
 					CustomTask cmd = new ExecCommand("cd " + installationPath,
 							"echo /r/n/r/n | sh " + jdkbin);
 					res = connection.exec(cmd);
-				}else if(fileType == ONSFileType.TAR_GZ||fileType == ONSFileType.GZ){
+				} else if (fileType == ONSFileType.TAR_GZ
+						|| fileType == ONSFileType.GZ) {
 					CustomTask cmd = new ExecCommand("cd " + installationPath,
 							"tar -xzvf " + jdkbin);
 					res = connection.exec(cmd);
-				}else if(fileType == ONSFileType.ZIP){
+				} else if (fileType == ONSFileType.ZIP) {
 					CustomTask cmd = new ExecCommand("cd " + installationPath,
 							"unzip " + jdkbin);
 					res = connection.exec(cmd);
 				}
-				
+
 				// if successfully extracted, set env vars
 				if (res.rc == 0) {
 					// set JAVA_HOME
@@ -502,5 +509,30 @@ public class DependencyDeployer implements Deployable {
 		DependencyConf conf = (DependencyConf) config;
 		logger.setLoggerConfig(conf);
 		return true;
+	}
+	
+	@Override
+	public boolean registerComponent(Configuration config) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean unregisterComponent(Configuration config) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean validateComponent(String nodeIp, SSHExec connection,
+			GenericConfiguration config) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean deployPatch(Configuration config) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

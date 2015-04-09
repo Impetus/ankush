@@ -22,6 +22,7 @@ package com.impetus.ankush.common.framework;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,18 +33,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
 
-import org.springframework.util.StringUtils;
-
 import net.neoremind.sshxcute.core.Result;
 import net.neoremind.sshxcute.core.SSHExec;
 import net.neoremind.sshxcute.exception.TaskExecFailException;
 import net.neoremind.sshxcute.task.CustomTask;
 import net.neoremind.sshxcute.task.impl.ExecCommand;
 
+import org.springframework.util.StringUtils;
+
 import com.impetus.ankush.AppStoreWrapper;
-import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.domain.Cluster;
-import com.impetus.ankush.common.framework.config.ClusterConf;
+import com.impetus.ankush.common.exception.AnkushException;
 import com.impetus.ankush.common.scripting.impl.ExecSudoCommand;
 import com.impetus.ankush.common.service.GenericManager;
 import com.impetus.ankush.common.utils.AnkushLogger;
@@ -51,6 +51,9 @@ import com.impetus.ankush.common.utils.CommandExecutor;
 import com.impetus.ankush.common.utils.ParserUtil;
 import com.impetus.ankush.common.utils.SSHUtils;
 import com.impetus.ankush.common.utils.validator.PortValidator;
+import com.impetus.ankush2.agent.AgentDeployer;
+import com.impetus.ankush2.constant.Constant;
+import com.impetus.ankush2.framework.config.ClusterConfig;
 
 /**
  * @author hokam
@@ -61,8 +64,13 @@ public class ClusterPreValidator {
 	private static final String JPS_PROCESS_LIST = "jpsProcessList";
 	private static final String REQUIRE_TTY_DISABLED = "requireTTYDisabled";
 	private static final String WGET_EXISTS = "wgetExists";
+	private static final String TAR_EXISTS = "tarExists";
+	// private static final String UNZIP_EXISTS = "unzipExists";
+	// private static final String ZIP_EXISTS = "zipExists";
+	private static final String JPS_EXISTS = "jpsExists";
 	private static final String NO_LOOPBACK = "noLoopback";
 	private static final String IS_SUDO_USER = "isSudoUser";
+	private static final String IS_DISK_FREE = "isDiskFree";
 	private static final String PORT_AVAILABILITY = "portAvailability";
 	private static final String FIREWALL_DISABLED = "firewallDisabled";
 	private static final String AGENT_METADATA_NOT_EXISTS = "agentMetadataNotExists";
@@ -93,16 +101,19 @@ public class ClusterPreValidator {
 			// Get the cluster object from database.
 			Cluster cluster = clusterManager.get(clusterId);
 
-			ClusterConf clusterConf = cluster.getClusterConf();
+			ClusterConfig clusterConfig = cluster.getClusterConfig();
 			// set username
-			params.put(Constant.Keys.USERNAME, clusterConf.getUsername());
-			String pass = clusterConf.getPassword();
+			params.put(Constant.Keys.USERNAME, clusterConfig.getAuthConf()
+					.getUsername());
+			String pass = clusterConfig.getAuthConf().getPassword();
 			if (pass != null && !pass.isEmpty()) {
 				params.put(Constant.Keys.PASSWORD, pass);
 			} else {
-				params.put(Constant.Keys.PRIVATEKEY,
-						clusterConf.getPrivateKey());
+				params.put(Constant.Keys.PRIVATEKEY, clusterConfig
+						.getAuthConf().getPrivateKey());
 			}
+			params.put(Constant.Agent.Key.AGENT_INSTALL_DIR,
+					clusterConfig.getAgentInstallDir());
 		} else {
 			if (notContainsKey(params, Constant.Keys.USERNAME, result)) {
 				return result;
@@ -117,6 +128,7 @@ public class ClusterPreValidator {
 		final String username = (String) params.get(Constant.Keys.USERNAME);
 		final String password = (String) params.get(Constant.Keys.PASSWORD);
 		final String privateKey = (String) params.get(Constant.Keys.PRIVATEKEY);
+
 		final Map nodePorts = (Map) params.get("nodePorts");
 		Set<String> nodes = nodePorts.keySet();
 
@@ -220,7 +232,7 @@ public class ClusterPreValidator {
 		}
 
 		List<String> processes = null;
-		if (processList == null || processList.isEmpty()) {
+		if ((processList == null) || processList.isEmpty()) {
 			processes = new ArrayList<String>();
 		} else {
 			processes = new ArrayList<String>(Arrays.asList(processList
@@ -229,8 +241,12 @@ public class ClusterPreValidator {
 
 		List<String> processLists = new ArrayList<String>();
 		for (String process : processes) {
-			if (!process.contains("Jps")) {
-				processLists.add(process.split("\\ ")[1]);
+			if (!(process.contains("Jps") || process
+					.contains(AgentDeployer.ANKUSH_SERVER_PROCSS_NAME))) {
+				String[] processArray = process.split("\\ ");
+				if (processArray.length == 2) {
+					processLists.add(process.split("\\ ")[1]);
+				}
 			}
 		}
 
@@ -254,13 +270,12 @@ public class ClusterPreValidator {
 	private Status checkCommandExistence(SSHExec conn, String command) {
 		boolean taskStatus = SSHUtils
 				.getCommandStatus(conn, "which " + command);
+		String label = command.substring(0, 1).toUpperCase()
+				+ command.substring(1) + " existence";
 		if (taskStatus) {
-			return new Status(command.substring(0, 1).toUpperCase()
-					+ command.substring(1) + " existence", OK);
+			return new Status(label, OK);
 		} else {
-			return new Status(command.substring(0, 1).toUpperCase()
-					+ command.substring(1) + " existence",
-					"Wget command not found", CRITICAL);
+			return new Status(label, command + " command not found", CRITICAL);
 		}
 	}
 
@@ -358,17 +373,19 @@ public class ClusterPreValidator {
 	 *            the auth using password
 	 * @return true, if successful
 	 */
-	public Status checkLoopbackAddress(SSHExec conn) {
+	public Status checkLoopbackAddress(SSHExec conn, String hostname) {
 		Result res = null;
 		// requires tty check by executing a sudo command
 		boolean status = false;
-		String message = "Problem found in /etc/hosts, please remove the loopback entries.";
-		CustomTask ttyTask = new ExecCommand("egrep  '^127.0.|^::1' /etc/hosts");
+		String message = "Invalid /etc/hosts configuration, please remove the loopback IP (127.0.x.x) mapping with "
+				+ hostname + ".";
+		CustomTask checkLoopBackTask = new ExecCommand("egrep  '^127.0.*"
+				+ hostname + "|^::1*" + hostname + "' "
+				+ Constant.LinuxEnvFiles.ETC_HOSTS);
 
 		try {
 			if (conn != null) {
-				res = conn.exec(ttyTask);
-				status = (res.rc != 0);
+				status = (conn.exec(checkLoopBackTask).rc != 0);
 			}
 		} catch (TaskExecFailException e) {
 			logger.error(e.getMessage(), e);
@@ -417,9 +434,6 @@ public class ClusterPreValidator {
 			}
 			logger.error(e.getMessage(), e);
 		}
-
-		System.out.println(res.error_msg);
-		System.out.println(res.sysout);
 		// error msg contains tty to run
 		boolean isTtyEnabled = res.error_msg.contains("tty to run");
 
@@ -428,7 +442,7 @@ public class ClusterPreValidator {
 		if (status) {
 			return new Status("Require TTY", OK);
 		} else {
-			return new Status("Require TTY", message, CRITICAL);
+			return new Status("Require TTY", message, WARNING);
 		}
 	}
 
@@ -469,7 +483,57 @@ public class ClusterPreValidator {
 		if (status) {
 			return new Status("Sudo user", OK);
 		} else {
-			return new Status("Sudo user", message, CRITICAL);
+			return new Status("Sudo user", message, WARNING);
+		}
+	}
+
+	public Status checkFreeDisk(SSHExec conn, String password, String agentHome) {
+		String errMsg = "Could not check free disk availability @ " + agentHome
+				+ ".";
+		String diskSpaceKey = "AnkushAgent Install Dir Disk Space";
+		Long availability;
+		boolean status = true;
+		try {
+			// task to check free disk apace
+			CustomTask freeDisk = new ExecCommand("df " + agentHome);
+			Result result = conn.exec(freeDisk);
+			// If filesystem name is long, then the command will output details
+			// in more than one line, so splitting the output on the basis of
+			// new line so as to remove the first line containing column labels
+			List<Object> details = new ArrayList(Arrays.asList(result.sysout
+					.split("\n")));
+			// Removing the column labels from command output
+			details.remove(0);
+			// joining elements in lists with tab
+			String filesystemDetail = org.apache.commons.lang3.StringUtils
+					.join(details, "\t");
+			// Considering that a directory is mounted only on a single
+			// filesystem, so throwing exception if the size of the list created
+			// using space as token is other than 6
+			if (new ArrayList(Arrays.asList(filesystemDetail.trim().split(
+					"\\s+"))).size() != 6) {
+				throw new AnkushException(errMsg);
+			}
+			// Getting the disk availability details
+			availability = Long.valueOf(new ArrayList(Arrays
+					.asList(filesystemDetail.split("\\s+"))).get(3).toString());
+			// if disk space available is less than 50 MB, then setting status
+			// as critical
+			if (availability < 51200L) {
+				status = false;
+			}
+		} catch (Exception e) {
+			return new Status(diskSpaceKey, errMsg, CRITICAL);
+		}
+		if (status) {
+			return new Status(diskSpaceKey, "Sufficent disk space available @ "
+					+ agentHome + ". Space Availability : "
+					+ (availability / 1024) + "  MB", OK);
+		} else {
+			return new Status(diskSpaceKey,
+					"Insufficent disk space available @ " + agentHome
+							+ ". Space Availability : " + (availability / 1024)
+							+ " MB", CRITICAL);
 		}
 	}
 
@@ -480,34 +544,76 @@ public class ClusterPreValidator {
 	 *            the hostname
 	 * @return true, if successful
 	 */
+	// public Status checkIptables(String hostname) {
+	// Status value = null;
+	// boolean status = false;
+	// String message = "Firewall is not disabled";
+	// String command = "nmap -P0 " + hostname;
+	// ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	//
+	// try {
+	// CommandExecutor.exec(command, baos, null);
+	// String result = baos.toString();
+	// value = new Status("Firewall", OK);
+	// status = result.contains("closed") && result.contains("open")
+	// && !result.contains("filtered ports");
+	// } catch (IOException e) {
+	// message = e.getMessage();
+	// logger.error(e.getMessage(), e);
+	// } catch (Exception e) {
+	// message = e.getMessage();
+	// logger.error(e.getMessage(), e);
+	// }
+	// if (message == null) {
+	// message = "Failed to validate firewall";
+	// }
+	//
+	// if (status) {
+	// value = new Status("Firewall", OK);
+	// } else {
+	// value = new Status("Firewall", message, CRITICAL);
+	// }
+	// return value;
+	// }
+
+	/**
+	 * Check iptables.
+	 * 
+	 * @param hostname
+	 *            the hostname
+	 * @return true, if successful
+	 */
 	public Status checkIptables(String hostname) {
 		Status value = null;
-		boolean status = false;
 		String message = "Firewall is not disabled";
-		String command = "nmap -P0 " + hostname;
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
+		Socket socket = null;
+		// Random port to validate
+		Integer port = 4511;
 		try {
-			CommandExecutor.exec(command, baos, null);
-			String result = baos.toString();
+			// Creating a socket condition
+			socket = new Socket(hostname, port);
+			// if socket connection created, then firewall is disabled
 			value = new Status("Firewall", OK);
-			status = result.contains("closed") && result.contains("open")
-					&& !result.contains("filtered ports");
-		} catch (IOException e) {
-			message = e.getMessage();
-			logger.error(e.getMessage(), e);
 		} catch (Exception e) {
-			message = e.getMessage();
-			logger.error(e.getMessage(), e);
-		}
-		if (message == null) {
-			message = "Failed to validate firewall";
-		}
-
-		if (status) {
-			value = new Status("Firewall", OK);
-		} else {
-			value = new Status("Firewall", message, CRITICAL);
+			// if exception type is NoRouteToHostException , then firewall is
+			// enabled , else if exception type is ConnectException, then
+			// firewall is disabled but no process is running on the port , else
+			// unable to validate firewall
+			if (e instanceof java.net.NoRouteToHostException) {
+				value = new Status("Firewall", message, CRITICAL);
+			} else if (e instanceof java.net.ConnectException) {
+				value = new Status("Firewall", OK);
+			} else {
+				value = new Status("Firewall", "Failed to validate firewall",
+						CRITICAL);
+			}
+		} finally {
+			if (socket != null) {
+				try {
+					socket.close();
+				} catch (IOException e) {
+				}
+			}
 		}
 		return value;
 	}
@@ -542,23 +648,46 @@ public class ClusterPreValidator {
 			Status requiretty = checkRequiresTTY(conn, password);
 			logger.debug("checking require tty." + params);
 			map.put(REQUIRE_TTY_DISABLED, requiretty);
-			
+
 			Status isSudoUser = checkSudoers(conn, password);
-			
-			if(requiretty.getStatus().equals(CRITICAL)) {
+
+			if (requiretty.getStatus().equals(WARNING)) {
 				isSudoUser.setMessage(requiretty.getMessage());
 			}
+			// checking free disk space.
+			logger.debug("checking free disk space." + params);
+			Status isDiskFree = checkFreeDisk(conn, password,
+					String.valueOf(params
+							.get(Constant.Agent.Key.AGENT_INSTALL_DIR)));
+			map.put(IS_DISK_FREE, isDiskFree);
+
 			// checking sudoers.
 			logger.debug("checking sudoers." + params);
 			map.put(IS_SUDO_USER, isSudoUser);
 
 			// checking etc hosts.
 			logger.debug("checking etc hosts." + params);
-			map.put(NO_LOOPBACK, checkLoopbackAddress(conn));
+			map.put(NO_LOOPBACK, checkLoopbackAddress(conn, hostname));
 
 			// checking wget.
 			logger.debug("checking checking wget." + params);
 			map.put(WGET_EXISTS, checkCommandExistence(conn, "wget"));
+
+			// checking tar.
+			logger.debug("checking checking tar." + params);
+			map.put(TAR_EXISTS, checkCommandExistence(conn, "tar"));
+
+			// checking unzip.
+			// logger.debug("checking checking unzip." + params);
+			// map.put(UNZIP_EXISTS, checkCommandExistence(conn, "unzip"));
+
+			// checking zip.
+			// logger.debug("checking checking zip." + params);
+			// map.put(ZIP_EXISTS, checkCommandExistence(conn, "zip"));
+
+			// checking jps.
+			logger.debug("checking checking jps." + params);
+			map.put(JPS_EXISTS, checkCommandExistence(conn, "jps"));
 
 			// getting running jps process list.
 			logger.debug("getting jps process list");

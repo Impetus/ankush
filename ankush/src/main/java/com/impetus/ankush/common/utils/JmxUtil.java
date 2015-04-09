@@ -32,7 +32,6 @@ import javax.management.IntrospectionException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanException;
 import javax.management.MBeanInfo;
-import javax.management.MBeanOperationInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
@@ -63,112 +62,116 @@ public class JmxUtil {
 	/** The mbean server connection. */
 	private MBeanServerConnection mbeanServerConnection = null;
 
-
 	/**
 	 * Instantiates a new jMX util.
-	 *
-	 * @param nodeIp the node ip
-	 * @param jmxPort the jmx port
-	 * @throws Exception 
+	 * 
+	 * @param nodeIp
+	 *            the node ip
+	 * @param jmxPort
+	 *            the jmx port
+	 * @throws Exception
 	 */
 
-	public JmxUtil(String nodeIp,int jmxPort) throws Exception {
+	public JmxUtil(String nodeIp, int jmxPort) throws Exception {
 		this.nodeIp = nodeIp;
 		this.jmxPort = jmxPort;
 	}
 
-	public MBeanServerConnection connect() throws AnkushException{
+	public MBeanServerConnection connect() throws AnkushException {
 		try {
-			jmxConnector = this.jmxConnection(this.nodeIp,this.jmxPort);
-			if(jmxConnector != null){
-				this.mbeanServerConnection = jmxConnector.getMBeanServerConnection();
+			jmxConnector = this.jmxConnection(this.nodeIp, this.jmxPort);
+			if (jmxConnector != null) {
+				this.mbeanServerConnection = jmxConnector
+						.getMBeanServerConnection();
 			}
-		}catch (IOException e) {
-			logger.info("Mbean Server Connection is not available at Node..."+nodeIp);
-			logger.error(e.getMessage());
-		}catch(Exception e){
-			logger.info("Mbean Server Connection is not available at Node..."+nodeIp);
-			logger.error(e.getMessage());
+		} catch (Exception e) {
+//			logger.info("Mbean Server Connection is not available at Node..."
+//					+ nodeIp);
+			throw new AnkushException(
+					"Mbean Server Connection is not available at Node..."
+							+ nodeIp);
 		}
 
 		return this.mbeanServerConnection;
 	}
 
-	public void disconnect(){
-		try{
-			if(this.jmxConnector != null){
+	public void disconnect() {
+		try {
+			if (this.jmxConnector != null) {
 				this.jmxConnector.close();
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
-
 
 	}
 
 	/**
 	 * Jmx connection.
-	 *
-	 * @param nodeIp the node ip
-	 * @param jmxPort the jmx port
+	 * 
+	 * @param nodeIp
+	 *            the node ip
+	 * @param jmxPort
+	 *            the jmx port
 	 * @return the jMX connector
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	private JMXConnector jmxConnection(String nodeIp,int jmxPort){
+	private JMXConnector jmxConnection(String nodeIp, int jmxPort) {
 		JMXConnector connector = null;
 		try {
 			JMXServiceURL address = new JMXServiceURL(
-					"service:jmx:rmi:///jndi/rmi://" + nodeIp + ":"
-							+ jmxPort + "/jmxrmi");
+					"service:jmx:rmi:///jndi/rmi://" + nodeIp + ":" + jmxPort
+							+ "/jmxrmi");
 			connector = JMXConnectorFactory.connect(address);
 		} catch (Exception e) {
 			if (e.getMessage().contains("java.net.ConnectException")) {
-				logger.info("Host unavailable at Node..."+nodeIp);
+				logger.info("Host unavailable at Node..." + nodeIp);
 				logger.error(e.getMessage());
-				//				throw new AnkushException("Host unavailable-" + nodeIp);
+				// throw new AnkushException("Host unavailable-" + nodeIp);
 			}
 		}
 		return connector;
 	}
 
-	public Set<ObjectName> getObjectSetFromPatternString(String patternStr){
-		Set<ObjectName> objectSet  = null;
+	public Set<ObjectName> getObjectSetFromPatternString(String patternStr) {
+		Set<ObjectName> objectSet = null;
 		try {
-			objectSet = mbeanServerConnection.queryNames(new ObjectName(patternStr),
-					null);
-		}catch(Exception e){
+			objectSet = mbeanServerConnection.queryNames(new ObjectName(
+					patternStr), null);
+		} catch (Exception e) {
 			logger.info(e.getMessage());
 		}
 		return objectSet;
 	}
 
-	public Object getResultObjectFromOperation(ObjectName name, String operationName, Object params[],String[] signature){
-		Object result  = null;
+	public Object getResultObjectFromOperation(ObjectName name,
+			String operationName, Object params[], String[] signature) {
+		Object result = null;
 		try {
-			if(mbeanServerConnection != null){
-				result = mbeanServerConnection.invoke(name,
-						operationName, params,
-						signature);
+			if (mbeanServerConnection != null) {
+				result = mbeanServerConnection.invoke(name, operationName,
+						params, signature);
 			}
 
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.info(e.getMessage());
 		}
 		return result;
 	}
 
-
 	/**
 	 * Gets the attribute.
-	 *
-	 * @param objName the obj name
-	 * @param attr the attr
+	 * 
+	 * @param objName
+	 *            the obj name
+	 * @param attr
+	 *            the attr
 	 * @return the attribute
 	 */
-	public Object getAttribute(ObjectName objName,String attr){
+	public Object getAttribute(ObjectName objName, String attr) {
 		Object attrVal = null;
 		try {
-			if(mbeanServerConnection != null){
+			if (mbeanServerConnection != null) {
 				attrVal = mbeanServerConnection.getAttribute(objName, attr);
 			}
 		} catch (AttributeNotFoundException e) {
@@ -181,7 +184,7 @@ public class JmxUtil {
 			logger.info(e.getMessage());
 		} catch (IOException e) {
 			logger.info(e.getMessage());
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.info(e.getMessage());
 		}
 		return attrVal;
@@ -189,11 +192,12 @@ public class JmxUtil {
 
 	/**
 	 * Gets the attribute name list.
-	 *
-	 * @param objName the obj name
+	 * 
+	 * @param objName
+	 *            the obj name
 	 * @return the attribute name list
 	 */
-	public MBeanAttributeInfo[] getAttributeNameList(ObjectName objName){
+	public MBeanAttributeInfo[] getAttributeNameList(ObjectName objName) {
 		MBeanAttributeInfo[] mbeanAttributeInfo = null;
 		try {
 			MBeanInfo mbeanInfo = mbeanServerConnection.getMBeanInfo(objName);
@@ -211,48 +215,28 @@ public class JmxUtil {
 	}
 
 	/**
-	 * Gets the operations.
+	 * Gets the attribute name value map.
 	 * 
 	 * @param objName
 	 *            the obj name
-	 * @param attr
-	 *            the attr
-	 * @return the attribute
-	 */
-	public MBeanOperationInfo[] getOperations(ObjectName objName) {
-		MBeanInfo mBeanInfo = null;
-		MBeanOperationInfo[] mBeanOperationInfo = null;
-		try {
-			if (mbeanServerConnection != null) {
-				mBeanInfo = mbeanServerConnection.getMBeanInfo(objName);
-				mBeanOperationInfo = mBeanInfo.getOperations();
-			}
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-		}
-		return mBeanOperationInfo;
-	}
-
-	/**
-	 * Gets the attribute name value map.
-	 *
-	 * @param objName the obj name
 	 * @return the attribute name value map
 	 */
-	public Map<String, Object> getDoubleAttributes(ObjectName objName){
+	public Map<String, Object> getDoubleAttributes(ObjectName objName) {
 		Map<String, Object> attrMap = null;
 		try {
 			MBeanInfo mbeanInfo = mbeanServerConnection.getMBeanInfo(objName);
-			MBeanAttributeInfo[] mbeanAttributeInfo =mbeanInfo.getAttributes();
+			MBeanAttributeInfo[] mbeanAttributeInfo = mbeanInfo.getAttributes();
 			attrMap = new HashMap<String, Object>();
 			DecimalFormat df = new DecimalFormat("###.##");
 			for (int i = 0; i < mbeanAttributeInfo.length; i++) {
-				String attrName = mbeanAttributeInfo[i].getName(); 
-				Object attrValue = getAttribute(objName,mbeanAttributeInfo[i].getName());
-				if(mbeanAttributeInfo[i].getType().equals("double")){
-					attrValue = df.format((Double)getAttribute(objName,mbeanAttributeInfo[i].getName()));
+				String attrName = mbeanAttributeInfo[i].getName();
+				Object attrValue = getAttribute(objName,
+						mbeanAttributeInfo[i].getName());
+				if (mbeanAttributeInfo[i].getType().equals("double")) {
+					attrValue = df.format((Double) getAttribute(objName,
+							mbeanAttributeInfo[i].getName()));
 				}
-				attrMap.put(attrName,attrValue);
+				attrMap.put(attrName, attrValue);
 			}
 		} catch (InstanceNotFoundException e) {
 			logger.info(e.getMessage());
@@ -262,7 +246,7 @@ public class JmxUtil {
 			logger.info(e.getMessage());
 		} catch (IOException e) {
 			logger.info(e.getMessage());
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.info(e.getMessage());
 		}
 		return attrMap;
@@ -270,21 +254,24 @@ public class JmxUtil {
 
 	/**
 	 * Gets the attribute name value map.
-	 *
-	 * @param objName the obj name
+	 * 
+	 * @param objName
+	 *            the obj name
 	 * @return the attribute name value map
 	 */
-	public Map<String, Object> getAttributes(ObjectName objName){
+	public Map<String, Object> getAttributes(ObjectName objName) {
 		Map<String, Object> attrMap = null;
 		try {
 			MBeanInfo mbeanInfo = mbeanServerConnection.getMBeanInfo(objName);
-			MBeanAttributeInfo[] mbeanAttributeInfo =mbeanInfo.getAttributes();
+			MBeanAttributeInfo[] mbeanAttributeInfo = mbeanInfo.getAttributes();
 			attrMap = new HashMap<String, Object>();
 			for (int i = 0; i < mbeanAttributeInfo.length; i++) {
-				String attrName = mbeanAttributeInfo[i].getName(); 
-				Object attrValue = getAttribute(objName,mbeanAttributeInfo[i].getName());
-				attrValue = getAttribute(objName,mbeanAttributeInfo[i].getName());
-				attrMap.put(attrName,attrValue);
+				String attrName = mbeanAttributeInfo[i].getName();
+				Object attrValue = getAttribute(objName,
+						mbeanAttributeInfo[i].getName());
+				attrValue = getAttribute(objName,
+						mbeanAttributeInfo[i].getName());
+				attrMap.put(attrName, attrValue);
 			}
 		} catch (InstanceNotFoundException e) {
 			logger.info(e.getMessage());
@@ -294,7 +281,7 @@ public class JmxUtil {
 			logger.info(e.getMessage());
 		} catch (IOException e) {
 			logger.info(e.getMessage());
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.info(e.getMessage());
 		}
 		return attrMap;

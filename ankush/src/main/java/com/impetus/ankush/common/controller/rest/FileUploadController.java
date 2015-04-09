@@ -21,9 +21,11 @@
 package com.impetus.ankush.common.controller.rest;
 
 import java.security.Principal;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -35,24 +37,45 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.impetus.ankush.common.constant.Constant;
+import com.impetus.ankush.common.service.AppConfService;
 import com.impetus.ankush.common.utils.ResponseWrapper;
 import com.impetus.ankush.common.utils.UploadHandler;
+import com.impetus.ankush2.constant.Constant.Strings;
 
 /**
  * The Class FileUploadController.
- *
+ * 
  * @author mayur
  */
 @Controller
 @RequestMapping("/")
 public class FileUploadController extends BaseController {
 
+	/** The app conf service. */
+	private AppConfService appConfService;
+
+	/**
+	 * Sets the config service.
+	 * 
+	 * @param appConfService
+	 *            the new config service
+	 */
+	@Autowired
+	public void setConfigService(
+			@Qualifier("appConfService") AppConfService appConfService) {
+		this.appConfService = appConfService;
+	}
+
 	/**
 	 * Upload.
-	 *
-	 * @param category the category
-	 * @param multipartRequest the multipart request
-	 * @param p the p
+	 * 
+	 * @param category
+	 *            the category
+	 * @param multipartRequest
+	 *            the multipart request
+	 * @param p
+	 *            the p
 	 * @return the response entity
 	 */
 	@RequestMapping(value = "uploadFile", method = RequestMethod.POST)
@@ -65,16 +88,16 @@ public class FileUploadController extends BaseController {
 				.getFile("file");
 
 		UploadHandler uploadHandler = new UploadHandler(multipartFile, category);
-		
-
 		return wrapResponse(uploadHandler.uploadFile(), HttpStatus.CREATED,
 				HttpStatus.CREATED.toString(), "file uploaded successfully");
 	}
 
+
 	/**
 	 * Gets the available file list.
-	 *
-	 * @param parameters the parameters
+	 * 
+	 * @param parameters
+	 *            the parameters
 	 * @return the available file list
 	 */
 	@RequestMapping(value = "list/files", method = RequestMethod.POST)

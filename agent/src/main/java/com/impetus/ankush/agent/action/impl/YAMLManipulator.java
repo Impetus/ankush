@@ -61,7 +61,7 @@ public class YAMLManipulator implements Manipulatable {
 			// save to file
 			File confFile = new File(file);
 			if (!confFile.exists()) {
-				System.err.println("File does not exist.");
+				System.err.println("File " + file + " does not exists.");
 			}
 			String dumped = yaml.dumpAsMap(map);
 			FileUtils.writeStringToFile(confFile, dumped, false);
@@ -69,13 +69,11 @@ public class YAMLManipulator implements Manipulatable {
 			return true;
 
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println(e.getMessage());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println(e.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.err.println(e.getMessage());
 		}
 		return false;
 	}
@@ -146,7 +144,7 @@ public class YAMLManipulator implements Manipulatable {
 			// save to file
 			File confFile = new File(file);
 			if (!confFile.exists()) {
-				System.err.println("File does not exist.");
+				System.err.println("File " + file + " does not exists.");
 			}
 
 			String dumped = yaml.dumpAsMap(map);
@@ -155,13 +153,11 @@ public class YAMLManipulator implements Manipulatable {
 			return true;
 
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println(e.getMessage());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println(e.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.err.println(e.getMessage());
 		}
 		return false;
 	}
@@ -228,13 +224,11 @@ public class YAMLManipulator implements Manipulatable {
 			fis.close();
 
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println(e.getMessage());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println(e.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.err.println(e.getMessage());
 		}
 		return null;
 	}

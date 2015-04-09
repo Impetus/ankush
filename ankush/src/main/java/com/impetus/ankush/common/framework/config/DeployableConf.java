@@ -33,6 +33,9 @@ public class DeployableConf {
 	/** The configuration. */
 	private Configuration configuration;
 
+	/** Component Name **/
+	private String componentName;
+
 	/**
 	 * Gets the deployer.
 	 * 
@@ -52,6 +55,13 @@ public class DeployableConf {
 	}
 
 	/**
+	 * @return the componentName
+	 */
+	public String getComponentName() {
+		return componentName;
+	}
+
+	/**
 	 * Instantiates a new deployable conf.
 	 * 
 	 * @param deployer
@@ -64,4 +74,29 @@ public class DeployableConf {
 		this.deployer = deployer;
 		this.configuration = configuration;
 	}
+
+	/**
+	 * Instantiates a new deployable conf.
+	 * 
+	 * @param deployer
+	 *            the deployer
+	 * @param configuration
+	 *            the configuration
+	 */
+	public DeployableConf(Deployable deployer, Configuration configuration,
+			String componentName) {
+		super();
+		this.deployer = deployer;
+		this.configuration = configuration;
+		this.componentName = componentName;
+	}
+	
+//	public DeployableConf(Deployable deployer, Configuration configuration,
+//			String componentName, boolean deployComponent) {
+//		super();
+//		this.deployer = deployer;
+//		this.configuration = configuration;
+//		this.componentName = componentName;
+//		this.deployComponent = deployComponent;
+//	}
 }

@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+
+	<property>
+		<name>config.classes.supported.components</name>
+		<value>Hadoop</value>
+		<description>Comma separated list of components with support for Component Configuration classes mapping</description>
+	</property>
+
 	<property>
 		<name>agent.dir</name>
 		<value>.ankush/agent/</value>
@@ -7,15 +14,42 @@
 		</description>
 	</property>
 	<property>
-		<name>ganglia.dir</name>
-		<value>.ankush/monitoring/</value>
-		<description>Directory path for the ganglia after USER_HOME directory
-		</description>
+		<name>agent.initialdelay</name>
+		<value>20000</value>
+		<description>Initial delay value for agent down check</description>
 	</property>
+	<property>
+    <name>agent.down.interval</name>
+    <value>60000</value>
+    <description>Interval after which agent is declared as down</description>
+  </property>	
+	<property>
+		<name>gmond.conf</name>
+		<value>.ankush/ganglia/conf/gmond.conf</value>
+		<description>Gmond configuration file path</description>
+	</property>
+	
+	<property>
+		<name>gmetad.conf</name>
+		<value>.ankush/ganglia/conf/gmetad.conf</value>
+		<description>Gmetad configuration file path</description>
+	</property>
+	
+	<property>
+		<name>ganglia.rrds</name>
+		<value>.ankush/ganglia/rrds/</value>
+		<description>Ganglia rrds directory path</description>
+	</property>
+	
 	
 	<property>
 		<name>ganglia.port</name>
 		<value>8649</value>
+	</property>
+	
+	<property>
+		<name>ganglia.polling.interval</name>
+		<value>15</value>
 	</property>
 	
 	<property>
@@ -33,69 +67,12 @@
 		<name>ankush.connectiontimeout</name>
 		<value>7000</value>
 	</property>
-	<!-- Oracle NoSQL DB Cluster Properties Start -->	
-	<property>
-		<name>oracle.nosql.snpoolname</name>
-		<value>AllStorageNodes</value>
-		<description>Default StorageNode pool Name.</description>
-	</property>
-	<property>
-		<name>oracle.nosql.topologychecktimeout</name>
-		<value>120000</value>
-		<description>Timeout value in milliseconds for checking Oracle NoSQL
-			technology data.
-		</description>
-	</property>
-	<property>
-		<name>oracle.nosql.topologychecksleeptime</name>
-		<value>15000</value>
-		<description>Sleep time in milliseconds between two topology check
-			cycles.
-		</description>
-	</property>
-	<property>
-		<name>oracle.nosql.servicechecktimeout</name>
-		<value>120000</value>
-		<description>Timeout value in milliseconds for checking Oracle NoSQL
-			service on Nodes.
-		</description>
-	</property>
-	<property>
-		<name>oracle.nosql.servicechecksleeptime</name>
-		<value>5000</value>
-		<description>Sleep time in milliseconds between two checking cycles of
-			Oracle NoSQL service on Nodes.
-		</description>
-	</property>
-	<property>
-		<name>oracle.nosql.jmxtransconfigfile</name>
-		<value>/dependencies/oracle nosql database/kvstore.json</value>
-		<description>jmxtrans config file to capture oracle nosql performace
-			metrics.
-		</description>
-	</property>
-	<!-- Oracle NoSQL DB Cluster Properties End -->
-
-
+	
 	<!-- Start Hadoop Cluster Properties -->
 	
 	<property>
 		<name>hadoop.non.editable.parameters</name>
 		<value>fs.default.name,dfs.http.address,dfs.secondary.http.address,mapred.job.tracker,fs.defaultFS,dfs.nameservices,yarn.resourcemanager.address,yarn.resourcemanager.resource-tracker.address,yarn.web-proxy.address,yarn.resourcemanager.scheduler.address,mapreduce.jobhistory.address,mapreduce.framework.name</value>
-	</property>
-	
-	<property>
-		<name>hbase.non.editable.parameters</name>
-		<value>hbase.master</value>
-	</property>
-	
-	<property>
-		<name>hadoop2.propname.mrshuffleclass.2.2.0</name>
-		<value>yarn.nodemanager.aux-services.mapreduce_shuffle.class</value>
-	</property>
-	<property>
-		<name>hadoop2.propval.auxservices.2.2.0</name>
-		<value>mapreduce_shuffle</value>
 	</property>
 	
 	<property>
@@ -191,8 +168,9 @@
 
 	<property>
 		<name>hadoop.jmxmonitoring.wait.time</name>
-		<value>3000</value>
-		<description>Wait time in milliseconds for response for Hadoop JMX data request</description>
+		<value>10000</value>
+		<description>Wait time in milliseconds for response for Hadoop JMX data request 
+		</description>
 	</property>
 	
 	<property>
@@ -272,32 +250,12 @@
 	
 	<property>
 		<name>jmx.quorumpeermain.targetText</name>
-		<value>ZOOMAIN="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.local.only=$JMXLOCALONLY org.apache.zookeeper.server.quorum.QuorumPeerMain</value>
+		<value>ZOOMAIN="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.local.only=$JMXLOCALONLY org.apache.zookeeper.server.quorum.QuorumPeerMain"</value>
 	</property>
 	
 	<property>
 		<name>jmx.quorumpeermain.replacementText</name>
-		<value>ZOOMAIN="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.port=JMX_PORT_QUORUMPEERMAIN org.apache.zookeeper.server.quorum.QuorumPeerMain</value>
-	</property>
-	
-	<property>
-		<name>jmx.kafka.targetText</name>
-		<value>export JMX_PORT=${JMX_PORT:-9999}</value>
-	</property>
-	
-	<property>
-		<name>jmx.kafka.replacementText</name>
-		<value>export JMX_PORT=${JMX_PORT:-JMX_PORT_KAFKA}</value>
-	</property>
-	
-	<property>
-		<name>jmx.yaml.childopts.supervisor</name>
-		<value>-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.port=JMX_PORT_SUPERVISOR</value>
-	</property>
-	
-	<property>
-		<name>jmx.yaml.childopts.nimbus</name>
-		<value>-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.port=JMX_PORT_NIMBUS</value>
+		<value>ZOOMAIN="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.port=JMX_PORT_QUORUMPEERMAIN org.apache.zookeeper.server.quorum.QuorumPeerMain"</value>
 	</property>
 	
 	<property>
@@ -312,36 +270,18 @@
 	
 	<property>
 		<name>jmx.dir.targetText.jarfile</name>
-		<value>${JAR_FILE:-"jmxtrans-all.jar"}</value>
+		<value>${JAR_FILE:-"ankush-jmxtrans-all.jar"}</value>
 	</property>
 	
 	<property>
 		<name>jmx.dir.jarfile.name</name>
-		<value>jmxtrans-all.jar</value>
-	</property>
-	
-	
-	<property>
-		<name>jmx.default.port.kafka</name>
-		<value>9999</value>
+		<value>ankush-jmxtrans-all.jar</value>
 	</property>
 	
 	<property>
 		<name>jmx.default.port.quorumpeermain</name>
 		<value>12345</value>
 	</property>
-	
-	<property>
-		<name>jmx.default.port.supervisor</name>
-		<value>12346</value>
-	</property>
-	
-	<property>
-		<name>jmx.default.port.nimbus</name>
-		<value>12347</value>
-	</property>
-	
-	
 	
 	<property>
 		<name>jmx.command.service.start</name>
@@ -378,16 +318,6 @@
 	</property>
 	
 	<property>
-		<name>java.process.list.kafka</name>
-		<value>kafka</value>
-	</property>
-	
-	<property>
-		<name>java.process.list.storm</name>
-		<value>nimbus,supervisor</value>
-	</property>
-	
-	<property>
 		<name>java.process.list.zookeeper</name>
 		<value>quorumpeermain</value>
 	</property>
@@ -399,6 +329,20 @@
 		<value>/.ankush/server/</value>
 		<description>Directory path for the server metadata dir after
 			USER_HOME directory
+		</description>
+	</property>
+	<property>
+		<name>license</name>
+		<value>/.ankush/server/license/</value>
+		<description>Directory path for the license dir
+			after USER_HOME directory
+		</description>
+	</property>
+	<property>
+		<name>validLicense</name>
+		<value>/.ankush/server/license/validLicense/</value>
+		<description>Directory path for the license dir
+			after USER_HOME directory
 		</description>
 	</property>
 	<property>
@@ -416,10 +360,14 @@
 		</description>
 	</property>
 	<property>
-		<name>license</name>
-		<value>/.ankush/server/license/</value>
-		<description>Directory path for the license dir
-			after USER_HOME directory
+		<name>serverLogsDir</name>
+		<value>/.ankush/server/log/</value>
+		<description>Directory path for the server logs directory</description>
+	</property>
+	<property>
+		<name>patches</name>
+		<value>/.ankush/server/patches/</value>
+		<description>Directory path on server for storing the patches. Patches repository
 		</description>
 	</property>
 	<property>
@@ -479,14 +427,18 @@
 	</property>
 	<!-- Ankush Configurator Keys End -->
 
-
-	<!-- Cloud connect wait time -->
+	<!-- Zookeeper Configuration Start -->
 	<property>
-		<name>ankush.cloud.wait</name>
-		<value>120000</value>
-		<description>Cloud connect wait time</description>
+		<name>zookeeper.session.timeout</name>
+		<value>4000</value>
+		<description>zookeeper session timeout</description>
 	</property>
-	<!--  Cloud connect wait time End -->
+	<property>
+		<name>zookeeper.connection.timeout</name>
+		<value>10000</value>
+		<description>zookeeper connection timeout</description>
+	</property>
+	<!-- Zookeeper Configuration End -->
 	
 </configuration>
 

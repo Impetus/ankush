@@ -30,8 +30,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.Transient;
+
 import org.codehaus.jackson.annotate.JsonIgnore;
 
+import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.utils.FileNameUtils;
 
 /**
@@ -71,6 +74,24 @@ public class GenericConfiguration implements Configuration {
 	/** The server tarball location. */
 	private String serverTarballLocation;
 
+	/** The server patch tarball location. */
+	private String serverPatchTarballLocation;
+
+	/** The server upgrade tarball location. */
+	private String serverUpgradeTarballLocation;
+
+	/** The server rolback tarball location. */
+	private String serverRollbackTarballLocation;
+	
+	/** The upgrade type. */
+	private boolean upgradeTypeClean;
+
+	/** The upgrade Behavior ConfOverwritw. */
+	private boolean upgradeBehaviorConfOverwrite;
+
+	/** The upgrade Behavior DataOverwritw. */
+	private boolean upgradeBehaviorDataOverwrite;
+	
 	/** The component home. */
 	private String componentHome;
 
@@ -92,6 +113,11 @@ public class GenericConfiguration implements Configuration {
 	/** The certification. */
 	private String certification;
 
+	/** The logDir. */
+	private String logDir = null;
+
+	/** The logFormat. */
+	private String logFormat = null;
 	/** The cluster conf. */
 	private ClusterConf clusterConf;
 
@@ -101,8 +127,22 @@ public class GenericConfiguration implements Configuration {
 	/** New nodes */
 	private List<NodeConf> newNodes = new ArrayList<NodeConf>();
 
+	/** New nodes */
+	private List<NodeConf> migrationNodeConf = new ArrayList<NodeConf>();
+	
 	/** Configuration State - Default/-/Custom **/
 	private String confState = new String();
+
+	/** Deployment state of the component **/
+	private String state = new String(
+			Constant.Component.DeploymentState.NOTSTARTED);
+
+	/**
+	 * Deploy Component Flag Used to notify the Deployer, if component needs to
+	 * be deployed or not Default is True During registration process, this can
+	 * be set to false to skip component deployment
+	 **/
+	private boolean deployComponentFlag = true;
 
 	/**
 	 * Gets the comp nodes.
@@ -278,6 +318,92 @@ public class GenericConfiguration implements Configuration {
 	 */
 	public void setServerTarballLocation(String serverTarballLocation) {
 		this.serverTarballLocation = serverTarballLocation;
+	}
+
+	
+	/**
+	 * @return the serverPatchTarballLocation
+	 */
+	public String getServerPatchTarballLocation() {
+		return serverPatchTarballLocation;
+	}
+
+	/**
+	 * @param serverPatchTarballLocation the serverPatchTarballLocation to set
+	 */
+	public void setServerPatchTarballLocation(String serverPatchTarballLocation) {
+		this.serverPatchTarballLocation = serverPatchTarballLocation;
+	}
+	
+	/**
+	 * @return the serverUpgradeTarballLocation
+	 */
+	public String getServerUpgradeTarballLocation() {
+		return serverUpgradeTarballLocation;
+	}
+
+	/**
+	 * @param serverUpgradeTarballLocation the serverUpgradeTarballLocation to set
+	 */
+	public void setServerUpgradeTarballLocation(String serverUpgradeTarballLocation) {
+		this.serverUpgradeTarballLocation = serverUpgradeTarballLocation;
+	}
+
+	/**
+	 * @return the serverRollbackTarballLocation
+	 */
+	public String getServerRollbackTarballLocation() {
+		return serverRollbackTarballLocation;
+	}
+
+	/**
+	 * @param serverRollbackTarballLocation the serverRollbackTarballLocation to set
+	 */
+	public void setServerRollbackTarballLocation(
+			String serverRollbackTarballLocation) {
+		this.serverRollbackTarballLocation = serverRollbackTarballLocation;
+	}
+
+	/**
+	 * @return the upgradeTypeClean
+	 */
+	public boolean isUpgradeTypeClean() {
+		return upgradeTypeClean;
+	}
+
+	/**
+	 * @param upgradeTypeClean the upgradeTypeClean to set
+	 */
+	public void setUpgradeTypeClean(boolean upgradeTypeClean) {
+		this.upgradeTypeClean = upgradeTypeClean;
+	}
+
+	/**
+	 * @return the upgradeBehaviorConfOverwrite
+	 */
+	public boolean isUpgradeBehaviorConfOverwrite() {
+		return upgradeBehaviorConfOverwrite;
+	}
+
+	/**
+	 * @param upgradeBehaviorConfOverwrite the upgradeBehaviorConfOverwrite to set
+	 */
+	public void setUpgradeBehaviorConfOverwrite(boolean upgradeBehaviorConfOverwrite) {
+		this.upgradeBehaviorConfOverwrite = upgradeBehaviorConfOverwrite;
+	}
+
+	/**
+	 * @return the upgradeBehaviorDataOverwrite
+	 */
+	public boolean isUpgradeBehaviorDataOverwrite() {
+		return upgradeBehaviorDataOverwrite;
+	}
+
+	/**
+	 * @param upgradeBehaviorDataOverwrite the upgradeBehaviorDataOverwrite to set
+	 */
+	public void setUpgradeBehaviorDataOverwrite(boolean upgradeBehaviorDataOverwrite) {
+		this.upgradeBehaviorDataOverwrite = upgradeBehaviorDataOverwrite;
 	}
 
 	/**
@@ -487,6 +613,37 @@ public class GenericConfiguration implements Configuration {
 		return newNodes;
 	}
 
+	public void resetNodeType() {
+		
+	}
+	
+	// /**
+	// * @return the processList
+	// */
+	// public List<String> getProcessList() {
+	// return processList;
+	// }
+	//
+	// /**
+	// * @param processList the processList to set
+	// */
+	// public void setProcessList(List<String> processList) {
+	// this.processList = processList;
+	// }
+
+	/**
+	 * @return the migrationNodeConf
+	 */
+	public List<NodeConf> getMigrationNodeConf() {
+		return migrationNodeConf;
+	}
+	
+	/**
+	 * @param migrationNodeConf the migrationNodeConf to set
+	 */
+	public void setMigrationNodeConf(List<NodeConf> migrationNodeConf) {
+		this.migrationNodeConf = migrationNodeConf;
+	}
 
 	/**
 	 * @param confState
@@ -501,6 +658,60 @@ public class GenericConfiguration implements Configuration {
 	 */
 	public String getConfState() {
 		return confState;
+	}
+
+	/**
+	 * @return the state
+	 */
+	public String getState() {
+		return state;
+	}
+
+	/**
+	 * @param state
+	 *            the state to set
+	 */
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	@JsonIgnore
+	@Transient
+	public boolean isInProgress() {
+		return this.state.equals(Constant.Component.DeploymentState.INPROGRESS);
+	}
+
+	@JsonIgnore
+	@Transient
+	public boolean isCompleted() {
+		return this.state.equals(Constant.Component.DeploymentState.COMPLETED);
+	}
+
+	@JsonIgnore
+	@Transient
+	public boolean isFailed() {
+		return this.state.equals(Constant.Component.DeploymentState.FAILED);
+	}
+
+	@JsonIgnore
+	@Transient
+	public boolean isNotStarted() {
+		return this.state.equals(Constant.Component.DeploymentState.NOTSTARTED);
+	}
+
+	/**
+	 * @return the deployComponentFlag
+	 */
+	public boolean isDeployComponentFlag() {
+		return deployComponentFlag;
+	}
+
+	/**
+	 * @param deployComponentFlag
+	 *            the deployComponentFlag to set
+	 */
+	public void setDeployComponentFlag(boolean deployComponentFlag) {
+		this.deployComponentFlag = deployComponentFlag;
 	}
 
 	/*
@@ -534,9 +745,40 @@ public class GenericConfiguration implements Configuration {
 	}
 
 	/**
-	 * Method to add new nodes in original nodes of object.
+	 * Empty method should be implemented by derived components.
 	 */
 	public void addNewNodes() {
 		// empty method for all components to implement.
 	}
+
+	/**
+	 * @return the logDir
+	 */
+	public String getLogDir() {
+		return logDir;
+	}
+
+	/**
+	 * @param logDir
+	 *            the logDir to set
+	 */
+	public void setLogDir(String logDir) {
+		this.logDir = logDir;
+	}
+
+	/**
+	 * @return the logFormat
+	 */
+	public String getLogFormat() {
+		return logFormat;
+	}
+
+	/**
+	 * @param logFormat
+	 *            the logFormat to set
+	 */
+	public void setLogFormat(String logFormat) {
+		this.logFormat = logFormat;
+	}
+
 }

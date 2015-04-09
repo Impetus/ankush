@@ -28,6 +28,8 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import com.impetus.ankush.common.exception.AnkushException;
+
 /**
  * The Class NmapUtilTest.
  */
@@ -39,7 +41,13 @@ public class NmapUtilTest {
 	@Test
 	public void testNmapUtil_1() {
 		NmapUtil fixture = new NmapUtil(null);
-		Map<String, Boolean> result = fixture.getNodeListWithStatus();
+		Map<String, Boolean> result = null;
+		try {
+			result = fixture.getNodeListWithStatus();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		assertNotNull(fixture);
 		assertNotNull(result);
 		assertEquals(0, result.size());
@@ -52,7 +60,13 @@ public class NmapUtilTest {
 	public void testNmapUtil_2() {
 		String nodePattern = "127.0.0.1";
 		NmapUtil fixture = new NmapUtil(nodePattern);
-		Map<String, Boolean> result = fixture.getNodeListWithStatus();
+		Map<String, Boolean> result = null;
+		try {
+			result = fixture.getNodeListWithStatus();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		assertNotNull(fixture);
 		assertNotNull(result);
 		assertEquals(1, result.size());

@@ -43,7 +43,6 @@ public class AgentConfTest {
 		conf.setAgentDaemonClass("AnkushAgent");
 		conf.setTechnologyName("Hadoop");
 		conf.setNodes(new LinkedList());
-		conf.setLocalJarsPath("/tmp/jars/");
 	}
 
 	@After
@@ -66,6 +65,5 @@ public class AgentConfTest {
 		assertNotNull(conf.getNodes());
 		assertEquals(0, conf.getNodes().size());
 		assertEquals("Hadoop", conf.getTechnologyName());
-		assertEquals("/tmp/jars/", conf.getLocalJarsPath());
 	}
 }

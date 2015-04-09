@@ -36,4 +36,8 @@ public class AnkushException extends Exception {
 	public AnkushException(String message) {
 		super(message);
 	}
+	
+	public AnkushException(String message,Exception e) {
+		super(message ,e);
+	}
 }

@@ -25,8 +25,10 @@ import java.lang.reflect.InvocationTargetException;
 
 import com.impetus.ankush.common.framework.AbstractMonitor;
 import com.impetus.ankush.common.framework.Clusterable;
+import com.impetus.ankush.common.framework.ComponentJsonMapper;
 import com.impetus.ankush.common.framework.Deployable;
-import com.impetus.ankush.common.framework.ServiceMonitorable;
+import com.impetus.ankush.common.framework.Registerable;
+import com.impetus.ankush.common.framework.config.ClusterConf;
 
 /**
  * The Class ReflectionUtil.
@@ -48,6 +50,14 @@ public class ReflectionUtil {
 	 */
 	public static Clusterable getClusterableObject(String className) {
 		return (com.impetus.ankush.common.framework.Clusterable) getObject(className);
+	}
+
+	public static ClusterConf getClusterConfObject(String className) {
+		return (com.impetus.ankush.common.framework.config.ClusterConf) getObject(className);
+	}
+
+	public static Registerable getRegisterableObject(String className) {
+		return (com.impetus.ankush.common.framework.Registerable) getObject(className);
 	}
 
 	/**
@@ -79,8 +89,33 @@ public class ReflectionUtil {
 	 *            the class name
 	 * @return the Serviceable object
 	 */
-	public static ServiceMonitorable getServiceMonitorableObject(String className) {
-		return (ServiceMonitorable) getObject(className);
+	public static com.impetus.ankush.common.framework.ServiceMonitorable getServiceMonitorableObject(
+			String className) {
+		return (com.impetus.ankush.common.framework.ServiceMonitorable) getObject(className);
+	}
+
+	public static ComponentJsonMapper getComponentJsonMapperObject(
+			String className) {
+		return (ComponentJsonMapper) getObject(className);
+	}
+
+	public static <S> S getObjectInstance(String className, Class<S> classType) {
+		return (S) getObject(className);
+	}
+
+	public static com.impetus.ankush2.framework.Deployable getDeployerObject(
+			String className) {
+		return (com.impetus.ankush2.framework.Deployable) getObject(className);
+	}
+
+	public static com.impetus.ankush2.framework.monitor.AbstractMonitor getMonitorObject(
+			String className) {
+		return (com.impetus.ankush2.framework.monitor.AbstractMonitor) getObject(className);
+	}
+
+	public static com.impetus.ankush2.framework.Serviceable getServiceObject(
+			String className) {
+		return (com.impetus.ankush2.framework.Serviceable) getObject(className);
 	}
 
 	/**
@@ -90,7 +125,7 @@ public class ReflectionUtil {
 	 *            the class name
 	 * @return the object
 	 */
-	private static Object getObject(String className) {
+	public static Object getObject(String className) {
 		Object obj = null;
 		try {
 			Class<?> clazz = Class.forName(className);

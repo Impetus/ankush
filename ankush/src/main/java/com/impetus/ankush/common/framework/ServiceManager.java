@@ -35,10 +35,10 @@ import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.domain.Cluster;
 import com.impetus.ankush.common.framework.config.ClusterConf;
 import com.impetus.ankush.common.framework.config.ServiceConf;
+import com.impetus.ankush.common.scripting.impl.AgentAction;
 import com.impetus.ankush.common.service.GenericManager;
 import com.impetus.ankush.common.utils.AnkushLogger;
 import com.impetus.ankush.common.utils.SSHUtils;
-import com.impetus.ankush.hadoop.HadoopClusterMonitor;
 
 /**
  * @author hokam
@@ -79,55 +79,114 @@ public class ServiceManager {
 		return this.result;
 	}
 
+	public Map manageClusterService(Long clusterId, Map parameterMap)
+			throws Exception {
+		// Getting cluster object from database.
+		Cluster cluster = clusterManager.get(clusterId);
+
+		// To be implemented
+
+		// if null then set error and return.
+		if (cluster == null) {
+			errors.add("Could not find cluster.");
+			return returnResult();
+		}
+		return returnResult();
+	}
+
+	/**
+	 * Method to perform the start/stop action on services
+	 * 
+	 * @param clusterId
+	 * @param serviceConf
+	 * @return
+	 * @throws Exception
+	 */
 	public Map manage(Long clusterId, ServiceConf serviceConf) throws Exception {
 
 		// Getting cluster object from database.
 		Cluster cluster = clusterManager.get(clusterId);
+
+		// if null then set error and return.
 		if (cluster == null) {
 			errors.add("Could not find cluster.");
+			return returnResult();
 		}
-		
-		for(String serviceName : serviceConf.getServices()) {
-			String errorMsg = "Unable to " + serviceConf.getAction() + " " + serviceName + " service, please view server logs for more detatils.";
+
+		// Iterating over the services to perform the action.
+		for (String serviceName : serviceConf.getServices()) {
+			// service error message.
+			String errorMsg = "Unable to " + serviceConf.getAction() + " "
+					+ serviceName
+					+ " service, please view server logs for more detatils.";
+			// service monitor object.
 			ServiceMonitorable serviceMonitor = null;
-			if(serviceName.startsWith("rg") || serviceName.startsWith("sn")) {
-				serviceMonitor = ObjectFactory.getServiceMonitorableInstanceByServiceName(Constant.Technology.ORACLE_NOSQL);
-			} else {
-				serviceMonitor = ObjectFactory.getServiceMonitorableInstanceByServiceName(serviceName);	
-			}
-			
-			if(serviceMonitor == null) {
+
+			serviceMonitor = ObjectFactory
+						.getServiceMonitorableInstanceByServiceName(serviceName);
+
+
+			// if it is null then add error else perform the action
+			if (serviceMonitor == null) {
 				this.errors.add(errorMsg);
-				logger.error("Unable to map class service monitor class for " + serviceName + ".");
+				logger.error("Unable to map class service monitor class for "
+						+ serviceName + ".");
 			} else {
+				// Cluster conf
 				ClusterConf clusterConf = cluster.getClusterConf();
-				
+
+				// SSH conncetion
 				SSHExec connection = null;
 				try {
 					logger.info("connecting with " + serviceConf.getIp());
 
 					// connect to remote node
 					connection = SSHUtils.connectToNode(serviceConf.getIp(),
-							clusterConf.getUsername(), clusterConf.getPassword(),
+							clusterConf.getUsername(),
+							clusterConf.getPassword(),
 							clusterConf.getPrivateKey());
 
-					String processName = Constant.RoleProcessName.getProcessName(serviceName);
-					if(processName == null) {
+					// Getting process name.
+					String processName = Constant.RoleProcessName
+							.getProcessName(serviceName);
+					if (processName == null) {
 						processName = serviceName;
 					}
-					
-					boolean requestStatus = serviceMonitor.manageService(clusterConf, connection, processName, serviceConf.getAction()); 
-					
-					if(!requestStatus) {
+
+					// force stop flag.
+					String forceStopFlag = "false";
+					if (serviceConf.getAction().equals(
+							Constant.ServiceAction.STOP)) {
+						forceStopFlag = "true";
+					}
+					// update forceStop flag when user manually start/stop the
+					// service.
+					AgentAction setForceStopFlag = new AgentAction(
+							Constant.Agent.Action.Handler.HACONFIG,
+							Constant.Agent.Action.ADDFORCESTOP, serviceName,
+							Constant.Agent.AGENT_HASERVICE_CONF_PATH,
+							forceStopFlag);
+
+					// setting force stop.
+					connection.exec(setForceStopFlag);
+
+					// service start/stop operation.
+					boolean requestStatus = serviceMonitor.manageService(
+							clusterConf, connection, processName,
+							serviceConf.getAction());
+
+					// if failed to perform action.
+					if (!requestStatus) {
 						this.errors.add(errorMsg);
-						logger.error("Unable to process service monitor request for " + serviceName + ".");
+						logger.error("Unable to process service monitor request for "
+								+ serviceName + ".");
 					}
 
 				} catch (Exception e) {
 					this.errors.add(errorMsg);
 					logger.error(e.getMessage());
 				} finally {
-					if(connection != null) {
+					if (connection != null) {
 						connection.disconnect();
 					}
 				}

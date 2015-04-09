@@ -14,9 +14,17 @@
 			<directory>src/main/webapp/</directory>
 			<outputDirectory>/</outputDirectory>
 			<includes>
+<!-- 			
 				<include>README*</include>
 				<include>LICENSE*</include>
+ -->				
+				<include>Impetus*</include>
+				<include>NOTICE.txt*</include>
 			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>src/main/resources/setupBundles/</directory>
+			<outputDirectory>repo</outputDirectory>
 		</fileSet>
 		<fileSet>
 			<directory>src/main/resources/</directory>
@@ -34,10 +42,15 @@
 		</fileSet>
 		<fileSet>
 			<directory>src/main/resources/scripts/ankush/</directory>
-			<outputDirectory>bin</outputDirectory>
+			<outputDirectory>/bin</outputDirectory>
 			<includes>
-				<include>**</include>
-			</includes>
+				<include>*.sh</include>				
+			</includes>			
+			<fileMode>0755</fileMode>
+		</fileSet>
+		<fileSet>
+			<directory>src/main/resources/license/</directory>
+			<outputDirectory>license</outputDirectory>
 		</fileSet>
 	</fileSets>
 </assembly>

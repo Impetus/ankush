@@ -32,7 +32,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -52,8 +51,13 @@ import com.impetus.ankush.common.constant.Constant;
 @Table(name = "event")
 public class Event extends BaseObject {
 
-	/** The Constant CLUSTER_ID. */
-	private static final String EVENT_ID = "eventId";
+	public enum Severity {
+		NORMAL, WARNING, CRITICAL
+	}
+
+	public enum Type {
+		SERVICE, USAGE
+	}
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
@@ -64,29 +68,24 @@ public class Event extends BaseObject {
 	/** The cluster id. */
 	private Long clusterId;
 
-	/** The name. */
-	private String name;
-
-	/** The type. */
-	private String type;
-
-	/** The severity. */
-	private String severity;
-
 	/** The host. */
 	private String host;
 
-	/** The description. */
-	private String description;
+	/** The type. */
+	private Type type;
+
+	/** The severity. */
+	private Severity severity;
+
+	private String category;
+
+	private String thresholdValue;
+
+	/** The name. */
+	private String name;
 
 	/** The current value. */
-	private String currentValue;
-
-	/** The sub type. */
-	private String subType;
-
-	/** The grouping type. */
-	private String groupingType;
+	private String value;
 
 	/** The date. */
 	private Date date;
@@ -98,7 +97,8 @@ public class Event extends BaseObject {
 	 * 
 	 * @return the tiles
 	 */
-	@OneToMany(mappedBy = EVENT_ID, fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+//	@OneToMany(mappedBy = "eventId", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "eventId", cascade = CascadeType.ALL)
 	@JsonIgnore
 	public List<EventHistory> getHistory() {
 		return history;
@@ -150,6 +150,7 @@ public class Event extends BaseObject {
 	 * @return the clusterId
 	 */
 	@JsonIgnore
+	@Index(name = "event_cluster_index")
 	public Long getClusterId() {
 		return clusterId;
 	}
@@ -159,29 +160,9 @@ public class Event extends BaseObject {
 	 * 
 	 * @return the name
 	 */
-	@Index(name="event_name_index")
+	@Index(name = "event_name_index")
 	public String getName() {
 		return name;
-	}
-
-	/**
-	 * Sets the name.
-	 * 
-	 * @param name
-	 *            the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-		if (this.name != null) {
-			if (this.name.startsWith("rg")) {
-				setSubType("Rep Node");
-			} else if (this.name.startsWith("sn")) {
-				setSubType("Storage Node");
-			} else {
-				setSubType(name);
-			}
-			setGroupingType(getSubType());
-		}
 	}
 
 	/**
@@ -189,7 +170,8 @@ public class Event extends BaseObject {
 	 * 
 	 * @return the type
 	 */
-	public String getType() {
+	@Index(name = "event_type_index")
+	public Type getType() {
 		return type;
 	}
 
@@ -199,7 +181,7 @@ public class Event extends BaseObject {
 	 * @param type
 	 *            the type to set
 	 */
-	public void setType(String type) {
+	public void setType(Type type) {
 		this.type = type;
 	}
 
@@ -208,8 +190,8 @@ public class Event extends BaseObject {
 	 * 
 	 * @return the severity
 	 */
-	@Index(name="event_severity_index")
-	public String getSeverity() {
+	@Index(name = "event_severity_index")
+	public Severity getSeverity() {
 		return severity;
 	}
 
@@ -219,7 +201,7 @@ public class Event extends BaseObject {
 	 * @param severity
 	 *            the severity to set
 	 */
-	public void setSeverity(String severity) {
+	public void setSeverity(Severity severity) {
 		this.severity = severity;
 	}
 
@@ -228,7 +210,7 @@ public class Event extends BaseObject {
 	 * 
 	 * @return the host
 	 */
-	@Index(name="event_host_index")
+	@Index(name = "event_host_index")
 	public String getHost() {
 		return host;
 	}
@@ -241,89 +223,6 @@ public class Event extends BaseObject {
 	 */
 	public void setHost(String host) {
 		this.host = host;
-	}
-
-	/**
-	 * Gets the description.
-	 * 
-	 * @return the description
-	 */
-	@Lob
-	public String getDescription() {
-		return description;
-	}
-
-	/**
-	 * Sets the description.
-	 * 
-	 * @param description
-	 *            the description to set
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	/**
-	 * Gets the current value.
-	 * 
-	 * @return the currentValue
-	 */
-	public String getCurrentValue() {
-		if (this.type != null && this.type.equals(Constant.Alerts.Type.USAGE)
-				&& currentValue != null && !currentValue.contains("%")) {
-			return currentValue + " %";
-		}
-		return currentValue;
-	}
-
-	/**
-	 * Sets the current value.
-	 * 
-	 * @param currentValue
-	 *            the currentValue to set
-	 */
-	public void setCurrentValue(String currentValue) {
-		this.currentValue = currentValue;
-	}
-
-	/**
-	 * Sets the sub type.
-	 * 
-	 * @param subType
-	 *            the subType to set
-	 */
-	public void setSubType(String subType) {
-		if (subType != null) {
-			this.subType = subType.replaceAll(" Service", "").replaceAll(
-					"Usage", "");
-		}
-	}
-
-	/**
-	 * Gets the sub type.
-	 * 
-	 * @return the subType
-	 */
-	@Index(name="event_subtype_index")
-	public String getSubType() {
-		return subType;
-	}
-
-	/**
-	 * @param groupingType
-	 *            the groupingType to set
-	 */
-	public void setGroupingType(String groupingType) {
-		if (groupingType != null) {
-			this.groupingType = groupingType;
-		}
-	}
-
-	/**
-	 * @return the groupingType
-	 */
-	public String getGroupingType() {
-		return groupingType;
 	}
 
 	/**
@@ -346,6 +245,60 @@ public class Event extends BaseObject {
 	}
 
 	/**
+	 * @return the category
+	 */
+	@Index(name = "event_category_index")
+	public String getCategory() {
+		return category;
+	}
+
+	/**
+	 * @param category
+	 *            the category to set
+	 */
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	/**
+	 * @return the value
+	 */
+	public String getValue() {
+		return value;
+	}
+
+	/**
+	 * @param value
+	 *            the value to set
+	 */
+	public void setValue(String value) {
+		this.value = value;
+	}
+
+	/**
+	 * @param name
+	 *            the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * @return the thresholdValue
+	 */
+	public String getThresholdValue() {
+		return thresholdValue;
+	}
+
+	/**
+	 * @param thresholdValue
+	 *            the thresholdValue to set
+	 */
+	public void setThresholdValue(String thresholdValue) {
+		this.thresholdValue = thresholdValue;
+	}
+
+	/**
 	 * Gets the subject.
 	 * 
 	 * @return the subject
@@ -354,12 +307,14 @@ public class Event extends BaseObject {
 	@Transient
 	public String getSubject() {
 		StringBuilder sub = new StringBuilder();
-		if (this.severity.equals(Constant.Alerts.Severity.NORMAL)) {
-			sub.append(this.name).append(" At ").append(this.host);
-			sub.append(" is back to normal");
+		if (this.severity.equals(Severity.NORMAL)) {
+			sub.append(this.name).append("(").append(this.category)
+					.append(") At ").append(this.host)
+					.append(" is back to normal");
 		} else {
 			sub.append("Ankush ").append(this.severity).append(" : ");
-			sub.append(this.host).append(" " + this.name);
+			sub.append(this.host).append(" " + this.name).append("(")
+					.append(this.category).append(")");
 		}
 		return sub.toString();
 	}
@@ -373,14 +328,16 @@ public class Event extends BaseObject {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((date == null) ? 0 : date.hashCode());
 		result = prime * result
-				+ ((description == null) ? 0 : description.hashCode());
+				+ ((category == null) ? 0 : category.hashCode());
+		result = prime * result
+				+ ((clusterId == null) ? 0 : clusterId.hashCode());
 		result = prime * result + ((host == null) ? 0 : host.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result
 				+ ((severity == null) ? 0 : severity.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		return result;
 	}
 
@@ -397,22 +354,22 @@ public class Event extends BaseObject {
 		if (obj == null) {
 			return false;
 		}
-		if (getClass() != obj.getClass()) {
+		if (!(obj instanceof Event)) {
 			return false;
 		}
 		Event other = (Event) obj;
-		if (date == null) {
-			if (other.date != null) {
+		if (category == null) {
+			if (other.category != null) {
 				return false;
 			}
-		} else if (!date.equals(other.date)) {
+		} else if (!category.equals(other.category)) {
 			return false;
 		}
-		if (description == null) {
-			if (other.description != null) {
+		if (clusterId == null) {
+			if (other.clusterId != null) {
 				return false;
 			}
-		} else if (!description.equals(other.description)) {
+		} else if (!clusterId.equals(other.clusterId)) {
 			return false;
 		}
 		if (host == null) {
@@ -443,23 +400,26 @@ public class Event extends BaseObject {
 		} else if (!type.equals(other.type)) {
 			return false;
 		}
+		if (value == null) {
+			if (other.value != null) {
+				return false;
+			}
+		} else if (!value.equals(other.value)) {
+			return false;
+		}
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "Event [id=" + id + ", name=" + name + ", type=" + type
-				+ ", severity=" + severity + ", host=" + host
-				+ ", description=" + description + ", date=" + date
-				+ ", getId()=" + getId() + ", getName()=" + getName()
-				+ ", getType()=" + getType() + ", getSeverity()="
-				+ getSeverity() + ", getHost()=" + getHost()
-				+ ", getDescription()=" + getDescription() + ", getDate()="
-				+ getDate() + ", hashCode()=" + hashCode() + "]";
+		return "Event [id=" + id + ", clusterId=" + clusterId + ", host="
+				+ host + ", type=" + type + ", severity=" + severity
+				+ ", category=" + category + ", thresholdValue="
+				+ thresholdValue + ", name=" + name + ", value=" + value
+				+ ", date=" + date + ", history=" + history + "]";
 	}
+	
 }

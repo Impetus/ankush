@@ -55,22 +55,7 @@ public class FileNameUtilsTest {
 		assertEquals("/", result);
 	}
 
-	/**
-	 * Test get dependency file name_1.
-	 *
-	 * @throws Exception the exception
-	 */
-	@Test
-	public void testGetDependencyFileName_1()
-		throws Exception {
-		String osName = "ubuntu";
-		String componentName = "storm";
-
-		String result = FileNameUtils.getDependencyFileName(osName, componentName);
-
-		assertEquals("nulldependencies/storm/ubuntu", result);
-	}
-
+	
 	/**
 	 * Test get extracted directory name_1.
 	 *

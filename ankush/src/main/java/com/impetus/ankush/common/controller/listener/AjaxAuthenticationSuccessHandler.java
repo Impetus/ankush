@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
+import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.domain.User;
 import com.impetus.ankush.common.service.AppConfService;
 import com.impetus.ankush.common.service.UserManager;
@@ -40,6 +41,9 @@ import com.impetus.ankush.common.service.UserManager;
  */
 public class AjaxAuthenticationSuccessHandler extends
 		SavedRequestAwareAuthenticationSuccessHandler {
+
+	/** The user manager. */
+	private UserManager userManager;
 
 	/** The app conf service. */
 	private AppConfService appConfService;
@@ -55,9 +59,6 @@ public class AjaxAuthenticationSuccessHandler extends
 			@Qualifier("appConfService") AppConfService appConfService) {
 		this.appConfService = appConfService;
 	}
-	
-	/** The user manager. */
-	private UserManager userManager;
 
 	/**
 	 * Sets the user manager.
@@ -84,14 +85,20 @@ public class AjaxAuthenticationSuccessHandler extends
 			throws IOException, ServletException {
 
 		if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
-			String loggedUserName = authentication.getName();
-			User user = userManager.getUserByUsername(loggedUserName);
-			Boolean changeRequired = user.getForcePasswordChange();
-			if (changeRequired == null) {
-				changeRequired = false;
+			String state = null;
+			String userName = authentication.getName();
+			User usr = userManager.getByPropertyValue("username", userName);
+			if (usr != null) {
+				Object obj = usr.getForcePasswordChange();
+				if ((obj != null) && (obj instanceof Boolean)) {
+					boolean b = (Boolean)obj;
+					if (b)
+						state = Constant.App.State.CHANGE_PASSWORD;
+				}
 			}
-
-			String state = appConfService.getState();
+				
+			if (state == null)
+				state = appConfService.getState();
 
 			response.setContentType("application/json");
 			String responseJSON = "{\"success\":true";

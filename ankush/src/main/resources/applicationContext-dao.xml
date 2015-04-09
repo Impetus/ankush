@@ -32,18 +32,19 @@
 			</value>
 		</property>
 	</bean>
-	
-	<!--  Hibernate Session Factory -->
-	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+
+	<!-- Hibernate Session Factory -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="hibernateProperties">
 			<value>
 				hibernate.dialect=${jdbc.dialect}
 				hibernate.query.substitutions=true 'Y', false 'N'
 			</value>
-		</property>    	
-  	</bean>
-  	
+		</property>
+	</bean>
+
 	<bean id="persistenceUnitManager"
 		class="org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager">
 		<property name="persistenceXmlLocations">
@@ -74,35 +75,35 @@
 	<bean id="eventDao" class="com.impetus.ankush.common.dao.impl.GenericDaoJpa">
 		<constructor-arg value="com.impetus.ankush.common.domain.Event" />
 	</bean>
-	
+
 	<bean id="eventHistoryDao" class="com.impetus.ankush.common.dao.impl.GenericDaoJpa">
 		<constructor-arg value="com.impetus.ankush.common.domain.EventHistory" />
 	</bean>
-	
+
 	<bean id="tileDao" class="com.impetus.ankush.common.dao.impl.GenericDaoJpa">
-    	<constructor-arg value="com.impetus.ankush.common.domain.Tile" />
-  	</bean>
-  	
+		<constructor-arg value="com.impetus.ankush.common.domain.Tile" />
+	</bean>
+
 	<bean id="clusterDao" class="com.impetus.ankush.common.dao.impl.GenericDaoJpa">
 		<constructor-arg value="com.impetus.ankush.common.domain.Cluster" />
 	</bean>
-	
+
 	<bean id="nodeDao" class="com.impetus.ankush.common.dao.impl.GenericDaoJpa">
 		<constructor-arg value="com.impetus.ankush.common.domain.Node" />
 	</bean>
-	
+
 	<bean id="nodeMonitoringDao" class="com.impetus.ankush.common.dao.impl.GenericDaoJpa">
 		<constructor-arg value="com.impetus.ankush.common.domain.NodeMonitoring" />
 	</bean>
-	
+
 	<bean id="configurationDao" class="com.impetus.ankush.common.dao.impl.GenericDaoJpa">
 		<constructor-arg value="com.impetus.ankush.common.domain.Configuration" />
 	</bean>
-	
+
 	<bean id="logDao" class="com.impetus.ankush.common.dao.impl.GenericDaoJpa">
-   	 	<constructor-arg value="com.impetus.ankush.common.domain.Log" />
-  	</bean>
-	
+		<constructor-arg value="com.impetus.ankush.common.domain.Log" />
+	</bean>
+
 	<bean id="roleDao" class="com.impetus.ankush.common.dao.impl.GenericDaoJpa">
 		<constructor-arg value="com.impetus.ankush.common.domain.Role" />
 	</bean>
@@ -111,53 +112,91 @@
 		<constructor-arg value="com.impetus.ankush.common.domain.AppConf" />
 	</bean>
 
-	<!-- Manager Definitions -->
-	<bean id="eventManager" class="com.impetus.ankush.common.service.impl.GenericManagerImpl">
-		<constructor-arg ref="eventDao" />
+	<bean id="templateDao" class="com.impetus.ankush.common.dao.impl.GenericDaoJpa">
+		<constructor-arg value="com.impetus.ankush.common.domain.Template" />
+	</bean>
+
+	<bean id="haServiceDao" class="com.impetus.ankush.common.dao.impl.GenericDaoJpa">
+		<constructor-arg value="com.impetus.ankush.common.domain.HAService" />
 	</bean>
 	
-	<bean id="eventHistoryManager" class="com.impetus.ankush.common.service.impl.GenericManagerImpl">
+	 <bean id="serviceDao" class="com.impetus.ankush.common.dao.impl.GenericDaoJpa">
+    <constructor-arg value="com.impetus.ankush.common.domain.Service" />
+  </bean>
+	
+	<bean id="operationDao" class="com.impetus.ankush.common.dao.impl.GenericDaoJpa">
+		<constructor-arg value="com.impetus.ankush.common.domain.Operation" />
+	</bean>
+
+	<!-- Manager Definitions -->
+	<bean id="eventManager"
+		class="com.impetus.ankush.common.service.impl.GenericManagerImpl">
+		<constructor-arg ref="eventDao" />
+	</bean>
+
+	<bean id="eventHistoryManager"
+		class="com.impetus.ankush.common.service.impl.GenericManagerImpl">
 		<constructor-arg ref="eventHistoryDao" />
 	</bean>
 
 	<bean id="tileManager"
-	    class="com.impetus.ankush.common.service.impl.GenericManagerImpl">
-	    <constructor-arg ref="tileDao" />
-  	</bean>
-	
+		class="com.impetus.ankush.common.service.impl.GenericManagerImpl">
+		<constructor-arg ref="tileDao" />
+	</bean>
+
 	<bean id="clusterManager"
 		class="com.impetus.ankush.common.service.impl.GenericManagerImpl">
 		<constructor-arg ref="clusterDao" />
 	</bean>
-	
+
 	<bean id="nodeManager"
 		class="com.impetus.ankush.common.service.impl.GenericManagerImpl">
 		<constructor-arg ref="nodeDao" />
 	</bean>
-	
+
 	<bean id="nodeMonitoringManager"
 		class="com.impetus.ankush.common.service.impl.GenericManagerImpl">
 		<constructor-arg ref="nodeMonitoringDao" />
 	</bean>
-	
+
 	<bean id="configurationManager"
 		class="com.impetus.ankush.common.service.impl.GenericManagerImpl">
 		<constructor-arg ref="configurationDao" />
 	</bean>
-	
+
 	<bean id="logManager"
-    	class="com.impetus.ankush.common.service.impl.GenericManagerImpl">
-    	<constructor-arg ref="logDao" />
-  	</bean>
+		class="com.impetus.ankush.common.service.impl.GenericManagerImpl">
+		<constructor-arg ref="logDao" />
+	</bean>
 
 	<bean id="roleManager"
 		class="com.impetus.ankush.common.service.impl.GenericManagerImpl">
 		<constructor-arg ref="roleDao" />
 	</bean>
-	
+
 	<bean id="appConfManager"
 		class="com.impetus.ankush.common.service.impl.GenericManagerImpl">
 		<constructor-arg ref="appConfDao" />
 	</bean>
 
+	<bean id="templateManager"
+		class="com.impetus.ankush.common.service.impl.GenericManagerImpl">
+		<constructor-arg ref="templateDao" />
+	</bean>
+
+	<bean id="haServiceManager"
+		class="com.impetus.ankush.common.service.impl.GenericManagerImpl">
+		<constructor-arg ref="haServiceDao" />
+	</bean>
+	
+	<bean id="serviceManager"
+    class="com.impetus.ankush.common.service.impl.GenericManagerImpl">
+    <constructor-arg ref="serviceDao" />
+  </bean>
+	
+	<bean id="operationManager"
+		class="com.impetus.ankush.common.service.impl.GenericManagerImpl">
+		<constructor-arg ref="operationDao" />
+	</bean>
+	
 </beans>

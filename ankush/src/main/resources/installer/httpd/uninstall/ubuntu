@@ -1,0 +1,2 @@
+apt-get -qq -y remove apache2
+apt-get -qq -y remove libapache2-mod-jk

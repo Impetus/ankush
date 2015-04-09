@@ -24,7 +24,6 @@
 package com.impetus.ankush.common.service;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,8 +33,6 @@ import java.util.Map;
 import org.apache.commons.beanutils.BeanUtils;
 
 import com.impetus.ankush.AppStoreWrapper;
-import com.impetus.ankush.common.alerts.EventManager;
-import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.domain.Cluster;
 import com.impetus.ankush.common.domain.Node;
 import com.impetus.ankush.common.domain.NodeMonitoring;
@@ -49,6 +46,10 @@ import com.impetus.ankush.common.framework.config.NodeProcessInfo;
 import com.impetus.ankush.common.framework.config.NodeSwapInfo;
 import com.impetus.ankush.common.framework.config.NodeUpTimeInfo;
 import com.impetus.ankush.common.utils.AnkushLogger;
+import com.impetus.ankush2.constant.Constant;
+import com.impetus.ankush2.db.DBEventManager;
+import com.impetus.ankush2.db.DBServiceManager;
+import com.impetus.ankush2.framework.manager.ClusterManager;
 
 /**
  * The Class MonitoringManager.
@@ -70,10 +71,6 @@ public class MonitoringManager {
 	private GenericManager<Node, Long> nodeManager = AppStoreWrapper
 			.getManager(Constant.Manager.NODE, Node.class);
 
-	/** Cluster Manager. */
-	private GenericManager<Cluster, Long> clusterManager = AppStoreWrapper
-			.getManager(Constant.Manager.CLUSTER, Cluster.class);
-
 	/**
 	 * Ankush logger.
 	 */
@@ -87,44 +84,59 @@ public class MonitoringManager {
 	 * @param infoMap
 	 *            the info map
 	 */
-	public void saveNodeMonitoringInfo(Long nodeId, Map infoMap) {
+	public boolean saveNodeMonitoringInfo(Long nodeId, Map infoMap) {
+		boolean status = true;
 		try {
 			// getting the node object.
 			Node node = nodeManager.get(nodeId);
+			// get cluster from nodedId
+			GenericManager<Cluster, Long> clusterManager = AppStoreWrapper
+					.getManager(Constant.Manager.CLUSTER, Cluster.class);
 
-			// getting the cluster object
-			Cluster cluster = clusterManager.get(node.getClusterId());
+			// Return if not is not in deployed state
+			if (clusterManager
+					.get(node.getClusterId())
+					.getState()
+					.equalsIgnoreCase(
+							Constant.Cluster.State.REMOVING.toString())
+					|| !node.getState().equalsIgnoreCase(
+							Constant.Node.State.DEPLOYED.toString())) {
+				LOG.error("Cann't save node monitoring data as Cluster or node State is not Deployed.");
+				status = false;
+			} else {
 
-			if (!isDeployedOrAdded(node, cluster)) {
-				return;
+				// Get the db node monitoring info
+				NodeMonitoring nodeMonitoring = monitoringManager
+						.getByPropertyValueGuarded(NODE_ID, nodeId);
+
+				// if null create the new node monitoring obj.
+				if (nodeMonitoring == null) {
+					// Set initial node monitoring data
+					nodeMonitoring = new NodeMonitoring();
+					nodeMonitoring.setNodeId(nodeId);
+				}
+
+				// Create monitoring info object using map.
+				MonitoringInfo monitoringInfo = getMonitoringInfo(infoMap);
+				// Set monitoring info in node monitoring info.
+				nodeMonitoring.setMonitoringInfo(monitoringInfo);
+				// Setting update time in node monitoring info.
+				nodeMonitoring.setUpdateTime(new Date());
+
+				// Saving node monitoring info in db.
+				nodeMonitoring = monitoringManager.save(nodeMonitoring);
+
+				new DBEventManager().checkAlertsForUsage(node.getPublicIp(),
+						node.getClusterId(), nodeMonitoring);
 			}
 
-			// Get the db node monitoring info
-			NodeMonitoring nodeMonitoring = monitoringManager
-					.getByPropertyValueGuarded(NODE_ID, nodeId);
-
-			// if null create the new node monitoring obj.
-			if (nodeMonitoring == null) {
-				nodeMonitoring = new NodeMonitoring();
-			}
-
-			// Create monitoring info object using map.
-			MonitoringInfo monitoringInfo = getMonitoringInfo(infoMap);
-			// Set monitoring info in node monitoring info.
-			nodeMonitoring.setMonitoringInfo(monitoringInfo);
-			// Setting update time in node monitoring info.
-			nodeMonitoring.setUpdateTime(new Date());
-			// setting node id in node monitoring info.
-			nodeMonitoring.setNodeId(nodeId);
-			// Saving node monitoring info in db.
-			nodeMonitoring = monitoringManager.save(nodeMonitoring);
-			EventManager eventManager = new EventManager();
-			eventManager.checkAlertsForMonitoring(nodeMonitoring);
 		} catch (Exception e) {
 			// Setting log error.
-			LOG.error(e.getMessage());
+			LOG.error("Unable to save node monitoring info against nodeId : "
+					+ nodeId, e);
+			status = false;
 		}
-
+		return status;
 	}
 
 	/**
@@ -142,7 +154,7 @@ public class MonitoringManager {
 			return nodeMonitoring;
 		} catch (Exception e) {
 			// Setting log error.
-			LOG.error(e.getMessage());
+			LOG.error(e.getMessage(), e);
 		}
 		return null;
 	}
@@ -161,7 +173,7 @@ public class MonitoringManager {
 			return nodeMonitoring.getTechnologyData().get(technology);
 		} catch (Exception e) {
 			// Setting log error.
-			LOG.error(e.getMessage());
+			LOG.error(e.getMessage(), e);
 		}
 		return null;
 	}
@@ -185,82 +197,100 @@ public class MonitoringManager {
 			}
 		} catch (Exception e) {
 			// Setting log error.
-			LOG.error(e.getMessage());
+			LOG.error(e.getMessage(), e);
 		}
 		return null;
 	}
 
 	/**
-	 * Save service status info.
+	 * Save Technology Service Status.
 	 * 
 	 * @param nodeId
-	 *            the node id
-	 * @param infoMap
-	 *            the info map
+	 * @param agentServiceStatus
 	 */
-	public void saveServiceStatusInfo(Long nodeId,
-			HashMap<String, Boolean> infoMap) {
+	public boolean saveTecnologyServiceStatus(Long nodeId,
+			HashMap<String, Map<String, Boolean>> agentServiceStatus) {
+		boolean status = true;
 		try {
+
 			// getting the node object.
 			Node node = nodeManager.get(nodeId);
 
-			// getting the cluster object
-			Cluster cluster = clusterManager.get(node.getClusterId());
+			// get cluster from nodedId
+			GenericManager<Cluster, Long> clusterManager = AppStoreWrapper
+					.getManager(Constant.Manager.CLUSTER, Cluster.class);
 
-			if (!isDeployedOrAdded(node, cluster)) {
-				return;
-			}
+			// Return if not is not in deployed state
+			if (clusterManager
+					.get(node.getClusterId())
+					.getState()
+					.equalsIgnoreCase(
+							Constant.Cluster.State.REMOVING.toString())
+					|| !node.getState().equalsIgnoreCase(
+							Constant.Node.State.DEPLOYED.toString())) {
+				LOG.error("Cann't save node service status as Cluster or node State is not Deployed.");
+				status = false;
+			} else {
 
-			// Get the db node monitoring info
-			NodeMonitoring nodeMonitoring = monitoringManager
-					.getByPropertyValueGuarded(NODE_ID, nodeId);
+				// Get the db node monitoring info
+				NodeMonitoring nodeMonitoring = monitoringManager
+						.getByPropertyValueGuarded(NODE_ID, nodeId);
 
-			// if null create the new node monitoring obj.
-			if (nodeMonitoring == null) {
-				nodeMonitoring = new NodeMonitoring();
-			}
-
-			Map<String, Boolean> serviceStatus = nodeMonitoring
-					.getServiceStatus();
-			if (serviceStatus == null) {
-				serviceStatus = new HashMap<String, Boolean>();
-			}else{
-				// Remove RepNode services infoMap has StorageNode service status
-				for(String service: infoMap.keySet()){
-					if(service.startsWith("sn")){
-						List<String> repNodes = new ArrayList<String>();
-						for(String s: serviceStatus.keySet()){
-							if(s.startsWith("rg")){
-								repNodes.add(s);
-							}
-						}
-						for(String s:repNodes){
-							serviceStatus.remove(s);
-						}
-					}				
+				// if null create the new node monitoring obj.
+				if (nodeMonitoring == null) {
+					nodeMonitoring = new NodeMonitoring();
+					// Set initial node monitoring data
+					nodeMonitoring.setNodeId(nodeId);
+					// set service status.
+					nodeMonitoring
+							.setTechnologyServiceStatus(new HashMap<String, Map<String, Boolean>>());
 				}
+
+				// Update service into database if it is not empty
+				if (!agentServiceStatus.isEmpty()) {
+
+					Map<String, Map<String, Boolean>> serviceStatus = nodeMonitoring
+							.getTechnologyServiceStatus();
+
+					if (serviceStatus == null) {
+						serviceStatus = new HashMap<String, Map<String, Boolean>>();
+					}
+
+					for (String key : agentServiceStatus.keySet()) {
+						if (serviceStatus.containsKey(key)) {
+							serviceStatus.get(key).putAll(
+									agentServiceStatus.get(key));
+						} else {
+							serviceStatus.put(key, agentServiceStatus.get(key));
+						}
+					}
+					// set service status.
+					nodeMonitoring
+							.setTechnologyServiceStatus((HashMap<String, Map<String, Boolean>>) serviceStatus);
+
+					// Set service status into service table
+					DBServiceManager.getManager().setServicesStatus(
+							node.getClusterId(), node.getPublicIp(),
+							agentServiceStatus);
+				}
+
+				// Set monitoring info in node monitoring info.
+				nodeMonitoring.setUpdateTime(new Date());
+
+				// Saving node monitoring info in database.
+				nodeMonitoring = monitoringManager.save(nodeMonitoring);
+
+				DBEventManager eventManager = new DBEventManager();
+				eventManager.checkAlertsForService(node.getPublicIp(),
+						node.getClusterId(), agentServiceStatus);
 			}
-			
-			
-			serviceStatus.putAll(infoMap);
-			// removing the empty entry added by agent.
-			serviceStatus.remove("");
-			// Create monitoring info object using map.
-			// set service status.
-			nodeMonitoring
-					.setServiceStatus((HashMap<String, Boolean>) serviceStatus);
-			// Set monitoring info in node monitoring info.
-			nodeMonitoring.setUpdateTime(new Date());
-			// setting node id in node monitoring info.
-			nodeMonitoring.setNodeId(nodeId);
-			// Saving node monitoring info in db.
-			nodeMonitoring = monitoringManager.save(nodeMonitoring);
-			EventManager eventManager = new EventManager();
-			eventManager.checkAlertsForMonitoring(nodeMonitoring);
 		} catch (Exception e) {
 			// Setting log error.
-			LOG.error(e.getMessage());
+			LOG.error("Unable to save node service status against nodeId : "
+					+ nodeId, e);
+			status = false;
 		}
+		return status;
 	}
 
 	/**
@@ -315,27 +345,8 @@ public class MonitoringManager {
 			nodeMonitoring = monitoringManager.save(nodeMonitoring);
 		} catch (Exception e) {
 			// Setting log error.
-			LOG.error(e.getMessage());
+			LOG.error(e.getMessage(), e);
 		}
-	}
-
-	/**
-	 * Method to check the either the cluster/node is deployed/added or not.
-	 * 
-	 * @param node
-	 *            the node
-	 * @param cluster
-	 *            the cluster
-	 * @return true, if is deployed or added
-	 */
-	private boolean isDeployedOrAdded(Node node, Cluster cluster) {
-		if (!node.getState().equalsIgnoreCase(Constant.Node.State.DEPLOYED)
-				|| cluster.getState().equals(Constant.Cluster.State.ERROR)
-				|| cluster.getState().equals(Constant.Cluster.State.DEPLOYING)
-				|| cluster.getState().equals(Constant.Cluster.State.REMOVING)) {
-			return false;
-		}
-		return true;
 	}
 
 	/**
@@ -466,104 +477,6 @@ public class MonitoringManager {
 			result.add(status);
 		}
 		return result;
-	}
-
-	/**
-	 * Swap info.
-	 * 
-	 * @param nodeId
-	 *            the node id
-	 * @return the node swap info
-	 */
-	private NodeSwapInfo swapInfo(Long nodeId) {
-		// create node monitoring info.
-		try {
-			NodeMonitoring nodeMonitoring = monitoringManager
-					.getByPropertyValueGuarded(NODE_ID, nodeId);
-
-			// if node monitoring and monitoring info is not null.
-			NodeSwapInfo swapInfo = new NodeSwapInfo();
-
-			if (nodeMonitoring != null
-					&& nodeMonitoring.getMonitoringInfo() != null) {
-
-				MonitoringInfo monitoringInfo = nodeMonitoring
-						.getMonitoringInfo();
-				if (monitoringInfo.getSwapInfos() != null) {
-					// get the first element from the list.
-					swapInfo = monitoringInfo.getSwapInfos().get(0);
-				}
-			}
-			// return swap info.
-			return swapInfo;
-		} catch (Exception e) {
-			LOG.error(e.getMessage(), e);
-		}
-		return null;
-	}
-
-	/**
-	 * Os info.
-	 * 
-	 * @param nodeId
-	 *            the node id
-	 * @return the node os info
-	 */
-	private NodeOSInfo osInfo(Long nodeId) {
-		try {
-			// create node monitoring info.
-			NodeMonitoring nodeMonitoring = monitoringManager
-					.getByPropertyValueGuarded(NODE_ID, nodeId);
-
-			// if node monitoring and monitoring info is not null.
-			NodeOSInfo osInfo = new NodeOSInfo();
-
-			if (nodeMonitoring != null
-					&& nodeMonitoring.getMonitoringInfo() != null) {
-
-				MonitoringInfo monitoringInfo = nodeMonitoring
-						.getMonitoringInfo();
-				if (monitoringInfo.getOsInfos() != null) {
-					// get the first element from the list.
-					osInfo = monitoringInfo.getOsInfos().get(0);
-				}
-			}
-			// return swap info.
-			return osInfo;
-		} catch (Exception e) {
-			LOG.error(e.getMessage(), e);
-		}
-		return null;
-	}
-
-	/**
-	 * Monitor.
-	 * 
-	 * @param nodeId
-	 *            the node id
-	 * @param action
-	 *            the action
-	 * @return the object
-	 */
-	public Object monitor(Long nodeId, String action) {
-		try {
-			// Create method object using the action name.
-			Method method = this.getClass().getDeclaredMethod(action,
-					Long.class);
-
-			// invoking the method.
-			return method.invoke(this, nodeId);
-		} catch (SecurityException e) {
-			// Logging error
-			LOG.error(e.getMessage(), e);
-		} catch (NoSuchMethodException e) {
-			// Logging error
-			LOG.error(e.getMessage(), e);
-		} catch (Exception e) {
-			// Logging error
-			LOG.error(e.getMessage(), e);
-		}
-		return null;
 	}
 
 	/**

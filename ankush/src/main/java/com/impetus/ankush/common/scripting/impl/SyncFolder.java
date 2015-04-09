@@ -70,7 +70,6 @@ public class SyncFolder extends AnkushTask {
 		} else {
 			return ("scp -r " + this.folderPath + "* " + this.destinationIp + ":" + this.folderPath);	
 		}
-		
 	}
 
 }

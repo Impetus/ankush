@@ -23,7 +23,6 @@
  */
 package com.impetus.ankush.common.agent;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -36,18 +35,18 @@ import net.neoremind.sshxcute.core.SSHExec;
 import net.neoremind.sshxcute.task.CustomTask;
 import net.neoremind.sshxcute.task.impl.ExecCommand;
 
-import org.springframework.util.StringUtils;
-
 import com.impetus.ankush.AppStoreWrapper;
 import com.impetus.ankush.common.config.ConfigurationReader;
 import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.domain.AppConf;
 import com.impetus.ankush.common.framework.Deployable;
 import com.impetus.ankush.common.framework.config.Configuration;
+import com.impetus.ankush.common.framework.config.GenericConfiguration;
 import com.impetus.ankush.common.framework.config.NodeConf;
 import com.impetus.ankush.common.scripting.AnkushTask;
-import com.impetus.ankush.common.scripting.impl.AppendFile;
+import com.impetus.ankush.common.scripting.impl.AppendFileUsingEcho;
 import com.impetus.ankush.common.scripting.impl.MakeDirectory;
+import com.impetus.ankush.common.scripting.impl.Move;
 import com.impetus.ankush.common.scripting.impl.Remove;
 import com.impetus.ankush.common.scripting.impl.ReplaceText;
 import com.impetus.ankush.common.scripting.impl.Unzip;
@@ -55,8 +54,8 @@ import com.impetus.ankush.common.service.GenericManager;
 import com.impetus.ankush.common.utils.AnkushLogger;
 import com.impetus.ankush.common.utils.JsonMapperUtil;
 import com.impetus.ankush.common.utils.SSHUtils;
-import com.impetus.ankush.hadoop.ecosystem.oozie.OozieConf;
-import com.impetus.ankush.hadoop.ecosystem.solr.SolrConf;
+import com.impetus.ankush2.constant.Constant.Component;
+import com.impetus.ankush2.constant.Constant.Strings;
 
 /**
  * It is deployable class for deployment of Agent on nodes.
@@ -75,7 +74,7 @@ public class AgentDeployer implements Deployable {
 	// Ankush Logger object.
 	/** The logger. */
 	private AnkushLogger logger = new AnkushLogger(
-			Constant.Component.Name.AGENT, AgentDeployer.class);
+			Component.Name.AGENT, AgentDeployer.class);
 
 	/**
 	 * Deploy.
@@ -211,7 +210,8 @@ public class AgentDeployer implements Deployable {
 
 		String message = "Starting Agent";
 
-		CustomTask task = new ExecCommand("sh " + Constant.Agent.AGENT_START_SCRIPT);
+		CustomTask task = new ExecCommand("sh "
+				+ Constant.Agent.AGENT_START_SCRIPT);
 
 		// Setting the start progress message for activity startup.
 		logger.info(nodeConf.getPublicIp(), message + "...");
@@ -280,7 +280,8 @@ public class AgentDeployer implements Deployable {
 		String message = "Stopping agent";
 
 		/* Creating the Kill Process Command for AnkushAgent */
-		CustomTask killProcess = new ExecCommand("sh " + Constant.Agent.AGENT_STOP_SCRIPT);
+		CustomTask killProcess = new ExecCommand("sh "
+				+ Constant.Agent.AGENT_STOP_SCRIPT);
 
 		/* Setting the start progress message for activity startup. */
 		logger.info(nodeConf.getPublicIp(), message + "...");
@@ -297,14 +298,6 @@ public class AgentDeployer implements Deployable {
 				/* Executing the Kill Process Task for AnkushAgent. */
 				Result result = connection.exec(killProcess);
 				nodeConf.setStatus(result.isSuccess);
-
-				/* Stop jmxtrans */
-				CustomTask runJmxtrans = new ExecCommand("cd \""
-						+ conf.getInstallationPath() + "jmxtrans\" ; sh "
-						+ ankushConf.getStringValue("jmx.script.file.name")
-						+ " stop");
-				connection.exec(runJmxtrans);
-
 			} else {
 				nodeConf.setStatus(false);
 				logger.error(nodeConf, "Authentication failed");
@@ -406,6 +399,20 @@ public class AgentDeployer implements Deployable {
 					conf.getPassword(), conf.getPrivateKey());
 
 			if (connection != null) {
+				/* Creating the Kill Process Command for AnkushAgent */
+				CustomTask killProcess = new ExecCommand("sh "
+						+ Constant.Agent.AGENT_STOP_SCRIPT);
+
+				// stopping already running agent
+				connection.exec(killProcess);
+
+				// backup old existing agent folder.
+				Move backUpAgent = new Move(conf.getInstallationPath(),
+						conf.getInstallationPath() + "/../agentBackup");
+
+				// execute task.
+				connection.exec(backUpAgent);
+
 				logger.debug("Create directory - " + conf.getInstallationPath());
 				/* make installation directory if not exists */
 				AnkushTask mkInstallationPath = new MakeDirectory(
@@ -428,9 +435,9 @@ public class AgentDeployer implements Deployable {
 					logger.info(publicIp, copyJarMsg + "...");
 
 					/* Uploading the jar files to node */
-					connection
-							.uploadSingleDataToServer(conf.getLocalJarsPath(),
-									conf.getInstallationPath());
+					connection.uploadSingleDataToServer(
+							conf.getServerTarballLocation(),
+							conf.getInstallationPath());
 
 					// unzip and remove task creation.
 					String zipFilePath = conf.getInstallationPath()
@@ -455,6 +462,11 @@ public class AgentDeployer implements Deployable {
 					logger.log(publicIp, configuringMsg, status);
 
 					if (status) {
+						// Creating make service dir command.
+						CustomTask mkDir = new MakeDirectory(
+								conf.getInstallationPath() + "/conf/services/");
+						// Execute command.
+						status = connection.exec(mkDir).isSuccess;
 						// configure jmxtrans.
 						status = this.configureJmxTrans(connection, nodeConf,
 								jmxtransPath, conf.getPassword());
@@ -558,6 +570,8 @@ public class AgentDeployer implements Deployable {
 			NodeConf nodeConf, AgentConf conf) {
 		boolean status = false;
 
+		String agentServiceConfPath = conf.getInstallationPath()
+				+ "/conf/services/";
 		String agetConfFile = conf.getInstallationPath()
 				+ "conf/agent.properties";
 
@@ -566,102 +580,77 @@ public class AgentDeployer implements Deployable {
 					.getManager("appConfManager", AppConf.class);
 
 			Properties agentProps = new Properties();
-			agentProps.setProperty(Constant.Properties.Agent.NODE_ID, nodeConf
+			agentProps.setProperty(com.impetus.ankush2.constant.Constant.Properties.Agent.NODE_ID, nodeConf
 					.getId().toString());
 			// set the cluster technology name
 			agentProps.setProperty(
-					Constant.Properties.Agent.CLUSTER_TECHNOLOGY_NAME,
+					com.impetus.ankush2.constant.Constant.Properties.Agent.CLUSTER_TECHNOLOGY_NAME,
 					conf.getTechnologyName());
 			// set the cluster id
-			agentProps.setProperty(Constant.Properties.Agent.CLUSTER_ID, conf
+			agentProps.setProperty(com.impetus.ankush2.constant.Constant.Properties.Agent.CLUSTER_ID, conf
 					.getClusterDbId().toString());
+
+			// set the service conf directory.
+			agentProps.setProperty(com.impetus.ankush2.constant.Constant.Properties.Agent.SERVICE_CONF_DIR,
+					agentServiceConfPath);
 
 			String publicIp = null;
 			String publicPort = null;
 
+			// if app conf manager is not null.
 			if (appConfManager != null) {
+				// Getting app conf object.
 				AppConf appConf = appConfManager.getByPropertyValueGuarded(
-						"confKey", "serverIP");
-				Map map = JsonMapperUtil.mapFromObject(appConf.getObject());
-				if (map.containsKey("publicIp")) {
-					publicIp = (String) map.get("publicIp");
+						com.impetus.ankush2.constant.Constant.Keys.CONFKEY, com.impetus.ankush2.constant.Constant.Keys.SERVERIP);
+				// if app conf is null.
+				if (appConf == null) {
+					logger.error(nodeConf,
+							"Unable to configure the public ip/port in agent");
+					return false;
 				}
-				if (map.containsKey("port")) {
-					publicPort = (String) map.get("port");
+				// getting app conf object as map.
+				Map map = JsonMapperUtil.mapFromObject(appConf.getObject());
+				// if it contains the public ip.
+				if (map.containsKey(com.impetus.ankush2.constant.Constant.Keys.PUBLICIP)) {
+					publicIp = (String) map.get(com.impetus.ankush2.constant.Constant.Keys.PUBLICIP);
+				}
+				// if it contains the port.
+				if (map.containsKey(com.impetus.ankush2.constant.Constant.Keys.PORT)) {
+					publicPort = (String) map.get(com.impetus.ankush2.constant.Constant.Keys.PORT);
 				}
 			}
 
 			if (publicIp != null && !publicIp.isEmpty()) {
-				agentProps
-						.setProperty(Constant.Properties.Agent.HOST, publicIp);
+				agentProps.setProperty(com.impetus.ankush2.constant.Constant.Properties.Agent.SERVER_IP,
+						publicIp);
 			}
 			if (publicPort != null && !publicPort.isEmpty()) {
-				agentProps.setProperty(Constant.Properties.Agent.PORT,
+				agentProps.setProperty(com.impetus.ankush2.constant.Constant.Properties.Agent.PORT,
 						publicPort);
 			}
 
-			// if type is not null then setting the jps process list in conf.
-			if (nodeConf.getType() != null) {
-				// node roles.
-				Set<String> roles = new HashSet<String>(Arrays.asList(nodeConf
-						.getType().split("/")));
+			// Setting host ip
+			agentProps.setProperty("HOST_IP", nodeConf.getPrivateIp());
+			// setting host public ip
+			agentProps.setProperty(com.impetus.ankush2.constant.Constant.Properties.Agent.HOST_PUBLIC_IP,
+					nodeConf.getPublicIp());
+			// setting host private ip
+			agentProps.setProperty(com.impetus.ankush2.constant.Constant.Properties.Agent.HOST_PRIVATE_IP,
+					nodeConf.getPrivateIp());
 
-				Set<String> services = new HashSet<String>();
+			// props file.
+			StringBuilder fileContent = new StringBuilder(
+					Strings.LINE_SEPERATOR);
 
-				Set<String> processForPortChecking = new HashSet<String>();
-
-				for (String role : roles) {
-
-					if (role.equals(Constant.Role.GMETAD)) {
-						continue;
-					} else if (role.equals(Constant.Role.OOZIESERVER)) {
-						OozieConf oozieConf = (OozieConf) conf.getClusterConf()
-								.getClusterComponents()
-								.get(Constant.Component.Name.OOZIE);
-						String processPortInfo = AgentDeployer
-								.getProcessPortInfo(Constant.RoleProcessName
-										.getProcessName(role), oozieConf
-										.getServerPort());
-						processForPortChecking.add(processPortInfo);
-					} else if (role.equals(Constant.Role.SOLRSERVICE)) {
-						SolrConf solrConf = (SolrConf) conf.getClusterConf()
-								.getClusterComponents()
-								.get(Constant.Component.Name.SOLR);
-						String processPortInfo = AgentDeployer
-								.getProcessPortInfo(Constant.RoleProcessName
-										.getProcessName(role), solrConf
-										.getServicePort());
-						processForPortChecking.add(processPortInfo);
-					} else {
-						String service = Constant.RoleProcessName
-								.getProcessName(role);
-						if (service != null) {
-							services.add(service);
-						}
-					}
-				}
-
-				if (processForPortChecking.size() > 0) {
-					agentProps.setProperty(Constant.Keys.PROCESS_PORT_MAP,
-							StringUtils.collectionToDelimitedString(
-									processForPortChecking, ","));
-				}
-
-				agentProps.setProperty(Constant.Keys.JPS_PROCESS_LIST,
-						StringUtils.collectionToDelimitedString(services, ","));
-
-				agentProps.setProperty("HOST_IP", nodeConf.getPrivateIp());
-			}
-
-			StringBuilder fileContent = new StringBuilder(Constant.LINE_SEPERATOR);
+			// iterating over the properties.
 			for (String key : agentProps.stringPropertyNames()) {
 				fileContent.append(key).append("=")
 						.append(agentProps.getProperty(key))
-						.append(Constant.LINE_SEPERATOR);
+						.append(Strings.LINE_SEPERATOR);
 			}
 
 			// Writing the agent.properties file on node
-			CustomTask appendTask = new AppendFile(fileContent.toString(),
+			CustomTask appendTask = new AppendFileUsingEcho(fileContent.toString(),
 					agetConfFile);
 			status = (connection.exec(appendTask).rc == 0);
 		} catch (Exception e) {
@@ -851,5 +840,34 @@ public class AgentDeployer implements Deployable {
 		// logging message.
 		logger.log(message, status);
 		return status;
+	}
+
+	@Override
+	public boolean registerComponent(Configuration config) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean unregisterComponent(Configuration config) {
+		logger.setLoggerConfig((AgentConf) config);
+		logger.info("Unregistering Agent...");
+		logger.info("Stopping Agent...");
+		stop(config);
+		undeploy(config);
+		return true;
+	}
+
+	@Override
+	public boolean validateComponent(String nodeIp, SSHExec connection,
+			GenericConfiguration config) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean deployPatch(Configuration config) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

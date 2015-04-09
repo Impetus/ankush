@@ -23,30 +23,40 @@
  */
 package com.impetus.ankush.common.utils.validator;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.Socket;
 
-import com.impetus.ankush.common.utils.CommandExecutor;
+import com.impetus.ankush.common.exception.AnkushException;
 
 /**
  * The Class PortValidator.
- *
+ * 
  * @author nikunj
  */
-public class PortValidator implements Validator{
-	
+public class PortValidator implements Validator {
+
 	/** The host. */
 	private String host;
-	
+
 	/** The ports. */
 	private String ports;
-	
+
 	/** The err msg. */
 	private String errMsg;
 
 	/**
+	 * The minimum number of server port number.
+	 */
+	public static final int MIN_PORT_NUMBER = 1;
+
+	/**
+	 * The maximum number of server port number.
+	 */
+	public static final int MAX_PORT_NUMBER = 49151;
+
+	/**
 	 * Gets the err msg.
-	 *
+	 * 
 	 * @return the errMsg
 	 */
 	public String getErrMsg() {
@@ -55,9 +65,11 @@ public class PortValidator implements Validator{
 
 	/**
 	 * Instantiates a new port validator.
-	 *
-	 * @param host the host
-	 * @param ports the ports
+	 * 
+	 * @param host
+	 *            the host
+	 * @param ports
+	 *            the ports
 	 */
 	public PortValidator(String host, String ports) {
 		this.host = host;
@@ -65,30 +77,35 @@ public class PortValidator implements Validator{
 		this.errMsg = null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.impetus.ankush.common.utils.validator.Validator#validate()
 	 */
 	public boolean validate() {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		String command = "nmap -p " + ports + " " + host;
+		Socket socket = null;
 		try {
-			CommandExecutor.exec(command, baos, null);
-			String result = baos.toString();
-			if (result.contains("filtered")) {
-				errMsg = ports
-						+ " is/are blocked. Please check firewall settings";
-			} else if (result.contains("open")) {
-				errMsg = ports + " is in use. Please select other port(s).";
-			} else {
-				return true;
+			Integer port = Integer.valueOf(ports);
+			if (port < MIN_PORT_NUMBER || port > MAX_PORT_NUMBER) {
+				throw new AnkushException("Invalid port: " + ports);
 			}
-		} catch (IOException e) {
+			socket = new Socket(host, port);
+			errMsg = "Port " + port + "is already in use. Please check.";
+			// if socket connection created, then port is not free
+			return false;
+		} catch (AnkushException e) {
 			errMsg = e.getMessage();
-		} catch (InterruptedException e) {
+			return false;
+		} catch (Exception e) {
 			errMsg = e.getMessage();
-		} catch (Exception e){
-			errMsg = e.getMessage();
+			return true;
+		} finally {
+			if (socket != null) {
+				try {
+					socket.close();
+				} catch (IOException e) {
+				}
+			}
 		}
-		return false;
 	}
 }

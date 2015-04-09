@@ -46,8 +46,6 @@ public class AnkushApplicationConf {
 	/** The logged user. */
 	private User loggedUser;
 	
-	private Object license;
-	
 	/**
 	 * Gets the email.
 	 *
@@ -118,20 +116,6 @@ public class AnkushApplicationConf {
 	 */
 	public void setLoggedUser(User loggedUser) {
 		this.loggedUser = loggedUser;
-	}
-
-	/**
-	 * @return the license
-	 */
-	public Object getLicense() {
-		return license;
-	}
-
-	/**
-	 * @param license the license to set
-	 */
-	public void setLicense(Object license) {
-		this.license = license;
 	}
 	
 }

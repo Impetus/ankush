@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
 	<id>${version}</id>
 	<formats>
-		<format>zip</format>
+		<format>tar.gz</format>
 	</formats>
 	<includeBaseDirectory>false</includeBaseDirectory>
 	<dependencySets>
@@ -26,11 +26,11 @@
 	</dependencySets>
 	<fileSets>
 		<fileSet>
-			<directory>${basedir}/target/classes/jmxtrans/</directory>
+			<directory>${basedir}/target/classes/jmxtrans</directory>
 			<outputDirectory>/jmxtrans</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>${basedir}/target/classes/lib/</directory>
+			<directory>${basedir}/target/classes/lib</directory>
 			<outputDirectory>/libs</outputDirectory>
 		</fileSet>
 		<fileSet>
@@ -40,6 +40,17 @@
 		<fileSet>
 			<directory>${basedir}/target/classes/bin</directory>
 			<outputDirectory>/bin</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${basedir}/target/classes/logs</directory>
+			<outputDirectory>/logs</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${basedir}/target/classes/</directory>
+			<outputDirectory>/</outputDirectory>
+			<includes>
+				<include>VERSION.txt</include>
+			</includes>
 		</fileSet>
 	</fileSets>
 </assembly>

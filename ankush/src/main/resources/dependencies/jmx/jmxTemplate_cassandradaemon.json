@@ -3,8 +3,7 @@
     "host": "${hostprivateip}",
     "alias": "${serveralias}",
     "queries": [    
-
-	{
+   	{
             "outputWriters": [            {
                 "@class": "com.googlecode.jmxtrans.model.output.GangliaWriter",
                 "settings":                 {

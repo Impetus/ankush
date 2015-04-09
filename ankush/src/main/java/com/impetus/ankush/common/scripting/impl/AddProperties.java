@@ -23,8 +23,8 @@ package com.impetus.ankush.common.scripting.impl;
 import java.util.Iterator;
 import java.util.Properties;
 
-import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.scripting.AnkushTask;
+import com.impetus.ankush2.constant.Constant.Strings;
 
 /**
  * The Class AppendFile.
@@ -77,8 +77,9 @@ public class AddProperties extends AnkushTask {
 	@Override
 	public String getCommand() {
 		String line = getPropertiesString();
-		AppendFile appendFile = new AppendFile(line, filePath, password);
-		return appendFile.getCommand();
+		AppendFileUsingSed appendFile = new AppendFileUsingSed(line, filePath);
+		AnkushTask execSudo = new ExecSudoCommand(password, appendFile.getCommand());
+		return execSudo.getCommand();
 	}
 
 	private String getPropertiesString() {
@@ -88,7 +89,7 @@ public class AddProperties extends AnkushTask {
 			String key = (String) itr.next();
 			String value = properties.getProperty(key);
 			sb.append(key).append("=").append(value)
-					.append(Constant.LINE_SEPERATOR);
+					.append(Strings.LINE_SEPERATOR);
 		}
 		return sb.toString();
 	}

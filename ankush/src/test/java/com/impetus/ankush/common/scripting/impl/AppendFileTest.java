@@ -39,7 +39,7 @@ public class AppendFileTest {
 		String line = "someline";
 		String filePath = "somefile";
 
-		AppendFile result = new AppendFile(line, filePath);
+		AppendFileUsingEcho result = new AppendFileUsingEcho(line, filePath);
 
 		assertNotNull(result);
 		assertEquals("echo \"someline\" >> somefile", result.getCommand());
@@ -54,7 +54,7 @@ public class AppendFileTest {
 	@Test
 	public void testGetCommand_1()
 		throws Exception {
-		AppendFile fixture = new AppendFile("someline", "somefile");
+		AppendFileUsingEcho fixture = new AppendFileUsingEcho("someline", "somefile");
 
 		String result = fixture.getCommand();
 

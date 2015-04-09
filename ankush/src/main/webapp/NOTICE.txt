@@ -6,20 +6,16 @@ Ankush ("Product") is Copyright of Impetus Technologies, a California
 corporation, with a principal place of business at 720 University Avenue,
 Suite 130 Los Gatos, CA 95032, USA.
 
-This version ["RC 1.5"] of the Product is released 
+This version ["2.0.10"] of the Product is released 
 under LGPL v3 license as described at the link below.
 
 http://www.gnu.org/licenses/lgpl-3.0.txt
 
 
-Technologies that are available with RC 1.5 as 'open source' are
+Technologies that are available with v2.0.10 as 'open source' are
 
-1) Apache Hadoop (multiple versions that we support)
-2) Oracle NoSQL Database
-3) Storm
-4) Cassandra
-5) Kafka
-6) Elastic Search
+1) Apache Hadoop
+2) Apache Cassandra
 
 DISCLAIMER:
 
@@ -41,7 +37,7 @@ Product includes Other 3rd party software as indicated below
 =========================================================================
 
 1.  Name                 : jQuery
-    Source               : http://code.jquery.com/jquery-1.8.0.min.js
+    Source               : http://code.jquery.com/jquery-2.1.1.min.js
     License              : MIT
     License Source       : https://github.com/jquery/jquery/blob/master/MIT-LICENSE.txt
     Linking              : Static
@@ -131,189 +127,182 @@ Product includes Other 3rd party software as indicated below
     Linking              : Dynamic
     Modified By Impetus  : No
 
-14. Name                 : Oracle NoSQL Database
-    Source               : http://www.oracle.com/technetwork/products/nosqldb/downloads/index.html
-    License              : We are Technology Integration Partners with Oracle.
-    License Source       : We are Technology Integration Partners with Oracle.
-    Linking              : Dynamic
-    Modified By Impetus  : No
-
-15. Name                 : D3 Graphs
+14. Name                 : D3 Graphs
     Source               : http://d3js.org/
     License              : BSD 3 style
     License Source       : http://opensource.org/licenses/BSD-3-Clause
     Linking              : Static
     Modified By Impetus  : No
 
-16. Name                 : Twitter bootstrap
+15. Name                 : Twitter bootstrap
     Source               : http://twitter.github.io/bootstrap/
     License              : Apache 2 License
     License Source       : http://www.apache.org/licenses/LICENSE-2.0
     Linking              : Static
     Modified By Impetus  : Yes
 
-17. Name                 : Bootstrap-multiselect
+16. Name                 : Bootstrap-multiselect
     Source               : https://github.com/davidstutz/bootstrap-multiselect
     License              : Apache 2 License
     License Source       : http://www.apache.org/licenses/LICENSE-2.0
     Linking              : Static
     Modified By Impetus  : No
 
-18. Name                 : nvd3
+17. Name                 : nvd3
     Source               : http://nvd3.org/
     License              : Apache 2 License
     License Source       : http://www.apache.org/licenses/LICENSE-2.0
     Linking              : Static
     Modified By Impetus  : No
 
-19. Name                 : Apache Commons CLI
+18. Name                 : Apache Commons CLI
     Source               : http://commons.apache.org/proper/commons-cli/download_cli.cgi
     License              : Apache 2 License
     License Source       : http://www.apache.org/licenses/LICENSE-2.0
     Linking              : Dynamic
     Modified By Impetus  : No
 
-20. Name                 : cassandra-all
+19. Name                 : cassandra-all
     Source               : http://mvnrepository.com/artifact/org.apache.cassandra/cassandra-all/1.2.5
     License              : Apache 2 License
     License Source       : http://www.apache.org/licenses/LICENSE-2.0
     Linking              : Dynamic
     Modified By Impetus  : No
 
-21. Name                 : cassandra-thrift
+20. Name                 : cassandra-thrift
     Source               : http://repo1.maven.org/maven2/org/apache/cassandra/cassandra-thrift/1.2.10/cassandra-thrift-1.2.10.jar
     License              : Apache 2 License
     License Source       : http://www.apache.org/licenses/LICENSE-2.0
     Linking              : Dynamic
     Modified By Impetus  : No
 
-22. Name                 : Zookeeper
+21. Name                 : Zookeeper
     Source               : http://mvnrepository.com/artifact/org.apache.zookeeper/zookeeper/3.4.5
     License              : Apache 2 License
     License Source       : http://www.apache.org/licenses/LICENSE-2.0
     Linking              : Dynamic
     Modified By Impetus  : No
     
-23. Name                 : jquery.jstree.js
+22. Name                 : jquery.jstree.js
     Source               : http://jstree.com/
     License              : MIT
     License Source       : http://www.opensource.org/licenses/mit-license.php
     Linking              : Static
     Modified By Impetus  : No
 
-24. Name                 : jquery.dataTables.js
+23. Name                 : jquery.dataTables.js
     Source               : http://datatables.net/releases/DataTables-1.9.4.zip
     License              : BSD
     License Source       : http://datatables.net/license_bsd
     Linking              : Static
     Modified By Impetus  : No
 
-25. Name                 : within-viewport
+24. Name                 : within-viewport
     Source               : https://github.com/patik/within-viewport/blob/master/jquery.withinViewport.js
     License              : MIT
     License Source       : https://github.com/patik/within-viewport/blob/master/LICENSE
     Linking              : Static
     Modified By Impetus  : No
 
-26. Name                 : jquery.ba-throttle-debounce.js
+25. Name                 : jquery.ba-throttle-debounce.js
     Source               : https://github.com/cowboy/jquery-throttle-debounce/blob/master/jquery.ba-throttle-debounce.js
     License              : MIT
     License Source       : https://github.com/cowboy/jquery-throttle-debounce/blob/master/LICENSE-MIT
     Linking              : Static
     Modified By Impetus  : No
 
-27. Name                 : bootstrap-modal
+26. Name                 : bootstrap-modal
     Source               : http://bootstrapdocs.com/v2.0.2/docs/assets/js/bootstrap-modal.js
     License              : Apache2
     License Source       : http://www.apache.org/licenses/LICENSE-2.0
     Linking              : Static
     Modified By Impetus  : No
 
-28. Name                 : less
+27. Name                 : less
     Source               : https://github.com/less/less.js/blob/master/dist/less-1.3.3.min.js
     License              : Apache2
     License Source       : http://www.apache.org/licenses/LICENSE-2.0
     Linking              : Static
     Modified By Impetus  : No
 
-29. Name                 : bootstrap-editable
+28. Name                 : bootstrap-editable
     Source               : http://vitalets.github.com/x-editable/assets/zip/bootstrap-editable-1.4.1.zip
     License              : MIT
     License Source       : https://github.com/vitalets/x-editable/blob/master/LICENSE-MIT
     Linking              : Static
     Modified By Impetus  : Yes
 
-30. Name                 : bootstrap-popover
+29. Name                 : bootstrap-popover
     Source               : code.google.com/p/socr/source/browse/trunk/SOCR_3.0/SOCR_JS_Redesign/HTML5_Resampling_Simulation/pilot/js/bootstrap-popover.js?r=162
     License              : Apache2
     License Source       : http://www.apache.org/licenses/LICENSE-2.0
     Linking              : Static
     Modified By Impetus  : No
 
-31. Name                 : bootstrap-tooltip
+30. Name                 : bootstrap-tooltip
     Source               : https://gist.github.com/pseidemann/4458612
     License              : Apache2
     License Source       : http://www.apache.org/licenses/LICENSE-2.0
     Linking              : Static
     Modified By Impetus  : No
 
-32. Name                 : bootstrap-datepicker
+31. Name                 : bootstrap-datepicker
     Source               : http://www.eyecon.ro/bootstrap-datepicker/datepicker.zip
     License              : Apache2
     License Source       : http://www.apache.org/licenses/LICENSE-2.0
     Linking              : Static
     Modified By Impetus  : No
 
-33. Name                 : jquery-fileDownload
+32. Name                 : jquery-fileDownload
     Source               : https://github.com/johnculviner/jquery.fileDownload/blob/master/src/Scripts/jquery.fileDownload.js/
     License              : MIT
     License Source       : http://www.opensource.org/licenses/mit-license.php
     Linking              : Static
     Modified By Impetus  : No
 
-34. Name                 : bootstrap-button
+33. Name                 : bootstrap-button
     Source               : http://code.google.com/p/phpwcms/source/browse/branches/dev-2.0/include/js/bootstrap-button.js?r=481
     License              : Apache2
     License Source       : http://www.apache.org/licenses/LICENSE-2.0
     Linking              : Static
     Modified By Impetus  : No
 
-35. Name                 : bootstrap-clickover
+34. Name                 : bootstrap-clickover
     Source               : https://github.com/lecar-red/bootstrapx-clickover/blob/master/js/bootstrapx-clickover.js
     License              : Apache2
     License Source       : http://www.apache.org/licenses/LICENSE-2.0
     Linking              : Static
     Modified By Impetus  : No
 
-36. Name                 : file-input
+35. Name                 : file-input
     Source               : http://gregpike.net/demos/bootstrap-file-input/bootstrap.file-input.js
     License              : Apache2
     License Source       : http://www.apache.org/licenses/LICENSE-2.0
     Linking              : Static
     Modified By Impetus  : No
 
-37. Name                 : jquery-dateFormat
+36. Name                 : jquery-dateFormat
     Source               : https://raw.github.com/phstc/jquery-dateFormat/master/dist/jquery-dateFormat.js
     License              : MIT
     License Source       : https://github.com/phstc/jquery-dateFormat/blob/master/MIT-LICENSE.txt
     Linking              : Static
     Modified By Impetus  : No
 
-38. Name                 : jquery-masonry
+37. Name                 : jquery-masonry
     Source               : http://masonry.desandro.com/masonry.pkgd.min.js
     License              : MIT
     License Source       : http://desandro.mit-license.org/
     Linking              : Static
     Modified By Impetus  : No
 
-39. Name                 : jquery.dataTables.rowGrouping.js
+38. Name                 : jquery.dataTables.rowGrouping.js
     Source               : http://code.google.com/p/jquery-datatables-row-grouping/source/browse/trunk/media/js/jquery.dataTables.rowGrouping.js?r=45
     License              : BSD
     License Source       : https://datatables.net/license_bsd
     Linking              : Static
     Modified By Impetus  : No
 
-40. Name                 : Derby
+39. Name                 : Derby
     Source               : http://db.apache.org/derby/releases/release-10.8.2.2.html
     License              : Apache2
     License Source       : http://www.apache.org/licenses/LICENSE-2.0

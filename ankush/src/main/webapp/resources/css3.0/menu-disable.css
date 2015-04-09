@@ -1,0 +1,52 @@
+/*******************************************************************************
+*  ===========================================================
+*  Ankush : Big Data Cluster Management Solution
+*  ===========================================================
+*  
+*  (C) Copyright 2014, by Impetus Technologies
+*  
+*  This is free software; you can redistribute it and/or modify it under
+*  the terms of the GNU Lesser General Public License (LGPL v3) as
+*  published by the Free Software Foundation;
+*  
+*  This software is distributed in the hope that it will be useful, but
+*  WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+*  See the GNU Lesser General Public License for more details.
+*  
+*  You should have received a copy of the GNU Lesser General Public License 
+*  along with this software; if not, write to the Free Software Foundation, 
+* Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*******************************************************************************/
+.nav-condensed .nav > li:hover{
+	overflow: hidden;
+	width: 35px;;
+	background-color: #23272D;
+}
+.nav-condensed .nav > li:hover > a{
+	background-color: #23272D ! important;
+	cursor: default;
+}
+.nav-condensed .nav > li:hover > a > i{
+	color: #8f939e ! important;
+}
+.nav-condensed .nav > li.menulist:hover{
+	overflow: hidden;
+	width : 35px;
+}
+.nav-condensed .nav > li.menulist:hover > a{
+	background-color: #23272D !important;
+	cursor: pointer;
+}
+.nav a:focus{
+ 	background-color: #23272D ! important;
+ 	color: #8f939e ! important;
+}
+.nav .open > a, .nav .open > a:hover {
+    background-color: #23272D !important;
+    color: #8f939e ! important;
+}
+
+#breadcrumb-ankush a{
+	cursor: default;
+}

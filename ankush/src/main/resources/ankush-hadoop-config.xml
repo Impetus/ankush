@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hadoop>
+	<class installationType="Bundle" vendor="Apache" version="1">
+		<installer>com.impetus.ankush2.hadoop.deployer.installer.HadoopBundleInstaller</installer>
+		<configurator>com.impetus.ankush2.hadoop.deployer.configurator.Hadoop1Configurator</configurator>
+		<servicemanager>com.impetus.ankush2.hadoop.deployer.servicemanager.HadoopBundleServiceManager</servicemanager>
+		<commandsmanager>com.impetus.ankush2.hadoop.monitor.commandsmanager.Hadoop1CommandsManager</commandsmanager>
+		<monitor>com.impetus.ankush2.hadoop.monitor.Hadoop1Monitor</monitor>
+	</class>
+
+	<class installationType="Bundle" vendor="Cloudera" version="1">
+		<installer>com.impetus.ankush2.hadoop.deployer.installer.HadoopBundleInstaller</installer>
+		<configurator>com.impetus.ankush2.hadoop.deployer.configurator.Hadoop1Configurator</configurator>
+		<servicemanager>com.impetus.ankush2.hadoop.deployer.servicemanager.HadoopBundleServiceManager</servicemanager>
+		<commandsmanager>com.impetus.ankush2.hadoop.monitor.commandsmanager.Hadoop1CommandsManager</commandsmanager>
+		<monitor>com.impetus.ankush2.hadoop.monitor.Hadoop1Monitor</monitor>
+	</class>
+	
+	<class installationType="Bundle" vendor="Apache" version="2">
+		<installer>com.impetus.ankush2.hadoop.deployer.installer.HadoopBundleInstaller</installer>
+		<configurator>com.impetus.ankush2.hadoop.deployer.configurator.Hadoop2Configurator</configurator>
+		<servicemanager>com.impetus.ankush2.hadoop.deployer.servicemanager.HadoopBundleServiceManager</servicemanager>
+		<commandsmanager>com.impetus.ankush2.hadoop.monitor.commandsmanager.Hadoop2CommandsManager</commandsmanager>
+		<monitor>com.impetus.ankush2.hadoop.monitor.Hadoop2Monitor</monitor>
+	</class>
+	
+	<class installationType="Bundle" vendor="Cloudera" version="2">
+		<installer>com.impetus.ankush2.hadoop.deployer.installer.HadoopBundleInstaller</installer>
+		<configurator>com.impetus.ankush2.hadoop.deployer.configurator.Hadoop2Configurator</configurator>
+		<servicemanager>com.impetus.ankush2.hadoop.deployer.servicemanager.HadoopBundleServiceManager</servicemanager>
+		<commandsmanager>com.impetus.ankush2.hadoop.monitor.commandsmanager.Hadoop2CommandsManager</commandsmanager>
+		<monitor>com.impetus.ankush2.hadoop.monitor.Hadoop2Monitor</monitor>
+	</class>
+	
+	<class installationType="Bundle" vendor="HDP" version="2">
+		<installer>com.impetus.ankush2.hadoop.deployer.installer.HadoopBundleInstaller</installer>
+		<configurator>com.impetus.ankush2.hadoop.deployer.configurator.Hadoop2Configurator</configurator>
+		<servicemanager>com.impetus.ankush2.hadoop.deployer.servicemanager.HadoopBundleServiceManager</servicemanager>
+		<commandsmanager>com.impetus.ankush2.hadoop.monitor.commandsmanager.Hadoop2CommandsManager</commandsmanager>
+		<monitor>com.impetus.ankush2.hadoop.monitor.Hadoop2Monitor</monitor>
+	</class>
+	
+	<class installationType="Package" vendor="HDP" version="2">
+		<installer>com.impetus.ankush2.hadoop.deployer.installer.HdpPackageInstaller</installer>
+		<configurator>com.impetus.ankush2.hadoop.deployer.configurator.Hadoop2Configurator</configurator>
+		<servicemanager>com.impetus.ankush2.hadoop.deployer.servicemanager.HdpPackageServiceManager</servicemanager>
+		<commandsmanager>com.impetus.ankush2.hadoop.monitor.commandsmanager.Hadoop2CommandsManager</commandsmanager>
+		<monitor>com.impetus.ankush2.hadoop.monitor.Hadoop2HdpMonitor</monitor>
+	</class>
+	
+	<class installationType="Package" vendor="Cloudera" version="2">
+		<installer>com.impetus.ankush2.hadoop.deployer.installer.ClouderaPackageInstaller</installer>
+		<configurator>com.impetus.ankush2.hadoop.deployer.configurator.Hadoop2Configurator</configurator>
+		<servicemanager>com.impetus.ankush2.hadoop.deployer.servicemanager.HdpPackageServiceManager</servicemanager>
+		<commandsmanager>com.impetus.ankush2.hadoop.monitor.commandsmanager.Hadoop2CommandsManager</commandsmanager>
+		<monitor>com.impetus.ankush2.hadoop.monitor.Hadoop2HdpMonitor</monitor>
+	</class>
+</hadoop>

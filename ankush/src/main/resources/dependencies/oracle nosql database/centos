@@ -1,2 +1,0 @@
-yum -q -y install ntp
-/sbin/service ntpd stop || echo ""

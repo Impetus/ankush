@@ -64,7 +64,6 @@ public class AppConfControllerTest {
 		Map result = new HashMap();
 		Map tech = new HashMap();
 		tech.put("Hadoop", "Hadoop");
-		tech.put("Storm", "Storm");
 		result.put(key, tech);
 
 		EasyMock.expect(appConfService.getAppConf(key)).andReturn(result);
@@ -74,8 +73,7 @@ public class AppConfControllerTest {
 				get("/app/conf/technology").accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpect(
-						jsonPath("$.output.technology.Hadoop").value("Hadoop"))
-				.andExpect(jsonPath("$.output.technology.Storm").value("Storm"));
+						jsonPath("$.output.technology.Hadoop").value("Hadoop"));
 
 	}
 }

@@ -1,0 +1,62 @@
+/*******************************************************************************
+*  ===========================================================
+*  Ankush : Big Data Cluster Management Solution
+*  ===========================================================
+*  
+*  (C) Copyright 2014, by Impetus Technologies
+*  
+*  This is free software; you can redistribute it and/or modify it under
+*  the terms of the GNU Lesser General Public License (LGPL v3) as
+*  published by the Free Software Foundation;
+*  
+*  This software is distributed in the hope that it will be useful, but
+*  WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+*  See the GNU Lesser General Public License for more details.
+*  
+*  You should have received a copy of the GNU Lesser General Public License 
+*  along with this software; if not, write to the Free Software Foundation, 
+* Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*******************************************************************************/
+.showExpand,  .hideExpand {
+    background: url("../images/expand/box-hide.png") no-repeat scroll left top transparent;
+    cursor: pointer;
+    height: 15px;
+    overflow: hidden;
+    position: absolute;
+    right: 7px;
+    top: 7px;
+    width: 24px;
+}
+.boxToExpand {
+    /* border: 1px solid #E6E6E6; */
+   	/* box-shadow: 1px 1px 0 #E6E6E6; */
+   /*  border : 1px solid #E6E6E6; */
+    display: block;
+    margin: 10px 0px 0 0px;
+    min-width:270px;
+}
+.boxToExpandPlugin {
+    background: none repeat scroll 0 0 #FFFFFF;
+    /* border: 1px solid #E6E6E6; */
+   	/* box-shadow: 1px 1px 0 #E6E6E6; */
+    border : 1px solid #E6E6E6;
+    display: block;
+    margin: 10px 0px 0 0px;
+    min-width:270px;
+}
+.titleExpand {
+    background:#f5f5f5 url("../images/expand/box-title.gif") repeat-x scroll left top;
+    color: #000000;
+    display: block;
+    font: 13px/1em 'MuseoSans500',Arial;
+    padding: 8px 10px 6px;
+    position: relative;
+}
+
+
+.showPlusMinus{
+	background-position: right bottom;
+}
+
+

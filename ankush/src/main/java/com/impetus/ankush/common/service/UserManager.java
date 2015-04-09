@@ -150,4 +150,7 @@ public interface UserManager extends GenericManager<User, Long> {
 	Boolean checkUserExistance(User user);
 	
 	void addAdminUser();
+
+	boolean doesPasswordMatch(String userName, String password)
+			throws Exception;
 }

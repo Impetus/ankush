@@ -29,8 +29,11 @@ import java.util.Map;
 import org.apache.zookeeper.client.FourLetterWordMain;
 
 import com.impetus.ankush.common.constant.Constant;
+import com.impetus.ankush.common.domain.Cluster;
 import com.impetus.ankush.common.framework.AbstractMonitor;
 import com.impetus.ankush.common.framework.config.NodeConf;
+import com.impetus.ankush.common.tiles.NewTileInfo;
+import com.impetus.ankush.common.tiles.TileInfo;
 import com.impetus.ankush.common.utils.AnkushLogger;
 
 public class ZookeeperClusterMonitor extends AbstractMonitor{
@@ -79,7 +82,7 @@ public class ZookeeperClusterMonitor extends AbstractMonitor{
 				String nodeType = execFourLetterCmd(zookeeperNode.getPublicIp(), COMMAND_SRVR ,clientPort);
 				String serverId = execFourLetterCmd(zookeeperNode.getPublicIp(), COMMAND_CONF ,clientPort);
 				Map<String, Object> zookeeperNodeData = new HashMap<String, Object>();
-				zookeeperNodeData.put(Constant.Keys.NODEIP, zookeeperNode.getPublicIp());
+				zookeeperNodeData.put(com.impetus.ankush2.constant.Constant.Keys.NODEIP, zookeeperNode.getPublicIp());
 				zookeeperNodeData.put(SERVER_ID, serverId);
 				zookeeperNodeData.put(SERVER_TYPE, nodeType);
 				zookeeperNodeInfo.add(zookeeperNodeData);
@@ -115,7 +118,7 @@ public class ZookeeperClusterMonitor extends AbstractMonitor{
 			if(versionList.get(1).equalsIgnoreCase("4")){
 				commandList.add("mntr");
 			}
-			result.put(Constant.Keys.COMMAND, commandList);
+			result.put(com.impetus.ankush2.constant.Constant.Keys.COMMAND, commandList);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error while getting command list: "+ e.getMessage());
@@ -125,10 +128,10 @@ public class ZookeeperClusterMonitor extends AbstractMonitor{
 	public void runFourLetterCommand(){
 
 		// Getting the ip address from parameter map.
-		String ip = (String) parameterMap.get(Constant.Keys.IP);
+		String ip = (String) parameterMap.get(com.impetus.ankush2.constant.Constant.Keys.IP);
 
 		// Getting the ip address from parameter map.
-		String command = (String) parameterMap.get(Constant.Keys.COMMAND);
+		String command = (String) parameterMap.get(com.impetus.ankush2.constant.Constant.Keys.COMMAND);
 
 		// Getting Zookeeper conf.
 		ZookeeperConf conf = (ZookeeperConf) dbCluster.getClusterConf()
@@ -140,7 +143,7 @@ public class ZookeeperClusterMonitor extends AbstractMonitor{
 			logger.info("Zookeeper 4 Letter Command Execution ...");
 			String commandOutput = FourLetterWordMain.send4LetterWord(ip, clientPort, command);
 
-			result.put(Constant.Keys.OUT, commandOutput);
+			result.put(com.impetus.ankush2.constant.Constant.Keys.OUT, commandOutput);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -191,6 +194,18 @@ public class ZookeeperClusterMonitor extends AbstractMonitor{
 			System.out.println("Error while executing Zookeeper 4 Letter Command: "+ e.getMessage());
 		}
 		return "";
+	}
+
+	@Override
+	public List<TileInfo> compNodeTiles(Cluster dbCluster, Map parameterMap, String nodeIP) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<NewTileInfo> componentSummarizedTiles(Cluster dbCluster) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

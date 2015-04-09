@@ -41,7 +41,7 @@ import javax.management.remote.JMXServiceURL;
 public class JmxUtil {
 
 	/** The log. */
-	private AgentLogger LOGGER = new AgentLogger(JmxUtil.class);
+	private static final AgentLogger LOGGER = new AgentLogger(JmxUtil.class);
 	/** The node ip. */
 	private String nodeIp = "";
 

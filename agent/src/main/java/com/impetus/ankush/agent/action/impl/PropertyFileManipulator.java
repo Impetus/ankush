@@ -21,18 +21,12 @@
 package com.impetus.ankush.agent.action.impl;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Properties;
 
-import com.impetus.ankush.agent.AgentConf;
+import org.apache.commons.configuration.PropertiesConfiguration;
+
 import com.impetus.ankush.agent.action.Manipulatable;
-import com.impetus.ankush.agent.sigar.SigarNodeInfoProvider;
-import com.impetus.ankush.agent.utils.AgentLogger;
 
 public class PropertyFileManipulator implements Manipulatable {
-
-	/** The log. */
-	private AgentLogger LOGGER = new AgentLogger(SigarNodeInfoProvider.class);
 
 	/**
 	 * Edits the conf value.
@@ -54,18 +48,16 @@ public class PropertyFileManipulator implements Manipulatable {
 			File confFile = new File(file);
 
 			if (!confFile.exists()) {
-				System.err.println("File does not exist.");
+				System.err.println("File " + file + " does not exists.");
 				status = false;
 			}
-			AgentConf agentConf = new AgentConf();
-			Properties configuration = agentConf.load(file);
-			configuration.put(propertyName, newPropertyValue);
-			agentConf.save(configuration, file);
+			PropertiesConfiguration props = new PropertiesConfiguration(file);
+			props.setProperty(propertyName, newPropertyValue);
+			props.getLayout().setSeparator(propertyName, "=");
+			props.save();
 			status = true;
-		} catch (IOException e) {
-			LOGGER.error(e.getMessage(), e);
 		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
+			System.err.println(e.getMessage());
 		}
 		return status;
 	}
@@ -87,20 +79,18 @@ public class PropertyFileManipulator implements Manipulatable {
 			File confFile = new File(file);
 
 			if (!confFile.exists()) {
-				System.err.println("File does not exist.");
+				System.err.println("File " + file + " does not exists.");
 				status = false;
 			}
-			AgentConf agentConf = new AgentConf();
-			Properties configuration = agentConf.load(file);
-			if (configuration.remove(propertyName) != null) {
-				configuration.remove(propertyName);
-				agentConf.save(configuration, file);
+			PropertiesConfiguration props = new PropertiesConfiguration(file);
+			props.getLayout().setSeparator(propertyName, "=");
+			if (props.getProperty(propertyName) != null) {
+				props.clearProperty(propertyName);
+				props.save();
 				status = true;
 			}
-		} catch (IOException e) {
-			LOGGER.error(e.getMessage(), e);
 		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
+			System.err.println(e.getMessage());
 		}
 		return status;
 
@@ -140,16 +130,13 @@ public class PropertyFileManipulator implements Manipulatable {
 			File confFile = new File(file);
 
 			if (!confFile.exists()) {
-				System.err.println("File does not exist.");
+				System.err.println("File " + file + " does not exists.");
 				return confValue;
 			}
-			AgentConf agentConf = new AgentConf();
-			Properties configuration = agentConf.load(file);
-			confValue = configuration.getProperty(propertyName);
-		} catch (IOException e) {
-			LOGGER.error(e.getMessage(), e);
+			PropertiesConfiguration props = new PropertiesConfiguration(file);
+			confValue = props.getProperty(propertyName).toString();
 		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
+			System.err.println(e.getMessage());
 		}
 		return confValue;
 	}

@@ -40,16 +40,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.impetus.ankush.AppStoreWrapper;
 import com.impetus.ankush.common.alerts.AlertsConf;
-import com.impetus.ankush.common.alerts.EventManager;
 import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.domain.Cluster;
 import com.impetus.ankush.common.domain.User;
 import com.impetus.ankush.common.framework.ClusterMonitor;
 import com.impetus.ankush.common.service.ConfigurationManager;
 import com.impetus.ankush.common.service.GenericManager;
-import com.impetus.ankush.common.service.MonitoringManager;
 import com.impetus.ankush.common.utils.AnkushLogger;
 import com.impetus.ankush.common.utils.ResponseWrapper;
+import com.impetus.ankush2.db.DBEventManager;
 
 /**
  * The Class MonitorController.
@@ -81,8 +80,9 @@ public class MonitorController extends BaseController {
 	public ResponseEntity<ResponseWrapper<Map>> monitor(
 			@PathVariable("clusterId") Long clusterId,
 			@PathVariable("action") String action, HttpServletRequest request) {
-		Map map = new ClusterMonitor().getMap(clusterId, action,
-				request.getParameterMap());
+
+		Map map = new com.impetus.ankush2.framework.monitor.ClusterMonitor()
+				.getMap(clusterId, action, request.getParameterMap());
 		return wrapResponse(map, HttpStatus.OK, HttpStatus.OK.toString(),
 				"Cluster details.");
 	}
@@ -92,30 +92,18 @@ public class MonitorController extends BaseController {
 	 * 
 	 * @param clusterId
 	 *            the cluster id
-	 * @param parameterMap
-	 *            the parameter map
 	 * @param action
 	 *            the action
 	 * @param request
 	 *            the request
 	 * @return the response entity
 	 */
-	@RequestMapping(method = RequestMethod.POST, value = "/{clusterId}/{action}")
+	@RequestMapping(method = RequestMethod.GET, value = "/maintenancedetails")
 	@ResponseBody
-	public ResponseEntity<ResponseWrapper<Map>> monitor(
-			@PathVariable("clusterId") Long clusterId,
-			@RequestBody Map parameterMap,
-			@PathVariable("action") String action, HttpServletRequest request) {
-		String loggedUser = ((User) SecurityContextHolder.getContext()
-				.getAuthentication().getPrincipal()).getUsername();
-		parameterMap.put("loggedUser", loggedUser);
-		if(request.getParameterMap().containsKey(Constant.Keys.TECHNOLOGY)){
-			parameterMap.put(Constant.Keys.TECHNOLOGY,request.getParameter(Constant.Keys.TECHNOLOGY));
-		}
-		Map map = new ClusterMonitor().getMapPost(clusterId, action,
-				parameterMap);
+	public ResponseEntity<ResponseWrapper<Map>> monitor() {
+		Map map = new ClusterMonitor().maintenanceDetails();
 		return wrapResponse(map, HttpStatus.OK, HttpStatus.OK.toString(),
-				"Cluster detail");
+				"Cluster details.");
 	}
 
 	/**
@@ -144,26 +132,6 @@ public class MonitorController extends BaseController {
 	}
 
 	/**
-	 * Gets the monitoring info.
-	 * 
-	 * @param nodeId
-	 *            the node id
-	 * @param action
-	 *            the action
-	 * @return the monitoring info
-	 */
-	@RequestMapping(method = RequestMethod.GET, value = "/node/{nodeId}/{action}")
-	@ResponseBody
-	public ResponseEntity<ResponseWrapper<Object>> getMonitoringInfo(
-			@PathVariable("nodeId") Long nodeId,
-			@PathVariable("action") String action) {
-
-		MonitoringManager manager = new MonitoringManager();
-		return wrapResponse(manager.monitor(nodeId, action), HttpStatus.OK,
-				HttpStatus.OK.toString(), "system overview details.");
-	}
-
-	/**
 	 * Sets the alerts conf.
 	 * 
 	 * @param clusterId
@@ -186,7 +154,7 @@ public class MonitorController extends BaseController {
 			Cluster cluster = clusterManager.get(clusterId);
 			cluster.setAlertConf(alertsConf);
 			cluster = clusterManager.save(cluster);
-			new EventManager().updateEventSubTypes(cluster);
+			new DBEventManager().updateEventSubTypes(cluster);
 		} catch (Exception e) {
 			logger.debug(e.getMessage());
 			description = "Failed to save alerts configuration.";
@@ -221,5 +189,30 @@ public class MonitorController extends BaseController {
 		}
 		return wrapResponse(alertsConf, HttpStatus.OK,
 				HttpStatus.OK.toString(), description);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/{clusterId}/{action}")
+	@ResponseBody
+	public ResponseEntity<ResponseWrapper<Map>> newMonitor(
+			@PathVariable("clusterId") Long clusterId,
+			@PathVariable("action") String action,
+			@RequestBody Map parameterMap, HttpServletRequest request) {
+		try {
+			String loggedUser = ((User) SecurityContextHolder.getContext()
+					.getAuthentication().getPrincipal()).getUsername();
+			parameterMap.put("loggedUser", loggedUser);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+		if (request.getParameterMap().containsKey(
+				com.impetus.ankush2.constant.Constant.Keys.COMPONENT)) {
+			parameterMap
+					.put(com.impetus.ankush2.constant.Constant.Keys.COMPONENT,
+							request.getParameter(com.impetus.ankush2.constant.Constant.Keys.COMPONENT));
+		}
+		Map map = new com.impetus.ankush2.framework.monitor.ClusterMonitor()
+				.getMapPost(clusterId, action, parameterMap);
+		return wrapResponse(map, HttpStatus.OK, HttpStatus.OK.toString(),
+				"Cluster details.");
 	}
 }

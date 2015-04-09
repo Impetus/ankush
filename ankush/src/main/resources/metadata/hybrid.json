@@ -1,0 +1,266 @@
+{
+  "Agent": {
+    "agentInstallDir": "/home/${user}"
+  },
+  "Cassandra": {
+    "Defaults": {
+      "installationPath": "/home/${user}/cassandra",
+      "logDir": "/home/${user}/cassandra/log",
+      "dataDir": "/home/${user}/cassandra/data",
+      "savedCachesDir": "/home/${user}/cassandra/saved_caches",
+      "commitlogDir": "/home/${user}/cassandra/commitlog",
+      "storagePort": "7000",
+      "rpcPort": "9160",
+      "jmxPort": "7199",
+      "Partitioner": {
+        "Murmur3Partitioner": "org.apache.cassandra.dht.Murmur3Partitioner",
+        "ByteOrderedPartitioner": "org.apache.cassandra.dht.ByteOrderedPartitioner",
+        "RandomPartitioner": "org.apache.cassandra.dht.RandomPartitioner"
+      },
+      "Snitch": {
+        "SimpleSnitch": "",
+        "RackInferringSnitch": "",
+        "PropertyFileSnitch": "",
+        "GossipingPropertyFileSnitch": ""
+      },
+      "vNodeCount": "256",
+      "confState": "Default"
+    },
+    "Vendors": {
+      "Apache": {
+        "2.1.2": {
+          "downloadUrl": "http://archive.apache.org/dist/cassandra/2.1.2/apache-cassandra-2.1.2-bin.tar.gz"
+        },
+        "2.0.7": {
+          "downloadUrl": "http://archive.apache.org/dist/cassandra/2.0.7/apache-cassandra-2.0.7-bin.tar.gz"
+        },
+        "2.0.6": {
+          "downloadUrl": "http://archive.apache.org/dist/cassandra/2.0.6/apache-cassandra-2.0.6-bin.tar.gz"
+        },
+        "2.0.5": {
+          "downloadUrl": "http://archive.apache.org/dist/cassandra/2.0.5/apache-cassandra-2.0.5-bin.tar.gz"
+        },
+        "2.0.3": {
+          "downloadUrl": "http://apache.mirrors.tds.net/cassandra/2.0.3/apache-cassandra-2.0.3-bin.tar.gz"
+        },
+        "2.0.1": {
+          "downloadUrl": "http://apache.osuosl.org/cassandra/2.0.1/apache-cassandra-2.0.1-bin.tar.gz"
+        },
+        "1.2.10": {
+          "downloadUrl": "http://apache.osuosl.org/cassandra/1.2.10/apache-cassandra-1.2.10-bin.tar.gz"
+        }
+      },
+      "Datastax": {
+        "2.1.2": {
+          "downloadUrl": "http://downloads.datastax.com/community/dsc-cassandra-2.1.2-bin.tar.gz"
+        },
+        "2.0.7": {
+          "downloadUrl": "http://downloads.datastax.com/community/dsc-cassandra-2.0.7-bin.tar.gz"
+        },
+        "2.0.6": {
+          "downloadUrl": "http://downloads.datastax.com/community/dsc-cassandra-2.0.6-bin.tar.gz"
+        },
+        "2.0.5": {
+          "downloadUrl": "http://downloads.datastax.com/community/dsc-cassandra-2.0.5-bin.tar.gz"
+        },
+        "2.0.3": {
+          "downloadUrl": "http://downloads.datastax.com/community/dsc-cassandra-2.0.3-bin.tar.gz"
+        },
+        "2.0.1": {
+          "downloadUrl": "http://downloads.datastax.com/community/dsc-cassandra-2.0.1-bin.tar.gz"
+        },
+        "1.2.10": {
+          "downloadUrl": "http://downloads.datastax.com/community/dsc-cassandra-1.2.10-bin.tar.gz"
+        }
+      }
+    }
+  },
+ 
+  "Ganglia": {
+    "Defaults": {
+      "register": true,
+      "gangliaClustername": "",
+      "gridName": "Ankush",
+      "gmondConfPath": "/home/${user}/.ankush/ganglia/conf/gmond.conf",
+      "gmetadConfPath": "/home/${user}/.ankush/ganglia/conf/gmetad.conf",
+      "pollingInterval": 15,
+      "gangliaPort": 8649,
+      "rrdFilePath": "/home/${user}/.ankush/ganglia/rrds/",
+      "confState": "-",
+       "RegisterLevel": {
+        "LEVEL1": "",
+        "LEVEL2": "",
+         "LEVEL3": ""
+      }
+    },
+    "Vendors": {
+      "Ganglia": {}
+    }
+  },
+ 
+  "Hadoop": {
+    "Registration": {
+      "Vendors": {
+        "Apache": {
+          "2.x": {},
+          "1.x": {}
+        },
+        "HDP": {
+          "2.x": {}
+        },
+        "Cloudera": {
+          "2.x": {}
+        }
+      }
+    },
+    "Defaults": {
+      "mapRedTmpDir": "/home/${user}/hes/hadoopDirs/mrtmp",
+      "dfsNameDir": "/home/${user}/hes/hadoopDirs/name",
+      "hadoopTmpDir": "/home/${user}/hes/hadoopDirs/hadooptmp",
+      "includeMasterAsSlave": "true",
+      "includeDFSFilePath": "/home/${user}/hes/hadoop/$VERSION/conf/includeDFS",
+      "javaHome": "/usr/lib/jvm/java-6-openjdk",
+      "excludeDFSFilePath": "/home/${user}/hes/hadoop/$VERSION/conf/excludeDFS",
+      "includeMRFilePath": "/home/${user}/hes/hadoop/$VERSION/conf/includeMR",
+      "includeMasterAsSNN": "true",
+      "excludeMRFilePath": "/home/${user}/hes/hadoop/$VERSION/conf/excludeMR",
+      "includeS3nSupportProperties": "false",
+      "startServices": "true",
+      "includeS3SupportProperties": "false",
+      "dfsDataDir": "/home/${user}/hes/hadoopDirs/data",
+      "dfsReplicationFactor": "3",
+      "formatNameNode": "true",
+      "installationPath": "/home/${user}/hes/hadoop/",
+      "confState": "Default",
+      "journalNodeEditsDir": "/home/${user}/hes/hadoopDirs/jndata",
+      "nameserviceId": "myCluster",
+      "nameNodeId1": "nn1",
+      "nameNodeId2": "nn2",
+      "webAppProxyPort": "8035",
+      "httpPortNameNode": "50070",
+      "webProxyEnabled": "true",
+      "haEnabled": "true",
+      "automaticFailoverEnabled": "true",
+      "DeploymentType": {
+        "Bundle": "",
+        "PackageManager": ""
+      },
+      "RegisterLevel": {
+        "LEVEL1": "",
+        "LEVEL2": ""
+      },
+      "MapreduceFramework": {
+        "yarn": "",
+        "classic": ""
+      }
+    },
+    "Vendors": {
+      "Apache": {
+        "2.6.0": {
+          "url": "http://archive.apache.org/dist/hadoop/core/hadoop-2.6.0/hadoop-2.6.0.tar.gz"
+        },
+        "2.5.1": {
+          "url": "http://archive.apache.org/dist/hadoop/core/hadoop-2.5.1/hadoop-2.5.1.tar.gz"
+        },
+        "2.4.1": {
+          "url": "http://archive.apache.org/dist/hadoop/core/hadoop-2.4.1/hadoop-2.4.1.tar.gz"
+        },
+        "2.4.0": {
+          "url": "http://archive.apache.org/dist/hadoop/core/hadoop-2.4.0/hadoop-2.4.0.tar.gz"
+        },
+        "2.3.0": {
+          "url": "http://archive.apache.org/dist/hadoop/core/hadoop-2.3.0/hadoop-2.3.0.tar.gz"
+        },
+        "2.2.0": {
+          "url": "http://archive.apache.org/dist/hadoop/core/hadoop-2.2.0/hadoop-2.2.0.tar.gz"
+        },
+        "1.2.1": {
+          "url": "http://archive.apache.org/dist/hadoop/core/hadoop-1.2.1/hadoop-1.2.1.tar.gz"
+        },
+        "1.1.1": {
+          "url": "http://archive.apache.org/dist/hadoop/core/hadoop-1.1.1/hadoop-1.1.1.tar.gz"
+        },
+        "1.0.4": {
+          "url": "http://archive.apache.org/dist/hadoop/core/hadoop-1.0.4/hadoop-1.0.4.tar.gz"
+        }
+      },
+      "Cloudera": {
+        "2.3.0-cdh5.1.0": {
+          "url": "http://archive.cloudera.com/cdh5/cdh/5/hadoop-2.3.0-cdh5.1.0.tar.gz"
+        },
+        "2.3.0-cdh5.0.3": {
+          "url": "http://archive.cloudera.com/cdh5/cdh/5/hadoop-2.3.0-cdh5.0.3.tar.gz"
+        },
+        "2.3.0-cdh5.0.0": {
+          "url": "http://archive.cloudera.com/cdh5/cdh/5/hadoop-2.3.0-cdh5.0.0.tar.gz"
+        },
+        "2.0.0-cdh4.7.0": {
+          "url": "http://archive-primary.cloudera.com/cdh4/cdh/4/hadoop-2.0.0-cdh4.7.0.tar.gz"
+        },
+        "2.0.0-cdh4.6.0": {
+          "url": "http://archive-primary.cloudera.com/cdh4/cdh/4/hadoop-2.0.0-cdh4.6.0.tar.gz"
+        },
+        "2.0.0-cdh4.5.0": {
+          "url": "http://archive-primary.cloudera.com/cdh4/cdh/4/hadoop-2.0.0-cdh4.5.0.tar.gz"
+        },
+        "2.0.0-cdh4.4.0": {
+          "url": "http://archive.cloudera.com/cdh4/cdh/4/hadoop-2.0.0-cdh4.4.0.tar.gz"
+        }
+      }
+    }
+  },
+  
+  "Zookeeper_default": {
+    "Defaults": {
+      "installationHomePath": "/home/${user}/zookeeper/",
+      "clientPort": 2181,
+      "dataDir": "/home/${user}/zookeeper/zk_data_dir/",
+      "syncLimit": 2,
+      "initLimit": 5,
+      "tickTime": 2000,
+      "jmxPort": 12345,
+      "confState": "Default",
+      "RegisterLevel": {
+        "LEVEL1": "",
+        "LEVEL2": "",
+        "LEVEL3": ""
+      }
+    },
+    "Vendors": {
+      "Apache": {
+        "3.4.6": {
+          "url": "http://archive.apache.org/dist/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz"
+        },
+        "3.4.5": {
+          "url": "http://archive.apache.org/dist/zookeeper/zookeeper-3.4.5/zookeeper-3.4.5.tar.gz"
+        },
+        "3.3.5": {
+          "url": "http://archive.apache.org/dist/zookeeper/zookeeper-3.3.5/zookeeper-3.3.5.tar.gz"
+        }
+      },
+      "Cloudera": {
+        "3.4.5-cdh5.1.0": {
+          "url": "http://archive.cloudera.com/cdh5/cdh/5/zookeeper-3.4.5-cdh5.1.0.tar.gz"
+        },
+        "3.4.5-cdh5.0.3": {
+          "url": "http://archive.cloudera.com/cdh5/cdh/5/zookeeper-3.4.5-cdh5.0.3.tar.gz"
+        },
+        "3.4.5-cdh5.0.0": {
+          "url": "http://archive.cloudera.com/cdh5/cdh/5/zookeeper-3.4.5-cdh5.0.0.tar.gz"
+        },
+        "3.4.5-cdh4.7.0": {
+          "url": "http://archive.cloudera.com/cdh4/cdh/4/zookeeper-3.4.5-cdh4.7.0.tar.gz"
+        },
+        "3.4.5-cdh4.6.0": {
+          "url": "http://archive.cloudera.com/cdh4/cdh/4/zookeeper-3.4.5-cdh4.6.0.tar.gz"
+        },
+        "3.4.5-cdh4.5.0": {
+          "url": "http://archive.cloudera.com/cdh4/cdh/4/zookeeper-3.4.5-cdh4.5.0.tar.gz"
+        },
+        "3.4.5-cdh4.4.0": {
+          "url": "http://archive.cloudera.com/cdh4/cdh/4/zookeeper-3.4.5-cdh4.4.0.tar.gz"
+        }
+      }
+    }
+  }
+}

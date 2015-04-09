@@ -1,2 +1,0 @@
-zypper --non-interactive install ntp
-/sbin/service ntp stop || echo ""

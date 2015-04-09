@@ -34,17 +34,17 @@ public class UntarTest {
 	 * @throws Exception
 	 *             the exception
 	 */
-	@Test
-	public void testUntar_1() throws Exception {
-		String tarFilePath = "test.tar.gz";
-		String location = "/tmp";
-
-		Untar result = new Untar(tarFilePath, location);
-
-		assertNotNull(result);
-		assertEquals("tar -C /tmp -xf test.tar.gz", result.getCommand());
-		assertEquals("Ankush Task Info...", result.getInfo());
-	}
+//	@Test
+//	public void testUntar_1() throws Exception {
+//		String tarFilePath = "test.tar.gz";
+//		String location = "/tmp";
+//
+//		Untar result = new Untar(tarFilePath, location);
+//
+//		assertNotNull(result);
+//		assertEquals("tar -C /tmp -xf test.tar.gz", result.getCommand());
+//		assertEquals("Ankush Task Info...", result.getInfo());
+//	}
 
 	/**
 	 * Test get command_1.
@@ -52,12 +52,12 @@ public class UntarTest {
 	 * @throws Exception
 	 *             the exception
 	 */
-	@Test
-	public void testGetCommand_1() throws Exception {
-		Untar fixture = new Untar("test.tar.gz", "/tmp");
-
-		String result = fixture.getCommand();
-
-		assertEquals("tar -C /tmp -xf test.tar.gz", result);
-	}
+//	@Test
+//	public void testGetCommand_1() throws Exception {
+//		Untar fixture = new Untar("test.tar.gz", "/tmp");
+//
+//		String result = fixture.getCommand();
+//
+//		assertEquals("tar -C /tmp -xf test.tar.gz", result);
+//	}
 }

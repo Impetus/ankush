@@ -1,8 +1,4 @@
 {
   "Hadoop": "Hadoop",
-  "OracleNoSQL": "Oracle NoSQL Database",
-  "Storm": "Storm",
-  "Cassandra": "Cassandra",
-  "Kafka": "Kafka",
-  "ElasticSearch": "ElasticSearch"
+  "Cassandra": "Cassandra"
 }

@@ -43,13 +43,13 @@
     
     <bean id="pooledExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
 		<property name="daemon" value="true"></property>
-		<property name="threadNamePrefix" value="springTPTExecThread"></property>
+		<property name="threadNamePrefix" value="AnkushPooledExecutor"></property>
 		<property name="corePoolSize" value="5"/>
     </bean>
     
     <bean id="pooledScheduler" class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler">
-    	<property name="threadNamePrefix" value="springTPTSchedThread"/>
-    	<property name="poolSize" value="1000"/>
+    	<property name="threadNamePrefix" value="AnkushPooledScheduler"/>
+    	<property name="poolSize" value="5"/>
     	<property name="daemon" value="true"/>
     </bean>
 
@@ -69,8 +69,10 @@
 	
 	<bean id="appConfService" class="com.impetus.ankush.common.service.impl.AppConfServiceImpl"/>
     
+    <bean id="clusterService" class="com.impetus.ankush.common.service.impl.ClusterServiceImpl"/>
+    
     <bean id="asyncExecutorService" class="com.impetus.ankush.common.service.impl.AsyncExecutorServiceImpl" />
     
-    <bean id="parameterConfigService" class="com.impetus.ankush.hadoop.service.impl.ParameterConfigServiceImpl" />
+<!--     <bean id="parameterConfigService" class="com.impetus.ankush.hadoop.service.impl.ParameterConfigServiceImpl" /> -->
     
 </beans>

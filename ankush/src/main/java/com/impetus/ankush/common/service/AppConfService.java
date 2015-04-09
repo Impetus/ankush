@@ -23,6 +23,7 @@ package com.impetus.ankush.common.service;
 import java.util.Enumeration;
 import java.util.Map;
 
+import com.impetus.ankush.common.mail.MailConf;
 import com.impetus.ankush.common.service.impl.AnkushApplicationConf;
 
 /**
@@ -35,16 +36,21 @@ public interface AppConfService {
 	 * 
 	 * @param commonConf
 	 *            the common conf
+	 * @param unauthenticated
+	 *            the unauthenticated
 	 * @return the map
 	 */
-	Map manageCommonConfiguration(AnkushApplicationConf commonConf);
+	Map manageCommonConfiguration(AnkushApplicationConf commonConf,
+			boolean unauthenticated);
 
 	/**
 	 * Gets the common configuration.
 	 * 
+	 * @param unauthenticated
+	 *            the unauthenticated
 	 * @return the common configuration
 	 */
-	Map getCommonConfiguration();
+	Map getCommonConfiguration(boolean unauthenticated);
 
 	/**
 	 * Gets the app conf.
@@ -79,19 +85,37 @@ public interface AppConfService {
 	 * @return the app access public url
 	 */
 	String getAppAccessPublicURL();
-	
+
 	/**
 	 * Gets the app conf.
-	 *
-	 * @param parameterNames the parameter names
+	 * 
+	 * @param keys
+	 *            the keys
 	 * @return the app conf
 	 */
 	Map getAppConf(Enumeration keys);
-	
+
+	/**
+	 * Gets the metadata.
+	 * 
+	 * @param file
+	 *            the file
+	 * @return the metadata
+	 */
 	Map getMetadata(String file);
-	
+
 	/**
 	 * Method to set Host Address and Port.
 	 */
 	void setDefaultHostAddress();
+
+	/**
+	 * Test mail conf
+	 */
+	Map testMailConf(MailConf mailConf, String toUser);
+
+	/**
+	 * Update mail conf verification status
+	 */
+	Map updateMailConfVerificationStatus(String toUser);
 }

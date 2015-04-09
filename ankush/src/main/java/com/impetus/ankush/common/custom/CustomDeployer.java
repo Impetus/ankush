@@ -26,20 +26,21 @@ package com.impetus.ankush.common.custom;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
-import org.apache.commons.io.FilenameUtils;
-
 import net.neoremind.sshxcute.core.Result;
 import net.neoremind.sshxcute.core.SSHExec;
 import net.neoremind.sshxcute.task.CustomTask;
 import net.neoremind.sshxcute.task.impl.ExecCommand;
 
+import org.apache.commons.io.FilenameUtils;
+
 import com.impetus.ankush.AppStoreWrapper;
-import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.framework.Deployable;
 import com.impetus.ankush.common.framework.config.Configuration;
+import com.impetus.ankush.common.framework.config.GenericConfiguration;
 import com.impetus.ankush.common.framework.config.NodeConf;
 import com.impetus.ankush.common.utils.AnkushLogger;
 import com.impetus.ankush.common.utils.SSHUtils;
+import com.impetus.ankush2.constant.Constant.Component;
 
 /**
  * @author mayur
@@ -49,7 +50,7 @@ public class CustomDeployer implements Deployable {
 
 	/** The log. */
 	private final AnkushLogger LOG = new AnkushLogger(
-			Constant.Component.Name.CUSTOMDEPLOYER, CustomDeployer.class);
+			Component.Name.CUSTOMDEPLOYER, CustomDeployer.class);
 
 	@Override
 	public boolean deploy(Configuration config) {
@@ -199,4 +200,27 @@ public class CustomDeployer implements Deployable {
 		return status;
 	}
 
+	@Override
+	public boolean registerComponent(Configuration config) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean unregisterComponent(Configuration config) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean validateComponent(String nodeIp, SSHExec connection,
+			GenericConfiguration config) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	public boolean deployPatch(Configuration config) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

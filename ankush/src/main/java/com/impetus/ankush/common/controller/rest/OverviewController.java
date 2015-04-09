@@ -30,10 +30,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.impetus.ankush.common.cluster.ClusterOverviewMonitor;
-import com.impetus.ankush.common.cluster.SystemOverviewMonitor;
 import com.impetus.ankush.common.tiles.TileInfo;
 import com.impetus.ankush.common.utils.ResponseWrapper;
+import com.impetus.ankush2.framework.monitor.AnkushMonitor;
 
 /**
  * The Class OverviewController.
@@ -44,29 +43,28 @@ public class OverviewController extends BaseController {
 
 	/**
 	 * Gets the cluster overview.
-	 *
+	 * 
 	 * @return the cluster overview
 	 */
 	@RequestMapping(method = RequestMethod.GET, value = "clusteroverview")
 	@ResponseBody
 	public ResponseEntity<ResponseWrapper<List<Map<String, Object>>>> getClusterOverview() {
-		ClusterOverviewMonitor clusterOverviewMonitor = new ClusterOverviewMonitor();
-		return wrapResponse(clusterOverviewMonitor.getClusterOverview(), HttpStatus.OK,
-				HttpStatus.OK.toString(), "Cluster overview dashboard");
+		return wrapResponse(new AnkushMonitor().getClusterOverview(),
+				HttpStatus.OK, HttpStatus.OK.toString(),
+				"Cluster overview dashboard");
 	}
-	
+
 	/**
 	 * Gets the system overview.
-	 *
+	 * 
 	 * @return the system overview
 	 */
 	@RequestMapping(method = RequestMethod.GET, value = "systemoverview")
 	@ResponseBody
 	public ResponseEntity<ResponseWrapper<List<TileInfo>>> getSystemOverview() {
 
-		SystemOverviewMonitor monitor = new SystemOverviewMonitor();
-
-		return wrapResponse(monitor.getSystermOverview(), HttpStatus.OK,
-				HttpStatus.OK.toString(), "system overview details.");
+		return wrapResponse(new AnkushMonitor().getSystermOverview(),
+				HttpStatus.OK, HttpStatus.OK.toString(),
+				"system overview details.");
 	}
 }

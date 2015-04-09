@@ -1,21 +1,27 @@
 /*******************************************************************************
- * Copyright 2014 Impetus Infotech.
+ * ===========================================================
+ * Ankush : Big Data Cluster Management Solution
+ * ===========================================================
  * 
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * (C) Copyright 2014, by Impetus Technologies
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * This is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License (LGPL v3) as
+ * published by the Free Software Foundation;
  * 
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * This software is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License 
+ * along with this software; if not, write to the Free Software Foundation, 
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  ******************************************************************************/
 package com.impetus.ankush.common.controller.view;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -27,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,6 +49,7 @@ public class AnkushAuthViewController extends AbstractController {
 	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory
 			.getLogger(AnkushAuthViewController.class);
+	private ArrayList<String> jsFiles;
 
 	/**
 	 * Simply selects the home view to render by returning its name.
@@ -72,11 +80,11 @@ public class AnkushAuthViewController extends AbstractController {
 	 *            the model
 	 * @return the string
 	 */
-	@RequestMapping(value = "/user1/forget_password", method = RequestMethod.GET)
+	@RequestMapping(value = "/auth/forget_password", method = RequestMethod.GET)
 	public String resetPassword(
-			@RequestParam(value = "error", required = false) boolean error,
 			ModelMap model) {
-		return "user/forget-password";
+		model.addAttribute("page", "forget password");
+		return "/forgetPassword";
 	}
 
 	/**
@@ -95,6 +103,7 @@ public class AnkushAuthViewController extends AbstractController {
 			@RequestParam(value = "error", required = false) boolean error,
 			ModelMap model, HttpServletRequest request) {
 		logger.info("Received request to show login page");
+		model.addAttribute("page", "login");
 		return "/home";
 	}
 
@@ -109,14 +118,7 @@ public class AnkushAuthViewController extends AbstractController {
 	 *            the request
 	 * @return the config page
 	 */
-	@RequestMapping(value = "/auth/config", method = RequestMethod.GET)
-	public String getConfigPage(
-			@RequestParam(value = "error", required = false) boolean error,
-			ModelMap model, HttpServletRequest request) {
-		logger.info("Received Request to show COnfiguration page");
-		model.addAttribute("url", "/app/conf");
-		return "/afterLoginConfigPage";
-	}
+	
 
 	/*
 	 * (non-Javadoc)

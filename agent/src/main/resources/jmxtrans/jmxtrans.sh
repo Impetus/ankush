@@ -18,7 +18,7 @@ else
 fi
 
 LOG_DIR=${LOG_DIR:-"."}
-JAR_FILE=${JAR_FILE:-"jmxtrans-all.jar"}
+JAR_FILE=${JAR_FILE:-"ankush-jmxtrans-all.jar"}
 JSON_DIR=${JSON_DIR:-"."}
 SECONDS_BETWEEN_RUNS=${SECONDS_BETWEEN_RUNS:-"60"}
 

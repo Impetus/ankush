@@ -37,16 +37,24 @@ public class Untar extends AnkushTask {
 	
 	/** The destination. */
 	private String destination = null;
-
+	
+	private boolean appendStripComponentsFlag = true;
+	
 	/**
 	 * Instantiates a new untar.
 	 *
 	 * @param tarFilePath the tar file path
-	 * @param location the location
+	 * @param destination the destination
 	 */
-	public Untar(String tarFilePath, String location) {
+	public Untar(String tarFilePath, String destination) {
+		this.tarFilePath = tarFilePath;
+		this.destination = destination;
+	}
+	
+	public Untar(String tarFilePath, String location, boolean appendStripComponentsFlag) {
 		this.tarFilePath = tarFilePath;
 		this.destination = location;
+		this.appendStripComponentsFlag = appendStripComponentsFlag;
 	}
 
 	/* (non-Javadoc)
@@ -54,7 +62,11 @@ public class Untar extends AnkushTask {
 	 */
 	@Override
 	public String getCommand() {
-		return "tar -C " + this.destination + " -xf " + this.tarFilePath;
+		if(this.appendStripComponentsFlag) {
+			return "tar -C " + this.destination + " -xf " + this.tarFilePath + " --strip-components=1";
+		} else {
+			return "tar -C " + this.destination + " -xf " + this.tarFilePath;	
+		}
 	}
 
 }

@@ -41,9 +41,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 public class AgentRestClient {
 
 	/** The log. */
-	private AgentLogger LOGGER = new AgentLogger(AgentRestClient.class);
+	private static final AgentLogger LOGGER = new AgentLogger(
+			AgentRestClient.class);
 
-	
 	private static final String APPLICATION_JSON = "application/json";
 
 	/** The mapper. */
@@ -104,11 +104,14 @@ public class AgentRestClient {
 	private String sendRequest(String urlPath, String input, String method,
 			String accept, String contentType) {
 		HttpURLConnection conn = null;
-		String output = "";
 		OutputStream os = null;
+		BufferedReader br = null;
+		InputStreamReader isr = null;
+		
 		try {
-			LOGGER.info(" URL Path : " + urlPath);
+			LOGGER.info("URL Path : " + urlPath);
 			URL url = new URL(urlPath);
+
 			conn = (HttpURLConnection) url.openConnection();
 			conn.setDoOutput(true);
 			conn.setRequestMethod(method);
@@ -127,29 +130,45 @@ public class AgentRestClient {
 				throw new RuntimeException("Failed : HTTP error code : "
 						+ conn.getResponseCode());
 			}
-
-			BufferedReader br = new BufferedReader(new InputStreamReader(
-					(conn.getInputStream())));
+			isr = new InputStreamReader(conn.getInputStream());
+			br = new BufferedReader(isr);
 
 			String buffer = "";
+			StringBuilder output = new StringBuilder();
 			while ((buffer = br.readLine()) != null) {
-				output += buffer;
+				output.append(buffer);
 			}
+			return output.toString();
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
+			return null;
 		} finally {
+			try {
+				if (isr != null) {
+					isr.close();
+				}
+
+				if (br != null) {
+					br.close();
+				}
+			} catch (Exception e) {
+				LOGGER.error(
+						"Unable to close buffer stream while sending request",
+						e);
+			}
 			if (conn != null) {
 				conn.disconnect();
 			}
+
 			if (os != null) {
 				IOUtils.closeQuietly(os);
 			}
 		}
-		return output;
 	}
 
 	/**
 	 * Method to send get request.
+	 * 
 	 * @param url
 	 * @return
 	 */
@@ -159,6 +178,7 @@ public class AgentRestClient {
 
 	/**
 	 * Method to send post request.
+	 * 
 	 * @param url
 	 * @param data
 	 * @return

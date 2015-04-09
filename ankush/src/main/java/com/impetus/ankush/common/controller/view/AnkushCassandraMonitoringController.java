@@ -68,26 +68,58 @@ public class AnkushCassandraMonitoringController extends AbstractController {
 		model.addAttribute("clusterId", clusterId);
 		return "cassandra/cassandraClusterMonitoring/cassandraAddNodes";
 	}
+	@RequestMapping(value = "/nodeOverview", method = RequestMethod.GET)
+	public String nodeOverview(ModelMap model) {
+		logger.info("Inside cassandra nodeOverview view");
+		return "cassandra/cassandraClusterMonitoring/nodeOverviewTable";
+	}
 	//this will load keyspaces page for cassandra monitoring
-	@RequestMapping(value = "/keyspaces", method = RequestMethod.GET)
-	public String keySpaces(ModelMap model) {
+	@RequestMapping(value = "/{clusterName}/{hybridTechnology}/keyspaces/C-D/{clusterId}/{clusterTechnology}", method = RequestMethod.GET)
+	public String keySpaces(ModelMap model,
+			@PathVariable("clusterId") String clusterId,
+			@PathVariable("clusterTechnology") String clusterTechnology,
+			@PathVariable("hybridTechnology") String hybridTechnology,
+			@PathVariable("clusterName") String clusterName) {
+		model.addAttribute("page", "keyspaces");
+		model.addAttribute("clusterId", clusterId);
+		model.addAttribute("clusterName", clusterName);
+		model.addAttribute("clusterTechnology", clusterTechnology);
+		model.addAttribute("hybridTechnology", hybridTechnology);
 		logger.info("Inside keyspaces view");
 		return "cassandra/cassandraClusterMonitoring/keyspaces";
 	}
 	//this will load keyspacesdrilldown page for cassandra monitoring
-	@RequestMapping(value = "/keyspaceDrillDown", method = RequestMethod.GET)
-	public String keyspaceDrillDown(ModelMap model,@RequestParam("keyspace") String keyspace,@RequestParam("index") String index) {
-		logger.info("Inside keyspaces view");
-		model.addAttribute("keyspace", keyspace);
-		model.addAttribute("index", index);
+	@RequestMapping(value = "/{clusterName}/{hybridTechnology}/keyspaces/{keyspaceName}/C-D/{clusterId}/{clusterTechnology}", method = RequestMethod.GET)
+	public String keyspaceDrillDown(ModelMap model,
+			@PathVariable("clusterId") String clusterId,
+			@PathVariable("clusterName") String clusterName,
+			@PathVariable("clusterTechnology") String clusterTechnology,
+			@PathVariable("hybridTechnology") String hybridTechnology,@PathVariable("keyspaceName") String keyspaceName) {
+		model.addAttribute("page", "keyspacedrilldown");
+		model.addAttribute("clusterId", clusterId);
+		model.addAttribute("clusterTechnology", clusterTechnology);
+		model.addAttribute("hybridTechnology", hybridTechnology);
+		model.addAttribute("keyspaceName", keyspaceName);
+		logger.info("Inside keyspaces drilldown view");
 		return "cassandra/cassandraClusterMonitoring/keyspaceDrillDown";
 	}
 	//this will load colomnfamilydrilldown page for cassandra monitoring
-	@RequestMapping(value = "/columnFamilyDrillDown", method = RequestMethod.GET)
-	public String columnFamilyDrillDown(ModelMap model,@RequestParam("keyspace") String keyspace,@RequestParam("columnfamily") String columnfamily) {
-		logger.info("Inside keyspaces view");
-		model.addAttribute("keyspace", keyspace);
-		model.addAttribute("columnfamily", columnfamily);
+	@RequestMapping(value = "/{clusterName}/{hybridTechnology}/keyspaces/{keyspaceName}/{columnFamilyName}/C-D/{clusterId}/{clusterTechnology}", method = RequestMethod.GET)
+	public String columnFamilyDrillDown(ModelMap model,
+			@PathVariable("clusterId") String clusterId,
+			@PathVariable("clusterTechnology") String clusterTechnology,
+			@PathVariable("hybridTechnology") String hybridTechnology,
+			@PathVariable("keyspaceName") String keyspaceName,
+			@PathVariable("columnFamilyName") String columnFamilyName,
+			@PathVariable("clusterName") String clusterName){
+		model.addAttribute("page", "keyspacedrilldown");
+		model.addAttribute("clusterId", clusterId);
+		model.addAttribute("clusterName", clusterName);
+		model.addAttribute("clusterTechnology", clusterTechnology);
+		model.addAttribute("hybridTechnology", hybridTechnology);
+		model.addAttribute("keyspaceName", keyspaceName);
+		model.addAttribute("columnFamilyName", columnFamilyName);
+		logger.info("Inside columnFamily drilldown view");
 		return "cassandra/cassandraClusterMonitoring/columnFamilyDrillDown";
 	}
 	//this will load parameters page for cassandra monitoring

@@ -43,6 +43,9 @@ public class MailConf {
 	/** Stores whether mail service is available over secured socket. */
 	private boolean secured;
 
+	/** Stores email address of mail account */
+	private String emailAddress;
+	
 	/**
 	 * Gets the server.
 	 *
@@ -132,4 +135,19 @@ public class MailConf {
 	public void setSecured(boolean secured) {
 		this.secured = secured;
 	}
+
+	/**
+	 * @return the emailAddress
+	 */
+	public String getEmailAddress() {
+		return emailAddress;
+	}
+
+	/**
+	 * @param emailAddress the emailAddress to set
+	 */
+	public void setEmailAddress(String emailAddress) {
+		this.emailAddress = emailAddress;
+	}
+
 }

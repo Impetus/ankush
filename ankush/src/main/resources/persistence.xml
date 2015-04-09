@@ -36,6 +36,10 @@
 		<class>com.impetus.ankush.common.domain.Event</class>
 		<class>com.impetus.ankush.common.domain.AppConf</class>
 		<class>com.impetus.ankush.common.domain.EventHistory</class>
+		<class>com.impetus.ankush.common.domain.Template</class>
+		<class>com.impetus.ankush.common.domain.HAService</class>
+		<class>com.impetus.ankush.common.domain.Service</class>
+		<class>com.impetus.ankush.common.domain.Operation</class>
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 
 	</persistence-unit>

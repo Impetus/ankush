@@ -49,7 +49,8 @@ import com.impetus.ankush.agent.utils.ZipFiles;
  */
 public class UploadHandler implements Actionable {
 	/** The log. */
-	private static AgentLogger LOGGER = new AgentLogger(UploadHandler.class);
+	private static final AgentLogger LOGGER = new AgentLogger(
+			UploadHandler.class);
 
 	/**
 	 * A generic method to execute any type of Http Request and constructs a

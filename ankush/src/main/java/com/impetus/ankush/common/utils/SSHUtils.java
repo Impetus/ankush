@@ -42,7 +42,7 @@ import com.impetus.ankush.common.framework.config.AuthConf;
 import com.impetus.ankush.common.framework.config.GenericConfiguration;
 import com.impetus.ankush.common.framework.config.NodeConf;
 import com.impetus.ankush.common.scripting.AnkushTask;
-import com.impetus.ankush.common.scripting.impl.AppendFile;
+import com.impetus.ankush.common.scripting.impl.AppendFileUsingEcho;
 import com.impetus.ankush.common.scripting.impl.ExecSudoCommand;
 import com.impetus.ankush.common.scripting.impl.Untar;
 import com.impetus.ankush.common.scripting.impl.Unzip;
@@ -80,7 +80,7 @@ public class SSHUtils {
 		}
 		return true;
 	}
-
+	
 	/**
 	 * Setup paswwordless ssh.
 	 * 
@@ -109,16 +109,16 @@ public class SSHUtils {
 			}
 
 			for (NodeConf node : destinations) {
-				boolean status = SSHUtils.generateRSAKeyFiles(node.getPublicIp(),
-						username, password, privateKey);
+				boolean status = SSHUtils.generateRSAKeyFiles(
+						node.getPublicIp(), username, password, privateKey);
 				if (!status) {
 					return false;
 				}
 			}
 
 			// connect with from/master node
-			connection = SSHUtils.connectToNode(source.getPublicIp(),
-					username, password, privateKey);
+			connection = SSHUtils.connectToNode(source.getPublicIp(), username,
+					password, privateKey);
 
 			String passwordOrKeyForSSH = password;
 			boolean authUsingPassword = true;
@@ -131,30 +131,36 @@ public class SSHUtils {
 					source.getPublicIp(), username, passwordOrKeyForSSH,
 					authUsingPassword);
 
-			if(pubKey == null) {
-				logger.error(source, "Error : Unable to read ~/.ssh/id_rsa.pub file.");
+			if (pubKey == null) {
+				logger.error(source,
+						"Error : Unable to read ~/.ssh/id_rsa.pub file.");
 				return false;
 			}
+			
 			// add host entry in know host.
 			for (NodeConf destination : destinations) {
 				String cmdAddToKnowHost = "ssh -o ConnectTimeout=15 -o ConnectionAttempts=5 -o StrictHostKeyChecking=no "
 						+ username
 						+ "@"
-						+ HostOperation.getAnkushHostName(destination
-								.getPrivateIp()) + " ls";
+						+ destination.getPrivateIp() + " ls";
+
+//						+ HostOperation.getAnkushHostName(destination
+//								.getPrivateIp()) + " ls";
 
 				CustomTask task = new ExecCommand(cmdAddToKnowHost);
 				connection.exec(task);
 
-				SSHExec conn = SSHUtils.connectToNode(destination.getPublicIp(),
-						username, password, privateKey);
-				
+				SSHExec conn = SSHUtils.connectToNode(
+						destination.getPublicIp(), username, password,
+						privateKey);
+
 				task = new ExecCommand("echo \"" + pubKey
 						+ "\" >> ~/.ssh/authorized_keys",
 						"chmod 0600 ~/.ssh/authorized_keys");
 
 				if (conn.exec(task).rc != 0) {
-					logger.error(destination, "Error : Unable to update authorized keys.");
+					logger.error(destination,
+							"Error : Unable to update authorized keys.");
 					conn.disconnect();
 					connection.disconnect();
 					return false;
@@ -167,7 +173,7 @@ public class SSHUtils {
 			logger.debug(e.getMessage());
 			return false;
 		} finally {
-			if(connection != null) {
+			if (connection != null) {
 				connection.disconnect();
 			}
 		}
@@ -196,7 +202,7 @@ public class SSHUtils {
 		}
 		return connection;
 	}
-
+	
 	/**
 	 * Connect to node.
 	 * 
@@ -444,6 +450,44 @@ public class SSHUtils {
 		}
 		return output;
 	}
+	public static String getFileContents(SSHExec connection, String filePath) throws Exception {
+		String output = null;
+		Result res = connection.exec(new ExecCommand("cat " + filePath));
+		output = res.sysout;
+		return output;
+	}
+	
+	public static String getFileContents(String filePath, String hostname,
+			String username, String password, String privateKeyFilePath)
+			throws Exception {
+
+		String output = null;
+
+		// Making the SSH Connection.
+		SSHConnection connection = new SSHConnection(hostname, username,
+				password, privateKeyFilePath);
+
+		if (!connection.isConnected()) {
+			throw new Exception("Unable to connect to node.");
+		}
+
+		/* Executing the command. */
+		if (connection.exec("cat " + filePath)) {
+
+			if (connection.getExitStatus() == 0) {
+				// Getting the output of command.
+				output = connection.getOutput();
+			} else {
+				String error = connection.getError();
+				if (error.contains("No such file")) {
+					throw new Exception(filePath + " does not exists");
+				} else if (error.contains("Permission denied")) {
+					throw new Exception("Invalid permissions on " + filePath);
+				}
+			}
+		}
+		return output;
+	}
 
 	/**
 	 * Find out OSName of remote machine.
@@ -460,38 +504,45 @@ public class SSHUtils {
 	 */
 	public static String getOS(String hostname, String username,
 			String authInfo, boolean authUsingPassword) {
-		String osName = null;
-		/* Making connection to the node. */
-		SSHConnection connection = new SSHConnection(hostname, username,
-				authInfo, authUsingPassword);
+		String osName = "";
+		SSHConnection connection = null;
+		try {
+			/* Making connection to the node. */
+			connection = new SSHConnection(hostname, username,
+					authInfo, authUsingPassword);
 
-		// if connected.
-		if (connection.isConnected()) {
-			osName = "";
+			// if connected.
+			if (connection.isConnected()) {
+				osName = "";
 
-			/* Executing the command. */
-			if (connection.exec("cat /etc/*-release")) {
-				String output = connection.getOutput().toLowerCase();
-				if (output != null) {
-					if (output.contains("ubuntu")) {
-						osName = "Ubuntu";
-					}
-					if (output.contains("centos")) {
-						osName = "CentOS";
-					}
-					if (output.contains("opensuse")) {
-						osName = "openSUSE";
-					}
-					if (output.contains("fedora")) {
-						osName = "Fedora";
-					}
-					if (output.contains("red hat enterprise linux")) {
-						osName = "RHEL";
+				/* Executing the command. */
+				if (connection.exec("cat /etc/*-release")) {
+					String output = connection.getOutput().toLowerCase();
+					if (output != null) {
+						if (output.contains("ubuntu")) {
+							osName = "Ubuntu";
+						}
+						if (output.contains("centos")) {
+							osName = "CentOS";
+						}
+						if (output.contains("opensuse")) {
+							osName = "openSUSE";
+						}
+						if (output.contains("fedora")) {
+							osName = "Fedora";
+						}
+						if (output.contains("red hat enterprise linux")) {
+							osName = "RHEL";
+						}
 					}
 				}
-			}
+				
+			}	
+		} catch (Exception e) {
+			return osName; 
 		}
 		return osName;
+		
 	}
 
 	/**
@@ -523,7 +574,7 @@ public class SSHUtils {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Get JavaHome path from remote machine.
 	 * 
@@ -547,13 +598,15 @@ public class SSHUtils {
 		/* Executing the command. */
 		if (connection.exec("java -version")) {
 			String output = connection.getOutput();
-			System.out.println("output: " + output);
-			if(output == null) {
+			if (output == null) {
 				output = connection.getError();
 			}
 			if (output != null) {
-				String strJavaVersion = output.substring(0, output.indexOf("\n"));
-				String javaVersion = strJavaVersion.substring(strJavaVersion.indexOf("\""), strJavaVersion.length()-1);
+				String strJavaVersion = output.substring(0,
+						output.indexOf("\n"));
+				String javaVersion = strJavaVersion.substring(
+						strJavaVersion.indexOf("\""),
+						strJavaVersion.length() - 1);
 				return javaVersion;
 			}
 		}
@@ -584,8 +637,8 @@ public class SSHUtils {
 			output = connection.getError();
 		}
 		/* Returning the output of command. */
-		map.put(Constant.Keys.STATUS, status);
-		map.put(Constant.Keys.OUTPUT, output);
+		map.put(com.impetus.ankush2.constant.Constant.Keys.STATUS, status);
+		map.put(com.impetus.ankush2.constant.Constant.Keys.OUTPUT, output);
 		return map;
 	}
 
@@ -628,7 +681,7 @@ public class SSHUtils {
 		/* Returning the output of command. */
 		return output;
 	}
-
+	
 	/**
 	 * Check command.
 	 * 
@@ -708,6 +761,33 @@ public class SSHUtils {
 	}
 
 	/**
+	 * Method to execute list of tasks. If any one fails it return backs the
+	 * result of failed task otherwise the last task result.
+	 * 
+	 * @param tasks
+	 * @return
+	 */
+
+	public static Result executeTasks(List<AnkushTask> tasks, SSHExec connection) {
+		Result result = null;
+		try {
+			// iterating over the tasks.
+			for (AnkushTask task : tasks) {
+				// executing command
+				result = connection.exec(task);
+				// if command execution failed break the for loop
+				if (result.rc != 0) {
+					break;
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Could not execute the tasks.", e);
+		}
+		// returning result.
+		return result;
+	}
+
+	/**
 	 * Adds the process info.
 	 * 
 	 */
@@ -720,7 +800,7 @@ public class SSHUtils {
 			className = lineSeperator + className;
 
 			// add task information in taskable conf.
-			AnkushTask task = new AppendFile(className,
+			AnkushTask task = new AppendFileUsingEcho(className,
 					Constant.Agent.AGENT_TASKABLE_FILE_PATH);
 			connection.exec(task);
 			return true;

@@ -45,6 +45,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.Index;
 
 import com.impetus.ankush.common.framework.config.NodeConf;
+import com.impetus.ankush2.framework.config.NodeConfig;
 
 /**
  * The Class Node.
@@ -91,6 +92,12 @@ public class Node extends BaseObject {
 	/** the events **/
 	private List<Event> events;
 
+	/** the ervicess **/
+	private List<Service> services;
+
+	/** Agent version **/
+	private String agentVersion;
+
 	/**
 	 * @param events
 	 *            the events to set
@@ -111,6 +118,26 @@ public class Node extends BaseObject {
 			@JoinColumn(name = "host", referencedColumnName = "publicIp") })
 	public List<Event> getEvents() {
 		return events;
+	}
+
+	/**
+	 * @param events
+	 *            the events to set
+	 */
+	public void setServices(List<Service> services) {
+		this.services = services;
+	}
+
+	/**
+	 * @return the events
+	 */
+	/**
+	 * @return the configuration
+	 */
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@JoinColumns({ @JoinColumn(name = "node", referencedColumnName = "publicIp") })
+	public List<Service> getServices() {
+		return services;
 	}
 
 	/**
@@ -159,7 +186,7 @@ public class Node extends BaseObject {
 	 * @return the id
 	 */
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+//	@GeneratedValue(strategy = GenerationType.AUTO)
 	public Long getId() {
 		return id;
 	}
@@ -198,7 +225,7 @@ public class Node extends BaseObject {
 	 * 
 	 * @return the publicIp
 	 */
-	@Index(name="node_publicip_index")
+	@Index(name = "node_publicip_index")
 	public String getPublicIp() {
 		return publicIp;
 	}
@@ -306,6 +333,20 @@ public class Node extends BaseObject {
 	}
 
 	/**
+	 * Gets the node config obj.
+	 * 
+	 * @return the object
+	 */
+	@Transient
+	@JsonIgnore
+	public NodeConfig getNodeConfig() {
+		if (getConfBytes() == null) {
+			return null;
+		}
+		return (NodeConfig) SerializationUtils.deserialize(getConfBytes());
+	}
+
+	/**
 	 * Sets the node conf obj.
 	 * 
 	 * @param nodeConf
@@ -313,6 +354,10 @@ public class Node extends BaseObject {
 	 * @return the object
 	 */
 	public void setNodeConf(NodeConf nodeConf) {
+		this.setConfBytes(SerializationUtils.serialize(nodeConf));
+	}
+
+	public void setNodeConfig(NodeConfig nodeConf) {
 		this.setConfBytes(SerializationUtils.serialize(nodeConf));
 	}
 
@@ -333,6 +378,21 @@ public class Node extends BaseObject {
 	 */
 	public void setState(String state) {
 		this.state = state;
+	}
+
+	/**
+	 * @param agentVersion
+	 *            the agentVersion to set
+	 */
+	public void setAgentVersion(String agentVersion) {
+		this.agentVersion = agentVersion;
+	}
+
+	/**
+	 * @return the agentVersion
+	 */
+	public String getAgentVersion() {
+		return agentVersion;
 	}
 
 	/*

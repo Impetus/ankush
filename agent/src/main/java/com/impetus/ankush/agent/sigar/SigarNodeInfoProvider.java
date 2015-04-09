@@ -61,7 +61,8 @@ import com.impetus.ankush.agent.utils.Result;
 public class SigarNodeInfoProvider {
 
 	/** The log. */
-	private AgentLogger LOGGER = new AgentLogger(SigarNodeInfoProvider.class);
+	private static final AgentLogger LOGGER = new AgentLogger(
+			SigarNodeInfoProvider.class);
 
 	/** The Constant SLEEP. */
 	public static final char SLEEP = 'S';
@@ -107,7 +108,7 @@ public class SigarNodeInfoProvider {
 
 		try {
 			mem = sigar.getMem();
-		} catch (SigarException e) {
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 
@@ -137,13 +138,13 @@ public class SigarNodeInfoProvider {
 		try {
 			cpuList = sigar.getCpuList();
 
-		} catch (SigarException e) {
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 		try {
 			cpuInfoList = sigar.getCpuInfoList();
 
-		} catch (SigarException e) {
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 
@@ -183,7 +184,7 @@ public class SigarNodeInfoProvider {
 
 		try {
 			swap = sigar.getSwap();
-		} catch (SigarException e) {
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 
@@ -211,7 +212,7 @@ public class SigarNodeInfoProvider {
 		try {
 			netInterfaceList = sigar.getNetInterfaceList();
 
-		} catch (SigarException e) {
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 
@@ -219,7 +220,7 @@ public class SigarNodeInfoProvider {
 			try {
 				netInterfaceStat = sigar.getNetInterfaceStat(netInterface);
 
-			} catch (SigarException e) {
+			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
 			}
 			nodeNetworkInfo = new HashMap<Object, Object>();
@@ -295,33 +296,32 @@ public class SigarNodeInfoProvider {
 
 		try {
 			upTime = sigar.getUptime();
-		} catch (SigarException e) {
+			nodeUpTimeInfo.put("upTime", upTime.getUptime());
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 		try {
 			who = sigar.getWhoList();
-		} catch (SigarException e) {
+			String loggedUsers;
+			List<String> userList = new ArrayList<String>();
+			for (Who w : who) {
+				userList.add(w.getUser());
+			}
+			loggedUsers = getDelimitedValues(userList, ",");
+
+			nodeUpTimeInfo.put("loggedUsers", loggedUsers);
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 		try {
 			loadAverage = sigar.getLoadAverage();
-		} catch (SigarException e) {
+			nodeUpTimeInfo.put("loadAverage1", loadAverage[0]);
+			nodeUpTimeInfo.put("loadAverage2", loadAverage[1]);
+			nodeUpTimeInfo.put("loadAverage3", loadAverage[2]);
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 
-		nodeUpTimeInfo.put("upTime", upTime.getUptime());
-
-		String loggedUsers;
-		List<String> userList = new ArrayList<String>();
-		for (Who w : who) {
-			userList.add(w.getUser());
-		}
-		loggedUsers = getDelimitedValues(userList, ",");
-
-		nodeUpTimeInfo.put("loggedUsers", loggedUsers);
-		nodeUpTimeInfo.put("loadAverage1", loadAverage[0]);
-		nodeUpTimeInfo.put("loadAverage2", loadAverage[1]);
-		nodeUpTimeInfo.put("loadAverage3", loadAverage[2]);
 		nodeUpTimeInfo.put("cpuUsage", getCpuUsage());
 		return nodeUpTimeInfo;
 	}
@@ -383,8 +383,7 @@ public class SigarNodeInfoProvider {
 
 		try {
 			fileSystemList = sigar.getFileSystemList();
-
-		} catch (SigarException e) {
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 		for (FileSystem fileSystem : fileSystemList) {
@@ -467,6 +466,7 @@ public class SigarNodeInfoProvider {
 			Result rs = new Result();
 
 			for (long pid : procIdList) {
+				try{
 
 				ProcCpu procCpu = sigar.getProcCpu(pid);
 				ProcMem procMem = sigar.getProcMem(pid);
@@ -507,9 +507,12 @@ public class SigarNodeInfoProvider {
 				nodeProcInfoStatus.put("state", state);
 				nodeProcInfoStatus.put("ioUsage", 0);
 				nodeProcessInfos.add(nodeProcInfoStatus);
+				} catch (Exception e) {
+					LOGGER.error(e.getMessage(), e);
+				}
 			}
 
-		} catch (SigarException e) {
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 		return nodeProcessInfos;

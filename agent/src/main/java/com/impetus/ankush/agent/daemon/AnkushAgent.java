@@ -32,6 +32,7 @@ import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 
+import com.impetus.ankush.agent.Constant;
 import com.impetus.ankush.agent.action.ActionFactory;
 import com.impetus.ankush.agent.action.Taskable;
 import com.impetus.ankush.agent.utils.AgentLogger;
@@ -42,7 +43,7 @@ import com.impetus.ankush.agent.utils.AgentLogger;
 public final class AnkushAgent {
 
 	/** The log. */
-	private static AgentLogger LOGGER = new AgentLogger(AnkushAgent.class);
+	private static final AgentLogger LOGGER = new AgentLogger(AnkushAgent.class);
 
 	private static final int TASK_SEARCH_SLEEP_TIME = 1000;
 	private static Map<String, Taskable> objMap = new HashMap<String, Taskable>();
@@ -60,50 +61,62 @@ public final class AnkushAgent {
 	public static void main(String[] args) {
 
 		// taskable file name.
-		String file = System.getProperty("user.home")
+		String file = System.getProperty(Constant.AGENT_INSTALL_DIR)
 				+ "/.ankush/agent/conf/taskable.conf";
 
 		// iterate always
-		while (true) {
-			try {
-				// reading the class name lines from the file
-				List<String> classNames = FileUtils.readLines(new File(file));
-				// iterate over the class names to start the newly added task.
-				for (String className : classNames) {
-					// if an empty string from the file then continue the loop.
-					if (className.isEmpty()) {
-						continue;
-					}
-					// if not started.
-					if (!objMap.containsKey(className)) {
-						// create taskable object
-						LOGGER.info("Creating " + className + " object.");
 
+		try {
+			// reading the class name lines from the file
+			List<String> classNames = FileUtils.readLines(new File(file));
+			// iterate over the class names to start the newly added task.
+			for (String className : classNames) {
+				// if an empty string from the file then continue the loop.
+				if (className.isEmpty()) {
+					continue;
+				}
+				// if not started.
+				if (!objMap.containsKey(className)) {
+					// create taskable object
+					LOGGER.info("Creating " + className + " object.");
+
+					try {
 						Taskable taskable = ActionFactory
 								.getTaskableObject(className);
 						objMap.put(className, taskable);
 						// call start on object ...
 						taskable.start();
+					} catch (Exception e) {
+						LOGGER.error("Could not start the " + className
+								+ " taskable.");
 					}
 				}
+			}
 
-				// iterating over the existing tasks to stop if it is removed
-				// from the file.
-				Set<String> existingClassNames = new HashSet<String>(
-						objMap.keySet());
-				for (String className : existingClassNames) {
-					// if not started.
-					if (!classNames.contains(className)) {
-						// create taskable object
+			// iterating over the existing tasks to stop if it is removed
+			// from the file.
+			Set<String> existingClassNames = new HashSet<String>(
+					objMap.keySet());
+			for (String className : existingClassNames) {
+				// if not started.
+				if (!classNames.contains(className)) {
+					// create taskable object
 
-						LOGGER.info("Removing " + className + " object.");
+					LOGGER.info("Removing " + className + " object.");
 
-						Taskable taskable = objMap.get(className);
-						objMap.remove(className);
-						// call stop on object ...
-						taskable.stop();
-					}
+					Taskable taskable = objMap.get(className);
+					objMap.remove(className);
+					// call stop on object ...
+					taskable.stop();
 				}
+			}
+			
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+
+		while (true) {
+			try {
 				Thread.sleep(TASK_SEARCH_SLEEP_TIME);
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);

@@ -42,7 +42,6 @@ import com.impetus.ankush.common.framework.TechnologyData;
 import com.impetus.ankush.common.service.MonitoringManager;
 import com.impetus.ankush.common.utils.AnkushLogger;
 import com.impetus.ankush.common.utils.ResponseWrapper;
-import com.impetus.ankush.hadoop.HadoopCluster;
 
 /**
  * The Class NodeMonitoringController.
@@ -68,18 +67,19 @@ public class NodeMonitoringController extends BaseController {
 	 * @throws Exception
 	 *             the exception
 	 */
-	@RequestMapping(method = RequestMethod.POST, value = "/node/{id}/info", headers = "Accept=application/json", consumes = "application/json")
+	@RequestMapping(method = RequestMethod.POST, value = "/node/{id}/info", headers = "Accept=application/json")
 	@ResponseBody
 	public ResponseEntity<HttpStatus> saveMonitoringInfo(@PathVariable Long id,
 			@RequestBody Map infoMap, HttpServletRequest rq) throws Exception {
 		try {
 			MonitoringManager monitoringManager = new MonitoringManager();
-			monitoringManager.saveNodeMonitoringInfo(id, infoMap);
-			return new ResponseEntity<HttpStatus>(HttpStatus.OK);
+			if (monitoringManager.saveNodeMonitoringInfo(id, infoMap)) {
+				return new ResponseEntity<HttpStatus>(HttpStatus.OK);
+			}
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
-			return new ResponseEntity<HttpStatus>(HttpStatus.BAD_REQUEST);
 		}
+		return new ResponseEntity<HttpStatus>(HttpStatus.BAD_REQUEST);
 	}
 
 	/**
@@ -93,19 +93,20 @@ public class NodeMonitoringController extends BaseController {
 	 * @throws Exception
 	 *             the exception
 	 */
-	@RequestMapping(method = RequestMethod.POST, value = "/node/{id}/status", headers = "Accept=application/json", consumes = "application/json")
+	@RequestMapping(method = RequestMethod.POST, value = "/node/{id}/status", headers = "Accept=application/json")
 	@ResponseBody
-	public ResponseEntity<HttpStatus> saveServiceStatus(@PathVariable Long id,
-			@RequestBody HashMap<String, Boolean> infoMap, HttpServletRequest rq)
-			throws Exception {
+	public ResponseEntity saveServiceStatus(@PathVariable Long id,
+			@RequestBody HashMap<String, Map<String, Boolean>> infoMap,
+			HttpServletRequest rq) throws Exception {
 		try {
 			MonitoringManager monitoringManager = new MonitoringManager();
-			monitoringManager.saveServiceStatusInfo(id, infoMap);
-			return new ResponseEntity<HttpStatus>(HttpStatus.OK);
+			if (monitoringManager.saveTecnologyServiceStatus(id, infoMap)) {
+				return new ResponseEntity<HttpStatus>(HttpStatus.OK);
+			}
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
-			return new ResponseEntity<HttpStatus>(HttpStatus.BAD_REQUEST);
 		}
+		return new ResponseEntity<HttpStatus>(HttpStatus.BAD_REQUEST);
 	}
 
 	/**
@@ -119,7 +120,7 @@ public class NodeMonitoringController extends BaseController {
 	 * @throws Exception
 	 *             the exception
 	 */
-	@RequestMapping(method = RequestMethod.POST, value = "/node/{id}/monitoring", headers = "Accept=application/json", consumes = "application/json")
+	@RequestMapping(method = RequestMethod.POST, value = "/node/{id}/monitoring", headers = "Accept=application/json")
 	@ResponseBody
 	public ResponseEntity<HttpStatus> saveMonitoringData(@PathVariable Long id,
 			@RequestBody TechnologyData technologyData, HttpServletRequest rq)
@@ -134,13 +135,13 @@ public class NodeMonitoringController extends BaseController {
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = "/node/{id}/nnrole", headers = "Accept=application/json", consumes = "application/json")
+	@RequestMapping(method = RequestMethod.POST, value = "/node/{id}/nnrole", headers = "Accept=application/json")
 	@ResponseBody
 	public ResponseEntity<HttpStatus> updateNameNodeRole(@PathVariable Long id,
 			@RequestBody HashMap<String, String> roleInfoMap) throws Exception {
 		try {
-			HadoopCluster hadoopCluster = new HadoopCluster();
-			hadoopCluster.updateNameNodeRole(id, roleInfoMap);
+//			HadoopCluster hadoopCluster = new HadoopCluster();
+//			hadoopCluster.updateNameNodeRole(id, roleInfoMap);
 			return new ResponseEntity<HttpStatus>(HttpStatus.OK);
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);

@@ -20,6 +20,7 @@
  ******************************************************************************/
 package com.impetus.ankush.common.mail;
 
+import com.impetus.ankush.AppStoreWrapper;
 import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.utils.AnkushLogger;
 
@@ -38,24 +39,21 @@ public class MailManager {
 	/** used to store mail configuration. */
 	private MailConf mailConf;
 
-	/** used to store mailClient associated with this manager instance which actually performs the task of sending mail. */
+	/**
+	 * used to store mailClient associated with this manager instance which
+	 * actually performs the task of sending mail.
+	 */
 	private MailClient mailClient;
-
-	/** used to store complete address of from field of mail using from which mail is sent. */
-	private String from;
 
 	/**
 	 * Instantiates a new mail manager.
-	 *
-	 * @param mailConf the mail conf
+	 * 
+	 * @param mailConf
+	 *            the mail conf
 	 */
 	public MailManager(MailConf mailConf) {
 		this.mailConf = mailConf;
 		mailClient = new MailClient(mailConf);
-		from = mailConf.getUserName();
-		if (!(from.indexOf('@') >= 0)) {
-			from += "@" + mailConf.getServer();
-		}
 	}
 
 	/**
@@ -69,11 +67,13 @@ public class MailManager {
 	public boolean sendSystemMail(MailMsg mailMsg) {
 		boolean status = false;
 		try {
-			mailMsg.setFrom(mailConf.getUserName());
+			//mailMsg.setFrom(mailConf.getUserName());
+			mailMsg.setFrom(mailConf.getEmailAddress());
 			String message = mailMsg.getMessage() == null ? "" : mailMsg
 					.getMessage();
 			StringBuilder messageText = new StringBuilder(message);
 			messageText.append("\n\n").append(Constant.Mail.FOOTER_MESSAGE);
+			messageText.append(" Application is accessible at URL " +  AppStoreWrapper.getAppAccessURL());
 			mailMsg.setMessage(messageText.toString());
 			status = sendMail(mailMsg);
 		} catch (Exception e) {

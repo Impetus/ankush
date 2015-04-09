@@ -35,7 +35,10 @@ import net.neoremind.sshxcute.task.impl.ExecCommand;
 
 import org.apache.commons.io.FilenameUtils;
 
-import com.impetus.ankush.common.constant.Constant;
+import com.impetus.ankush.common.exception.AnkushException;
+import com.impetus.ankush2.agent.AgentUtils;
+import com.impetus.ankush2.constant.Constant.Strings;
+import com.impetus.ankush2.framework.config.AuthConfig;
 
 /**
  * The Class LogViewHandler.
@@ -90,6 +93,21 @@ public class LogViewHandler {
 		this.hostname = hostname;
 	}
 
+	public LogViewHandler(String hostname, AuthConfig authConf) {
+		super();
+		this.username = authConf.getUsername();
+		if (authConf.getPassword() != null && !authConf.getPassword().isEmpty()) {
+			this.authInfo = authConf.getPassword();
+			this.authUsingPassword = true;
+			this.password = authConf.getPassword();
+		} else {
+			this.authInfo = authConf.getPrivateKey();
+			this.authUsingPassword = false;
+			this.privateKey = authConf.getPrivateKey();
+		}
+		this.hostname = hostname;
+	}
+
 	/** The Constant READ_COUNT_KEY. */
 	private static final String READ_COUNT_KEY = "readCount";
 
@@ -133,35 +151,49 @@ public class LogViewHandler {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public List<String> listTypeLogDirectory(String directoryPath, String type)
+	public List<String> getLogFilesList(String directoryPath, String type)
 			throws Exception {
+
+		// Create list object
+		List<String> logFilesList = new ArrayList<String>();
 
 		// Create ls command
 		String command = "cd \"" + directoryPath + "\"; " + LS_COMMAND
-				+ "*-" + type.toLowerCase() + "-*.log*";
+				+ " *.log*";
+		if (type != null) {
+			command = "cd \"" + directoryPath + "\"; " + LS_COMMAND + "*-"
+					+ type.toLowerCase() + "-*.log*";
+		}
 
 		// Executing command and getting the command output
 		String commandOutput = SSHUtils.getCommandOutput(command, hostname,
 				username, authInfo, authUsingPassword);
 
-		// Create list object
-		List<String> paths = new ArrayList<String>();
-
 		// if command output not null.
 		if (commandOutput != null) {
 			// Splitting the output by '\n'
-			String[] fileNameList = commandOutput.split(Constant.LINE_SEPERATOR);
-			// adding all filenames to list.
-			paths.addAll(Arrays.asList(fileNameList));
+			// adding all filenames to list.123qweASD
+			
+			logFilesList.addAll(Arrays.asList(commandOutput
+					.split(Strings.LINE_SEPERATOR)));
 		} else {
+			StringBuilder errMsg = new StringBuilder(
+					"Could not get log files list for directory - "
+							+ directoryPath);
+			if (type != null) {
+				errMsg.append(" and type - " + type);
+			}
+			errMsg.append(".");
+
 			// throwing the exception
-			throw new Exception("Unable to get the log files.");
+			throw new Exception(errMsg.toString());
+
 		}
-		return paths;
+		return logFilesList;
 	}
 
 	/**
-	 * Method to Get the list of path found in remote directory.
+	 * Method to Get the list of log files found in the specified directory.
 	 * 
 	 * @param directoryPath
 	 *            the directory path
@@ -169,11 +201,31 @@ public class LogViewHandler {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public List<String> listLogDirectory(String directoryPath) throws Exception {
+	public List<String> getLogFilesList(String directoryPath) throws Exception {
+		return this.getLogFilesList(directoryPath, null);
+	}
+
+	/**
+	 * Gets the log files map. Map will have the file name and complete path for
+	 * the file
+	 * 
+	 * @param directoryPath
+	 *            the directory path
+	 * @return the log files map
+	 * @throws Exception
+	 *             the exception
+	 */
+	public Map<String, String> getLogFilesMap(String directoryPath, String type)
+			throws Exception {
 
 		// Create ls command
 		String lsCommand = "cd \"" + directoryPath + "\"; " + LS_COMMAND
 				+ " *.log*";
+
+		if (type != null) {
+			lsCommand = "cd \"" + directoryPath + "\"; " + LS_COMMAND + "*-"
+					+ type.toLowerCase() + "-*.log*";
+		}
 
 		/* Create SSH connection */
 		SSHConnection connection = new SSHConnection(hostname, username,
@@ -186,15 +238,34 @@ public class LogViewHandler {
 
 		// if executing command successfully.
 		if (connection.exec(lsCommand)) {
+			Map<String, String> logFileMap = new HashMap<String, String>();
 			String commandOutput = connection.getOutput();
 
+			List<String> logFilesList = new ArrayList<String>(
+					Arrays.asList(commandOutput.split(Strings.LINE_SEPERATOR)));
+			for (String logFile : logFilesList) {
+				logFileMap.put(logFile, directoryPath + "/" + logFile);
+			}
 			// Iterating over the filename list.
-			return new ArrayList<String>(Arrays.asList(commandOutput
-					.split(Constant.LINE_SEPERATOR)));
+			return logFileMap;
 		} else {
-			new Exception(connection.getError());
+			StringBuilder errMsg = new StringBuilder(
+					"Could not get log files list for directory - "
+							+ directoryPath);
+			if (type != null) {
+				errMsg.append(" and type - " + type);
+			}
+			errMsg.append(". ");
+			errMsg.append(connection.getError());
+			// throwing the exception
+			throw new Exception(errMsg.toString());
 		}
-		return new ArrayList<String>();
+	}
+
+	public Map<String, String> getLogFilesMap(String directoryPath)
+			throws Exception {
+		return getLogFilesMap(directoryPath, null);
+
 	}
 
 	/**
@@ -211,7 +282,8 @@ public class LogViewHandler {
 	 *             the exception
 	 */
 	public Map<String, String> getFileContent(String filePath, int readCount,
-			int bytesCount) throws Exception {
+			int bytesCount, String agentInstallDir) throws AnkushException,
+			Exception {
 
 		// Create Map.
 		Map<String, String> resultMap = new HashMap<String, String>();
@@ -222,15 +294,21 @@ public class LogViewHandler {
 				authInfo, authUsingPassword);
 
 		/* Execute agent log command. */
-		String readLogCmd = "java -cp $HOME/.ankush/agent/libs/*:$HOME/.ankush/agent/libs/agent-0.1.jar"
-				+ " com.impetus.ankush.agent.action.ActionHandler log "
-				+ filePath + " " + readCount + " " + bytesCount;
+		// String readLogCmd =
+		// "java -cp $HOME/.ankush/agent/libs/*:$HOME/.ankush/agent/libs/agent-0.1.jar"
+		// + " com.impetus.ankush.agent.action.ActionHandler log "
+		// + filePath + " " + readCount + " " + bytesCount;
+
+		StringBuilder readLogCmd = new StringBuilder().append(AgentUtils
+				.getActionHandlerCommand(agentInstallDir));
+		readLogCmd.append("log").append(" ").append(filePath).append(" ")
+				.append(readCount).append(" ").append(bytesCount);
 
 		if (!connection.isConnected()) {
 			throw new Exception("Unable to connect to node.");
 		}
 
-		if (connection.exec(readLogCmd)) {
+		if (connection.exec(readLogCmd.toString())) {
 
 			// Getting the output.
 			output = connection.getOutput();
@@ -249,6 +327,10 @@ public class LogViewHandler {
 				output = "";
 			}
 
+		} else {
+			throw new AnkushException(
+					"Couldn't execute log file view command. "
+							+ connection.getError());
 		}
 		// Setting the content in map.
 		resultMap.put(CONTENT_KEY, output);
@@ -271,23 +353,26 @@ public class LogViewHandler {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public String downloadFile(String clusterName, String filePath)
-			throws Exception {
+	public String downloadFile(String clusterName, String filePath,
+			String agentInstallDir) throws AnkushException, Exception {
 
 		// Getting the log file content with total read count value.
 		SSHExec conn = SSHUtils.connectToNode(hostname, username, authInfo,
 				privateKey);
 
-		String command = "java -cp $HOME/.ankush/agent/libs/*:$HOME/.ankush/agent/libs/agent-0.1.jar"
-				+ " com.impetus.ankush.agent.action.ActionHandler upload "
-				+ filePath;
-		ExecCommand task = new ExecCommand(command);
+//		String command = "java -cp $HOME/.ankush/agent/libs/*:$HOME/.ankush/agent/libs/agent-0.1.jar"
+//				+ " com.impetus.ankush.agent.action.ActionHandler upload "
+//				+ filePath;
+
+		StringBuilder command = new StringBuilder().append(AgentUtils
+				.getActionHandlerCommand(agentInstallDir));
+		command.append("upload").append(" ").append(filePath);
+		ExecCommand task = new ExecCommand(command.toString());
 		if (conn != null) {
 			Result rs = conn.exec(task);
 			if (rs.rc != 0) {
 				conn.disconnect();
-				throw new Exception(
-						"Unable to download log file due unavailability of ankush agent on node.");
+				throw new AnkushException(rs.error_msg);
 			} else {
 				conn.disconnect();
 				// Getting the file name for file path.

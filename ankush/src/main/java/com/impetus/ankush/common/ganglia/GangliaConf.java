@@ -26,10 +26,13 @@ package com.impetus.ankush.common.ganglia;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.impetus.ankush.common.framework.config.ClusterConf;
 import com.impetus.ankush.common.framework.config.GenericConfiguration;
 import com.impetus.ankush.common.framework.config.NodeConf;
+import com.impetus.ankush2.constant.Constant.Component;
+
 /**
- * It is a configuration class, for deployment of ganglia on nodes.
+ * It is a configuration class, for deployment of Ganglia on nodes.
  * 
  * @author Hokam Chauhan
  * 
@@ -38,40 +41,40 @@ public class GangliaConf extends GenericConfiguration {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
-	
-	/** The rrd directory. */
-	public static final String RRD_DIRECTORY = "/var/lib/ganglia/rrds/";
-	
-	/** The dwoo directory. */
-	public static final String DWOO_DIRECTORY = "/var/lib/ganglia/dwoo/";
 
 	/** The port. */
 	private Integer port;
-	
+
 	/** The polling interval. */
 	private Integer pollingInterval;
-	
+
 	/** The grid name. */
 	private String gridName;
-	
+
 	/** The gmetad node. */
 	private NodeConf gmetadNode = null;
-	
+
 	/** The gmond nodes. */
 	private Set<NodeConf> gmondNodes = new HashSet<NodeConf>();
-	
+
 	/** The server conf folder. */
 	private String serverConfFolder = null;
-	
+
 	/** The rrd file path. */
-	private String rrdFilePath = RRD_DIRECTORY;
-	
-	/** The dwoo file path. */
-	private String dwooFilePath = DWOO_DIRECTORY;
+	private String rrdFilePath;
+
+	/** The gmond file path. */
+	private String gmondConfPath;
+
+	/** The gmetad file path. */
+	private String gmetadConfPath;
+
+	/** Ganglia cluster name **/
+	private String gangliaClusterName;
 
 	/**
 	 * Gets the port.
-	 *
+	 * 
 	 * @return the port
 	 */
 	public Integer getPort() {
@@ -80,8 +83,9 @@ public class GangliaConf extends GenericConfiguration {
 
 	/**
 	 * Sets the port.
-	 *
-	 * @param port the port to set
+	 * 
+	 * @param port
+	 *            the port to set
 	 */
 	public void setPort(Integer port) {
 		this.port = port;
@@ -89,7 +93,7 @@ public class GangliaConf extends GenericConfiguration {
 
 	/**
 	 * Gets the polling interval.
-	 *
+	 * 
 	 * @return the pollingInterval
 	 */
 	public Integer getPollingInterval() {
@@ -98,8 +102,9 @@ public class GangliaConf extends GenericConfiguration {
 
 	/**
 	 * Sets the polling interval.
-	 *
-	 * @param pollingInterval the pollingInterval to set
+	 * 
+	 * @param pollingInterval
+	 *            the pollingInterval to set
 	 */
 	public void setPollingInterval(Integer pollingInterval) {
 		this.pollingInterval = pollingInterval;
@@ -107,7 +112,7 @@ public class GangliaConf extends GenericConfiguration {
 
 	/**
 	 * Gets the grid name.
-	 *
+	 * 
 	 * @return the gridName
 	 */
 	public String getGridName() {
@@ -116,8 +121,9 @@ public class GangliaConf extends GenericConfiguration {
 
 	/**
 	 * Sets the grid name.
-	 *
-	 * @param gridName the gridName to set
+	 * 
+	 * @param gridName
+	 *            the gridName to set
 	 */
 	public void setGridName(String gridName) {
 		this.gridName = gridName;
@@ -125,7 +131,7 @@ public class GangliaConf extends GenericConfiguration {
 
 	/**
 	 * Gets the gmetad node.
-	 *
+	 * 
 	 * @return the gmetadNode
 	 */
 	public NodeConf getGmetadNode() {
@@ -134,25 +140,17 @@ public class GangliaConf extends GenericConfiguration {
 
 	/**
 	 * Sets the gmetad node.
-	 *
-	 * @param gmetadNode the gmetadNode to set
+	 * 
+	 * @param gmetadNode
+	 *            the gmetadNode to set
 	 */
 	public void setGmetadNode(NodeConf gmetadNode) {
 		this.gmetadNode = gmetadNode;
-		/*String nodeType = gmetadNode.getType();
-		System.out.println("nodeIp-"+ gmetadNode.getPublicIp() +"nodeType in setGmetadNode-"+nodeType);
-		if(nodeType != null) {
-			if(nodeType.isEmpty()) {
-				gmetadNode.setType(Constant.Role.GMETAD);
-			} else {
-				gmetadNode.setType(nodeType + "/" + Constant.Role.GMETAD);
-			}	
-		}*/
 	}
 
 	/**
 	 * Gets the gmond nodes.
-	 *
+	 * 
 	 * @return the gmondNodes
 	 */
 	public Set<NodeConf> getGmondNodes() {
@@ -161,8 +159,9 @@ public class GangliaConf extends GenericConfiguration {
 
 	/**
 	 * Sets the gmond nodes.
-	 *
-	 * @param gmondNodes the gmondNodes to set
+	 * 
+	 * @param gmondNodes
+	 *            the gmondNodes to set
 	 */
 	public void setGmondNodes(Set<NodeConf> gmondNodes) {
 		this.gmondNodes = gmondNodes;
@@ -170,8 +169,9 @@ public class GangliaConf extends GenericConfiguration {
 
 	/**
 	 * Sets the server conf folder.
-	 *
-	 * @param serverConfFolder the serverConfFolder to set
+	 * 
+	 * @param serverConfFolder
+	 *            the serverConfFolder to set
 	 */
 	public void setServerConfFolder(String serverConfFolder) {
 		this.serverConfFolder = serverConfFolder;
@@ -179,7 +179,7 @@ public class GangliaConf extends GenericConfiguration {
 
 	/**
 	 * Gets the server conf folder.
-	 *
+	 * 
 	 * @return the serverConfFolder
 	 */
 	public String getServerConfFolder() {
@@ -188,8 +188,9 @@ public class GangliaConf extends GenericConfiguration {
 
 	/**
 	 * Sets the rrd file path.
-	 *
-	 * @param rrdFilePath the rrdFilePath to set
+	 * 
+	 * @param rrdFilePath
+	 *            the rrdFilePath to set
 	 */
 	public void setRrdFilePath(String rrdFilePath) {
 		this.rrdFilePath = rrdFilePath;
@@ -197,7 +198,7 @@ public class GangliaConf extends GenericConfiguration {
 
 	/**
 	 * Gets the rrd file path.
-	 *
+	 * 
 	 * @return the rrdFilePath
 	 */
 	public String getRrdFilePath() {
@@ -205,27 +206,55 @@ public class GangliaConf extends GenericConfiguration {
 	}
 
 	/**
-	 * Sets the dwoo file path.
-	 *
-	 * @param dwooFilePath the dwooFilePath to set
+	 * @return the gmondConfPath
 	 */
-	public void setDwooFilePath(String dwooFilePath) {
-		this.dwooFilePath = dwooFilePath;
+	public String getGmondConfPath() {
+		return gmondConfPath;
 	}
 
 	/**
-	 * Gets the dwoo file path.
-	 *
-	 * @return the dwooFilePath
+	 * @param gmondConfPath
+	 *            the gmondConfPath to set
 	 */
-	public String getDwooFilePath() {
-		return dwooFilePath;
+	public void setGmondConfPath(String gmondConfPath) {
+		this.gmondConfPath = gmondConfPath;
+	}
+
+	/**
+	 * @return the gmetadConfPath
+	 */
+	public String getGmetadConfPath() {
+		return gmetadConfPath;
+	}
+
+	/**
+	 * @param gmetadConfPath
+	 *            the gmetadConfPath to set
+	 */
+	public void setGmetadConfPath(String gmetadConfPath) {
+		this.gmetadConfPath = gmetadConfPath;
+	}
+
+	/**
+	 * @param gangliaClusterName
+	 *            the gangliaClusterName to set
+	 */
+	public void setGangliaClusterName(String gangliaClusterName) {
+		this.gangliaClusterName = gangliaClusterName;
+	}
+
+	/**
+	 * @return the gangliaClusterName
+	 */
+	public String getGangliaClusterName() {
+		return gangliaClusterName;
 	}
 
 	/**
 	 * Return True if the passed node is the gmetad node else false.
-	 *
-	 * @param nodeConf the node conf
+	 * 
+	 * @param nodeConf
+	 *            the node conf
 	 * @return true, if is gmetad node
 	 */
 	public boolean isGmetadNode(NodeConf nodeConf) {
@@ -236,5 +265,23 @@ public class GangliaConf extends GenericConfiguration {
 		}
 		// Returning the equals status of node with gmetad node.
 		return nodeConf.equals(this.gmetadNode);
+	}
+
+	public static int getGangliaPort(ClusterConf clusterConf) throws Exception {
+		GangliaConf gConf = (GangliaConf) clusterConf.getClusterComponents()
+				.get(Component.Name.GANGLIA);
+		if (gConf == null) {
+			throw new Exception(
+					"Could not get GangliaConf object from Cluster conf.");
+		} else {
+			return gConf.getPort();
+		}
+	}
+
+	@Override
+	public Set<NodeConf> getCompNodes() {
+		// Return the list of gmondNodes
+		// Cluster NodeConfs can also be used
+		return new HashSet<NodeConf>(gmondNodes);
 	}
 }

@@ -23,22 +23,27 @@
  */
 package com.impetus.ankush.common.zookeeper;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Semaphore;
 
 import net.neoremind.sshxcute.core.Result;
 import net.neoremind.sshxcute.core.SSHExec;
 
 import com.impetus.ankush.AppStoreWrapper;
+import com.impetus.ankush.common.agent.AgentUtils;
+import com.impetus.ankush.common.agent.ComponentService;
 import com.impetus.ankush.common.config.ConfigurationReader;
 import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.framework.config.NodeConf;
 import com.impetus.ankush.common.scripting.AnkushTask;
-import com.impetus.ankush.common.scripting.impl.AppendFile;
+import com.impetus.ankush.common.scripting.impl.AppendFileUsingEcho;
 import com.impetus.ankush.common.scripting.impl.MakeDirectory;
-import com.impetus.ankush.common.service.ConfigurationManager;
 import com.impetus.ankush.common.utils.AnkushLogger;
 import com.impetus.ankush.common.utils.JmxMonitoringUtil;
 import com.impetus.ankush.common.utils.SSHUtils;
+import com.impetus.ankush2.constant.Constant.Agent;
+import com.impetus.ankush2.constant.Constant.Component;
 
 /**
  * The Class ZookeeperWorker.
@@ -48,14 +53,9 @@ import com.impetus.ankush.common.utils.SSHUtils;
 public class ZookeeperWorker implements Runnable {
 
 	/** The log. */
-	private AnkushLogger LOG = new AnkushLogger(
-			Constant.Component.Name.ZOOKEEPER, ZookeeperWorker.class);
+	private static AnkushLogger LOG = new AnkushLogger(
+			Component.Name.ZOOKEEPER, ZookeeperWorker.class);
 
-	// Configuration manager to save the property file change records.
-	/** The conf manager. */
-	private ConfigurationManager confManager = new ConfigurationManager();
-	
-	private static final String FILE_NAME_ZOO_CFG = "zoo.cfg";
 	/** The ankushConf Reader. */
 	ConfigurationReader ankushConf = AppStoreWrapper.getAnkushConfReader();
 
@@ -93,32 +93,35 @@ public class ZookeeperWorker implements Runnable {
 		this.nodeId = nodeId;
 	}
 
-	private boolean configureJMXMonitoring(SSHExec connection) {
+	private static boolean configureJMXMonitoring(SSHExec connection,
+			ZookeeperConf conf, NodeConf nodeConf) {
+
 		LOG.debug("Configuring JMX Monitoring for Zookeeper started ... ");
 		boolean status = true;
 		String componentHome = conf.getComponentHome();
 		String zkServer_FilePath = componentHome
 				+ ZookeeperWorker.relPath_ZkServerScript;
-		status = JmxMonitoringUtil.configureJmxPort(
-				Constant.Component.ProcessName.QUORUMPEERMAIN, connection,
-				zkServer_FilePath, conf.getJmxPort(), conf.getPassword());
+//		status = JmxMonitoringUtil.configureJmxPort(
+//				Constant.Component.ProcessName.QUORUMPEERMAIN, connection,
+//				zkServer_FilePath, conf.getJmxPort(), conf.getPassword());
 		if (!status) {
-			LOG.error(this.nodeConf, "Could not update " + zkServer_FilePath
+			LOG.error(nodeConf, "Could not update " + zkServer_FilePath
 					+ " file.");
+			LOG.error(nodeConf,
+					"Couldn't configure JMX monitoring for Zookeeper...");
 			return false;
 		}
 
-		status = JmxMonitoringUtil.copyJmxTransJson(connection,
-				conf.getUsername(), conf.getPassword(),
-				Constant.Component.Name.ZOOKEEPER,
-				Constant.Component.ProcessName.QUORUMPEERMAIN,
-				conf.getJmxPort(), nodeConf.getPrivateIp());
-		if (!status) {
-			LOG.error(this.nodeConf,
-					"Could not copy JmxTrans JSON file for Zookeeper.");
-			return false;
-		}
-		LOG.debug("Configuring JMX Monitoring for Zookeeper over ... ");
+		// status = JmxMonitoringUtil.copyJmxTransJson(connection,
+		// conf.getUsername(), conf.getPassword(),
+		// Constant.Component.Name.ZOOKEEPER,
+		// Constant.Component.ProcessName.QUORUMPEERMAIN,
+		// conf.getJmxPort(), nodeConf.getPrivateIp());
+		// if (!status) {
+		// LOG.error(nodeConf,
+		// "Could not copy JmxTrans JSON file for Zookeeper.");
+		// return false;
+		// }
 		return true;
 	}
 
@@ -158,12 +161,11 @@ public class ZookeeperWorker implements Runnable {
 					// get and extract tarball
 					boolean isSuccessfull = SSHUtils.getAndExtractComponent(
 							connection, this.conf, "zookeeper");
-
 					if (!isSuccessfull) {
 						LOG.error(this.nodeConf,
 								"Could not extract bundle file ");
 						statusFlag = false;
-					}else{
+					} else {
 						// make data directory
 						AnkushTask makeDataDir = new MakeDirectory(
 								this.conf.getDataDirectory());
@@ -174,27 +176,31 @@ public class ZookeeperWorker implements Runnable {
 						// setting componentHome in bean
 						conf.setComponentHome(componentHome);
 
-						AnkushTask createZooCfg = new AppendFile(
+						AnkushTask createZooCfg = new AppendFileUsingEcho(
 								this.conf.getZooConfContents(), componentHome
-										+ "/conf/" + ZookeeperWorker.FILE_NAME_ZOO_CFG);
+										+ "/conf/zoo.cfg");
 						// create myid file
-						AnkushTask createMyId = new AppendFile(
+						AnkushTask createMyId = new AppendFileUsingEcho(
 								"" + this.nodeId, this.conf.getDataDirectory()
 										+ "myid");
-	
+
 						LOG.info(publicIp,
 								"Creating zookeeper's data directory...");
 						if (connection.exec(makeDataDir).isSuccess) {
 							LOG.info(publicIp, "Creating zoo.cfg file...");
-							
 							if (connection.exec(createZooCfg).isSuccess) {
-								
-								confManager.saveConfiguration(this.conf.getClusterDbId(),
-										this.conf.getCurrentUser(), ZookeeperWorker.FILE_NAME_ZOO_CFG, 
-										this.nodeConf.getPublicIp(), this.conf.getZooConfContentsAsMap());
-								
 								LOG.info(publicIp, "Creating myid file...");
-								if (!connection.exec(createMyId).isSuccess) {
+								if (connection.exec(createMyId).isSuccess) {
+									LOG.info(publicIp,
+											"Configuring JMX monitoring for Zookeeper... ");
+									if (ZookeeperWorker.configureJMXMonitoring(
+											connection, conf, nodeConf)) {
+										statusFlag = ZookeeperWorker.configure(
+												connection, conf, nodeConf);
+									}else{
+										statusFlag = false;
+									}
+								} else {
 									statusFlag = false;
 									LOG.error(this.nodeConf,
 											"Couldn't create myid file");
@@ -209,20 +215,19 @@ public class ZookeeperWorker implements Runnable {
 							LOG.error(this.nodeConf,
 									"Couldn't create zookeeper's data directory");
 						}
-	
-						// Configuring JMX Monitoring using JMX-Trans
-						statusFlag = this.configureJMXMonitoring(connection);
 					}
-					this.nodeConf.setStatus(statusFlag);
 					LOG.info(publicIp,
 							"Zookeeper worker thread execution over ... ");
 				}
 			} else {
 				LOG.error(nodeConf, "Authentication failed");
+				statusFlag = false;
 			}
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
+			this.nodeConf.setStatus(false);
 		} finally {
+			this.nodeConf.setStatus(statusFlag);
 			// disconncet to node/machine
 			if (semaphore != null) {
 				semaphore.release();
@@ -233,4 +238,80 @@ public class ZookeeperWorker implements Runnable {
 		}
 	}
 
+	/**
+	 * Configure.
+	 * 
+	 * @param conf
+	 *            the conf
+	 * @param nodeConf
+	 *            the node conf
+	 * @return the boolean
+	 */
+	public static boolean register(ZookeeperConf conf, SSHExec connection,
+			NodeConf nodeConf) {
+		LOG.setLoggerConfig(conf);
+		boolean statusFlag = false;
+		try {
+			LOG.info(nodeConf.getPublicIp(), "Connecting with node");
+			// if connected
+			if (connection != null) {
+				statusFlag = configure(connection, conf, nodeConf);
+			} else {
+				LOG.error("Could not connect to node " + nodeConf);
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+		}
+		return statusFlag;
+	}
+
+	/**
+	 * Configure.
+	 * 
+	 * @param connection
+	 *            the connection
+	 * @param conf
+	 *            the conf
+	 * @param nodeConf
+	 *            the node conf
+	 * @return true, if successful
+	 */
+	private static boolean configure(SSHExec connection, ZookeeperConf conf,
+			NodeConf nodeConf) {
+		LOG.setLoggerConfig(conf);
+		boolean statusFlag = false;
+		LOG.info(nodeConf.getPublicIp(),
+				"Creating zookeeper service configuration in agent...");
+		// Create ZOOKEEPER Service XML configuration in agent.
+		// Component service list
+		List<ComponentService> services = new ArrayList<ComponentService>();
+		// adding ZOOKEEPER service entry.
+		services.add(new ComponentService(
+				Constant.Component.ProcessName.QUORUMPEERMAIN,
+				Constant.Role.ZOOKEEPER, Agent.ServiceType.JPS));
+		// Creating ZOOKEEPER service XML.
+		statusFlag = AgentUtils.createServiceXML(connection, services,
+				Component.Name.ZOOKEEPER);
+		// if failed
+		if (!statusFlag) {
+			LOG.error(nodeConf,
+					"Could not create zookeeper service configuration in agent.");
+			return statusFlag;
+		}
+		LOG.info(nodeConf.getPublicIp(),
+				"Copying JmxTrans JSON file to Zookeeper...");
+		// Configuring JMX Monitoring using JMX-Trans
+		statusFlag = JmxMonitoringUtil.copyJmxTransJson(connection,
+				conf.getUsername(), conf.getPassword(),
+				Component.Name.ZOOKEEPER,
+				Constant.Component.ProcessName.QUORUMPEERMAIN,
+				conf.getJmxPort(), nodeConf.getPrivateIp());
+		if (!statusFlag) {
+			LOG.error(nodeConf,
+					"Could not copy JmxTrans JSON file for Zookeeper.");
+			return statusFlag;
+		}
+		LOG.debug("Configuring JMX Monitoring for Zookeeper over ... ");
+		return true;
+	}
 }

@@ -152,7 +152,6 @@ public class NodeMonitoringTest {
 		obj.setNodeId(new Long(1L));
 		obj.setUpdateTime(new Date(DATE));
 		obj.setMonitoringInfo(new MonitoringInfo());
-		obj.setServiceStatus(new HashMap<String, Boolean>());
 		obj.setTechnologyData(new HashMap<String, TechnologyData>());
 
 		boolean result = fixture.equals(obj);
@@ -202,16 +201,6 @@ public class NodeMonitoringTest {
 	}
 
 	/**
-	 * Run the Map<String, Boolean> getServiceStatus() method test.
-	 */
-	@Test
-	public void testGetServiceStatus_1() {
-		Map<String, Boolean> result = fixture.getServiceStatus();
-
-		assertNotNull(result);
-	}
-
-	/**
 	 * Run the TechnologyData getTechnologyData() method test.
 	 */
 	@Test
@@ -232,36 +221,7 @@ public class NodeMonitoringTest {
 		assertNotNull(result);
 		assertEquals(DATE, result.getTime());
 	}
-
-	/**
-	 * Run the boolean isAgentDown() method test.
-	 * 
-	 * @throws Exception
-	 * 
-	 * @generatedBy CodePro at 28/6/13 1:37 PM
-	 */
-	@Test
-	public void testIsAgentDown_1() {
-		NodeMonitoring fixture = new NodeMonitoring();
-		fixture.setNodeId(new Long(1L));
-		fixture.setUpdateTime(new Date());
-		fixture.setId(new Long(1L));
-
-		boolean result = fixture.isAgentDown();
-
-		assertEquals(false, result);
-	}
-
-	/**
-	 * Run the boolean isAgentDown() method test.
-	 */
-	@Test
-	public void testIsAgentDown_2() {
-		boolean result = fixture.isAgentDown();
-
-		assertEquals(true, result);
-	}
-
+	
 	/**
 	 * Perform pre-test initialization.
 	 */
@@ -272,7 +232,6 @@ public class NodeMonitoringTest {
 		fixture.setUpdateTime(new Date(DATE));
 		fixture.setId(new Long(1L));
 		fixture.setMonitoringInfo(new MonitoringInfo());
-		fixture.setServiceStatus(new HashMap<String, Boolean>());
 		fixture.setTechnologyData(new HashMap<String, TechnologyData>());
 	}
 

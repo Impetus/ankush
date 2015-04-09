@@ -28,7 +28,6 @@ import java.util.HashSet;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Test;
 
 import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.framework.config.NodeConf;
@@ -49,7 +48,6 @@ public class GangliaConfTest {
 		conf.setGridName("Ankush");
 		conf.setGmondNodes(new HashSet());
 		conf.setServerConfFolder("/config/ganglia/");
-		conf.setDwooFilePath("/var/lib/ganglia/dwoo");
 		conf.setRrdFilePath("/var/lib/ganglia/rrds");
 		conf.setPort(new Integer(1));
 	}
@@ -70,8 +68,6 @@ public class GangliaConfTest {
 	public void testGetGangliaConf() throws Exception {
 
 		assertNotNull(conf);
-		// checking dwoo path.
-		assertEquals("/var/lib/ganglia/dwoo", conf.getDwooFilePath());
 		// checking rrds path.
 		assertEquals("/var/lib/ganglia/rrds", conf.getRrdFilePath());
 		// checking gmetad node.

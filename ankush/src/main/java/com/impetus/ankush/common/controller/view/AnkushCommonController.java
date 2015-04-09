@@ -37,114 +37,128 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 import com.impetus.ankush.common.constant.Constant;
-
-
+import com.impetus.ankush2.constant.Constant.Component;
 
 /**
  * @author anzar.abbas
- *
+ * 
  */
 @Controller
 @RequestMapping("/common-cluster")
 public class AnkushCommonController extends AbstractController {
 	private static final Logger logger = LoggerFactory
-	.getLogger(AnkushCommonController.class);
-	
+			.getLogger(AnkushCommonController.class);
+
 	private ArrayList<String> cssFiles;
 	private ArrayList<String> jsFiles;
+
 	public AnkushCommonController() {
 		// TODO Auto-generated constructor stub
-		cssFiles = new ArrayList<String>();	
+		cssFiles = new ArrayList<String>();
 		jsFiles = new ArrayList<String>();
-		
+
 	}
+
 	/**
-	 * return deployment logs view of a cluster 
+	 * return deployment logs view of a cluster
+	 * 
 	 * @param model
 	 * @param clusterId
 	 * @param clusterTechnology
 	 * @return
 	 */
-	@RequestMapping(value = "/deploymentProgress/{clusterId}", method = RequestMethod.GET)
-	public String deploymentProgress(ModelMap model,@PathVariable("clusterId") String clusterId,@RequestParam("clusterTechnology") String clusterTechnology) {
+	@RequestMapping(value = "/{clusterName}/C-D/{clusterId}/{clusterTechnology}", method = RequestMethod.GET)
+	public String deploymentProgress(ModelMap model,
+			@PathVariable("clusterId") String clusterId,
+			@PathVariable("clusterName") String clusterName,
+			@PathVariable("clusterTechnology") String clusterTechnology) {
 		logger.info("Inside deploymentProgress view");
 		model.addAttribute("title", "oNodeDetail");
 		model.addAttribute("clusterId", clusterId);
+		model.addAttribute("clusterName", clusterName);
 		model.addAttribute("clusterTechnology", clusterTechnology);
-		System.out.println(clusterTechnology);
 		jsFiles.removeAll(jsFiles);
+		jsFiles.add("ankush");
 		jsFiles.add("ankush.common");
+		jsFiles.add("ankush.constants");
 		jsFiles.add("ErrorMessage");
-		jsFiles.add("ankush.validation");
 		jsFiles.add("tooltip/commonClusterCreationTooltip");
-		if(clusterTechnology.equalsIgnoreCase("oracle nosql database")){
-			jsFiles.add("oracle/oClusterSetup");
-			jsFiles.add("oracle/oracleSetupDetail");
-		}else if(clusterTechnology.equalsIgnoreCase("storm")){
-			jsFiles.add("stormClusterCreation");
-			jsFiles.add("storm/stormSetupDetail");
-		}else if(clusterTechnology.equalsIgnoreCase("cassandra")){
-			jsFiles.add("cassandraClusterCreation");
-			jsFiles.add("cassandra/cassandraSetupDetail");
-		}else if(clusterTechnology.equalsIgnoreCase("kafka")){
-			jsFiles.add("kafka/kafkaClusterCreation");
-			jsFiles.add("kafka/kafkaSetupDetail");
-		}else if(clusterTechnology.equalsIgnoreCase("elasticSearch")){
-			jsFiles.add("ElasticSearch/elasticSearchClusterCreation");
-			jsFiles.add("ElasticSearch/elasticSearchSetupDetail");
-		}
-		
-		else if(clusterTechnology.equalsIgnoreCase(Constant.Technology.HADOOP)
-				|| clusterTechnology.equalsIgnoreCase(Constant.Component.Name.HADOOP2)) {
-			jsFiles.add("hadoop/ankush.hadoop-cluster");
-			jsFiles.add("ankush.validation");
-		}
-		else if(clusterTechnology.equalsIgnoreCase("hybrid")) {
-			jsFiles.add("hybrid/hybridClusterCreation");
-			jsFiles.add("hybrid/hybridSetupDetail");
-			jsFiles.add("hybrid/hybrid_Zookeeper");
-			jsFiles.add("hybrid/hybrid_Kafka");
-			jsFiles.add("hybrid/hybrid_Storm");
-			jsFiles.add("hybrid/hybrid_Oracle");
-		//	jsFiles.add("hybrid/hybrid_Vajra");
-			jsFiles.add("hybrid/hybrid_Bda");
-			jsFiles.add("hybrid/hybrid_ElasticSearch");
-			jsFiles.add("hybrid/hybrid_Cassandra");
-			jsFiles.add("hybrid/hybrid_Greenplum");
-			jsFiles.add("hybrid/hybrid_RabbitMQ");
-			jsFiles.add("hybrid/hybrid_Hadoop");
-			jsFiles.add("hybrid/hybrid_Hbase");
-		}
+		jsFiles.add("ankush.validation");
 		model.addAttribute("jsFiles", jsFiles);
 		return "common/deploymentLogs";
 	}
+
 	/**
 	 * return node status table view
+	 * 
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = "/nodeStatus", method = RequestMethod.GET)
-	public String nodeStatus(ModelMap model) {
-		logger.info("Inside nodeStatus view");
+	@RequestMapping(value = "/{clusterName}/deploymentLogs/C-D/{clusterId}/{clusterTechnology}", method = RequestMethod.GET)
+	public String deploymentLogs(ModelMap model,
+			@PathVariable("clusterId") String clusterId,
+			@PathVariable("clusterName") String clusterName,
+			@PathVariable("clusterTechnology") String clusterTechnology) {
+		logger.info("Inside deploymentLogs view");
+		model.addAttribute("clusterId", clusterId);
+		model.addAttribute("clusterName", clusterName);
+		model.addAttribute("clusterTechnology", clusterTechnology);
+		jsFiles = new ArrayList<String>();
+		jsFiles.add("ankush.common");
+		model.addAttribute("jsFiles", jsFiles);
 		model.addAttribute("title", "oNodeDetail");
 		return "common/nodeStatus";
 	}
+
 	/**
 	 * return node level logs view
+	 * 
 	 * @param model
 	 * @param clusterId
 	 * @return
 	 */
-	@RequestMapping(value = "/nodeStatusNode/{clusterId}/details", method = RequestMethod.GET)
+	@RequestMapping(value = "/{clusterName}/nodeDeploymentLog/C-D/{clusterId}/{clusterTechnology}/{hostName:.+}", method = RequestMethod.GET)
 	public String nodeStatusNode(ModelMap model,
-			@PathVariable("clusterId") String clusterId) {
+			@PathVariable("clusterId") String clusterId,
+			@PathVariable("clusterName") String clusterName,
+			@PathVariable("clusterTechnology") String clusterTechnology,
+			@PathVariable("hostName") String hostName) {
 		logger.info("Inside nodeStatusNode view");
+		jsFiles = new ArrayList<String>();
+		jsFiles.add("ankush.common");
 		model.addAttribute("title", "nodeStatusNode");
 		model.addAttribute("clusterId", clusterId);
+		model.addAttribute("clusterName", clusterName);
+		model.addAttribute("clusterTechnology", clusterTechnology);
+		model.addAttribute("hostName", hostName);
+		model.addAttribute("jsFiles", jsFiles);
 		return "common/nodeDeploymentLogs";
 	}
-	/* (non-Javadoc)
-	 * @see org.springframework.web.servlet.mvc.AbstractController#handleRequestInternal(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+
+	@RequestMapping(value = "/{clusterName}/C-D/deleteCluster/{clusterId}/{clusterTechnology}", method = RequestMethod.GET)
+	public String deleteCluster(ModelMap model,
+			@PathVariable("clusterName") String clusterName,
+			@PathVariable("clusterTechnology") String clusterTechnology,
+			@PathVariable("clusterId") String clusterId) {
+		logger.info("Inside deleteCluster view");
+		model.addAttribute("clusterId", clusterId);
+		jsFiles = new ArrayList<String>();
+		jsFiles.add("ankush.common");
+		model.addAttribute("clusterId", clusterId);
+		model.addAttribute("clusterName", clusterName);
+		model.addAttribute("clusterTechnology", clusterTechnology);
+		model.addAttribute("jsFiles", jsFiles);
+		model.addAttribute("title", "deleteCluster");
+		return "common/deleteClusterLog";
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.springframework.web.servlet.mvc.AbstractController#handleRequestInternal
+	 * (javax.servlet.http.HttpServletRequest,
+	 * javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
 	protected ModelAndView handleRequestInternal(HttpServletRequest request,

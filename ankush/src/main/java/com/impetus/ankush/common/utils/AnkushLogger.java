@@ -42,6 +42,8 @@ import com.impetus.ankush.common.framework.config.NodeConf;
  */
 public class AnkushLogger {
 
+	private static final String FAILED = " failed.";
+	private static final String DONE = " done.";
 	private static final String MSG_TYPE_ERR = "error";
 	private static final String MSG_TYPE_INFO = "info";
 
@@ -317,9 +319,9 @@ public class AnkushLogger {
 	 */
 	public void log(String message, boolean status) {
 		if (status) {
-			info(message + " done.");
+			info(message + DONE);
 		} else {
-			error(message + " failed.");
+			error(message + FAILED);
 		}
 	}
 
@@ -332,9 +334,9 @@ public class AnkushLogger {
 	 */
 	public void log(String host, String message, boolean status) {
 		if (status) {
-			info(host, message + " done.");
+			info(host, message + DONE);
 		} else {
-			error(host, message + " failed.");
+			error(host, message + FAILED);
 		}
 	}
 
@@ -346,9 +348,9 @@ public class AnkushLogger {
 	 */
 	public void log(NodeConf nodeConf, String message) {
 		if (nodeConf.getStatus()) {
-			info(nodeConf.getPublicIp(), message + " done.");
+			info(nodeConf.getPublicIp(), message + DONE);
 		} else {
-			error(nodeConf, message + " failed.");
+			error(nodeConf, message + FAILED);
 		}
 	}
 }

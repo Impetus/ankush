@@ -68,26 +68,41 @@ public class MailClient {
 	 * values specified in associated MailConf object.
 	 */
 	private void init() {
+		String un = mailConf.getUserName();
+		String pw = mailConf.getPassword();
+		boolean anonymous = (un == null || un.equals("")) && (pw == null || pw.equals(""));
+		
 		boolean debug = false;
+		
 		Properties props = new Properties();
 		props.put("mail.smtp.host", mailConf.getServer());
-		props.put("mail.smtp.auth", "true");
-		props.put("mail.debug", "false");
-
 		props.put("mail.smtp.port", "" + mailConf.getPort());
+		props.put("mail.debug", "false");
+		if (!anonymous)
+			props.put("mail.smtp.auth", "true");
+//		else
+//			props.put("mail.smtp.auth", "false");
+
+		
 		if (mailConf.isSecured()) {
 			props.put("mail.smtp.starttls.enable", "true");
 			props.put("mail.smtp.socketFactory.port", "" + mailConf.getPort());
 			props.put("mail.smtp.socketFactory.class",
 					"javax.net.ssl.SSLSocketFactory");
 		}
-		session = Session.getInstance(props, new Authenticator() {
-			@Override
-			public PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(mailConf.getUserName(),
-						mailConf.getPassword());
-			}
-		});
+
+		if (!anonymous) {
+			session = Session.getInstance(props, new Authenticator() {
+				@Override
+				public PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(mailConf.getUserName(),
+							mailConf.getPassword());
+				}
+			});
+		} else {
+			//session = Session.getInstance(props, null);
+			session = Session.getInstance(props);
+		}
 		session.setDebug(debug);
 	}
 
@@ -152,11 +167,13 @@ public class MailClient {
 		String from = mailMsg.getFrom();
 
 		if (from == null) {
-			from = mailConf.getUserName();
+			from = mailConf.getEmailAddress();
 		}
 
-		InternetAddress addressFrom = new InternetAddress(from);
-		msg.setFrom(addressFrom);
+		if ((from != null) && (!from.equals(""))) {
+			InternetAddress addressFrom = new InternetAddress(from);
+			msg.setFrom(addressFrom);
+		}
 
 		// convert delimited list to array for to, cc & bcc
 		msg.setRecipients(Message.RecipientType.TO,
@@ -179,6 +196,7 @@ public class MailClient {
 		} catch (Exception e) {
 			logger.error("Error in Sending mail @ Mail client : "
 					+ e.getMessage());
+			e.printStackTrace();
 		}
 		return mailSent;
 	}

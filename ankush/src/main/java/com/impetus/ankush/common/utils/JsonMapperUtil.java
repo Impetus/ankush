@@ -27,8 +27,10 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -218,5 +220,43 @@ public class JsonMapperUtil {
 			throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
 		return mapper.convertValue(obj, className);
+	}
+
+	/**
+	 * Gets the node info list.
+	 * 
+	 * @param <S>
+	 *            the generic type
+	 * @param dataMap
+	 *            the monitoring info
+	 * @param key
+	 *            the key
+	 * @param targetClass
+	 *            the target class
+	 * @return the node info list
+	 * @throws Exception
+	 *             the exception
+	 */
+	public static <S> List<S> getListObject(List<Map> listMapData,
+			Class<S> targetClass) throws Exception {
+
+		// checking if map is null.
+		if (listMapData == null) {
+			return null;
+		}
+
+		// Creating the resultant list object.
+		List<S> result = new ArrayList<S>(listMapData.size());
+
+		// populating values in the list object from map.
+		for (Map<String, Object> info : listMapData) {
+			// creating target class object.
+			S status = targetClass.newInstance();
+			// populating object with map values.
+			BeanUtils.populate(status, info);
+			// adding object in result list.
+			result.add(status);
+		}
+		return result;
 	}
 }

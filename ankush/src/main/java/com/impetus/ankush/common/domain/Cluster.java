@@ -23,10 +23,7 @@
  */
 package com.impetus.ankush.common.domain;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -48,6 +45,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.impetus.ankush.common.alerts.AlertsConf;
 import com.impetus.ankush.common.framework.config.ClusterConf;
+import com.impetus.ankush2.framework.config.ClusterConfig;
 
 /**
  * The Class Cluster.
@@ -106,6 +104,52 @@ public class Cluster extends BaseObject {
 	/** The tiles. */
 	private List<Tile> tiles;
 
+	/** The operations. */
+	private List<Operation> operations;
+
+	/** The HAServices. */
+	private List<HAService> haServices;
+
+	/** The Services. */
+	private List<Service> services;
+
+	/** Agent version **/
+	private String agentVersion;
+
+	/**
+	 * @return the haServices
+	 */
+	@OneToMany(mappedBy = CLUSTER_ID, fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@JsonIgnore
+	public List<Service> getServices() {
+		return services;
+	}
+
+	/**
+	 * @param haServices
+	 *            the haServices to set
+	 */
+	public void setServices(List<Service> services) {
+		this.services = services;
+	}
+
+	/**
+	 * @return the haServices
+	 */
+	@OneToMany(mappedBy = CLUSTER_ID, fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@JsonIgnore
+	public List<HAService> getHaServices() {
+		return haServices;
+	}
+
+	/**
+	 * @param haServices
+	 *            the haServices to set
+	 */
+	public void setHaServices(List<HAService> haServices) {
+		this.haServices = haServices;
+	}
+
 	/**
 	 * Gets the tiles.
 	 * 
@@ -125,6 +169,23 @@ public class Cluster extends BaseObject {
 	 */
 	public void setTiles(List<Tile> tiles) {
 		this.tiles = tiles;
+	}
+
+	/**
+	 * @return the operations
+	 */
+	@OneToMany(mappedBy = CLUSTER_ID, fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@JsonIgnore
+	public List<Operation> getOperations() {
+		return operations;
+	}
+
+	/**
+	 * @param operations
+	 *            the operations to set
+	 */
+	public void setOperations(List<Operation> operations) {
+		this.operations = operations;
 	}
 
 	/**
@@ -206,26 +267,27 @@ public class Cluster extends BaseObject {
 	 * 
 	 * @return
 	 */
-	@Transient
-	public List<Node> getSortedNodesByIp() {
-		// nodes list getting from nodes set.
-		List<Node> sortedNodes = new ArrayList<Node>(nodes);
-		// sorting nodes.
-		Collections.sort(sortedNodes, new Comparator<Node>() {
-			/**
-			 * Comparing public ip.
-			 * 
-			 * @param o1
-			 * @param o2
-			 * @return
-			 */
-			@Override
-			public int compare(Node o1, Node o2) {
-				return o1.getPublicIp().compareTo(o2.getPublicIp());
-			}
-		});
-		return sortedNodes;
-	}
+	// @Transient
+	// public List<Node> getSortedNodesByIp() {
+	// // nodes list getting from nodes set.
+	// List<Node> sortedNodes = new ArrayList<Node>(nodes);
+	// // sorting nodes.
+	// Collections.sort(sortedNodes, new Comparator<Node>() {
+	// /**
+	// * Comparing public ip.
+	// *
+	// * @param o1
+	// * @param o2
+	// * @return
+	// */
+	// @Override
+	// public int compare(Node o1, Node o2) {
+	// return CommonUtil.toNumeric(o1.getPublicIp()).compareTo(
+	// CommonUtil.toNumeric(o2.getPublicIp()));
+	// }
+	// });
+	// return sortedNodes;
+	// }
 
 	/**
 	 * Sets the nodes.
@@ -243,7 +305,7 @@ public class Cluster extends BaseObject {
 	 * @return the id
 	 */
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+//	@GeneratedValue(strategy = GenerationType.AUTO)
 	public Long getId() {
 		return id;
 	}
@@ -458,15 +520,37 @@ public class Cluster extends BaseObject {
 		return (ClusterConf) SerializationUtils.deserialize(getConfBytes());
 	}
 
-	/**
-	 * Sets the cluster conf.
-	 * 
-	 * @param clusterConf
-	 *            the new cluster conf
-	 */
 	@Transient
 	public void setClusterConf(ClusterConf clusterConf) {
 		setConfBytes(SerializationUtils.serialize(clusterConf));
+	}
+
+	@Transient
+	public ClusterConfig getClusterConfig() {
+		if (getConfBytes() == null) {
+			return null;
+		}
+		return (ClusterConfig) SerializationUtils.deserialize(getConfBytes());
+	}
+
+	@Transient
+	public void setClusterConf(ClusterConfig clusterConf) {
+		setConfBytes(SerializationUtils.serialize(clusterConf));
+	}
+
+	/**
+	 * @return the agentVersion
+	 */
+	public String getAgentVersion() {
+		return agentVersion;
+	}
+
+	/**
+	 * @param agentVersion
+	 *            the agentVersion to set
+	 */
+	public void setAgentVersion(String agentVersion) {
+		this.agentVersion = agentVersion;
 	}
 
 	/*
@@ -546,7 +630,7 @@ public class Cluster extends BaseObject {
 				+ getAlertsConf() + ", getConfBytes()="
 				+ Arrays.toString(getConfBytes()) + ", getTechnology()="
 				+ getTechnology() + ", getUser()=" + getUser()
-				+ ", getClusterConfObj()=" + getClusterConf() + ", hashCode()="
+				+ ", getClusterConfig()=" + getClusterConfig() + ", hashCode()="
 				+ hashCode() + "]";
 	}
 

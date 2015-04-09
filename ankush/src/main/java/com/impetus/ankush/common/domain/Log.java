@@ -38,53 +38,57 @@ import javax.persistence.Transient;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.Index;
 
-
 /**
  * The Class Log.
- *
+ * 
  * @author nikunj
  */
 @Entity
 @Table(name = "log")
-@NamedQuery(name = "getLastOperationId", query = "select l from Log l where l.id=(select max(id) from Log where clusterId=:clusterId)")
+		@NamedQuery(name = "getLastOperationId", query = "select l from Log l where l.id=(select max(id) from Log where clusterId=:clusterId)")
+
 public class Log extends BaseObject {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
-	
+
 	/** The date format. */
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat(
 			"yyyy-MM-dd hh:mm:ss z");
-	
+
 	/** The id. */
 	private Long id;
-	
+
 	/** The cluster id. */
 	private Long clusterId;
-	
+
 	/** The operation id. */
 	private Long operationId;
-	
+
 	/** The host. */
 	private String host;
-	
+
+	private String componentName;
+
 	/** The type. */
 	private String type;
-	
+
 	/** The message. */
 	private String message;
-	
+
 	/** The long message. */
 	private String longMessage;
-	
+
 	/** The created at. */
 	private Date createdAt;
 
 	/**
 	 * Gets the node last log query.
-	 *
-	 * @param clusterId the cluster id
-	 * @param operationID the operation id
+	 * 
+	 * @param clusterId
+	 *            the cluster id
+	 * @param operationID
+	 *            the operation id
 	 * @return the node last log query
 	 */
 	public static String getNodeLastLogQuery(long clusterId, long operationID) {
@@ -101,7 +105,7 @@ public class Log extends BaseObject {
 
 	/**
 	 * Gets the id.
-	 *
+	 * 
 	 * @return the id
 	 */
 	@Id
@@ -113,8 +117,9 @@ public class Log extends BaseObject {
 
 	/**
 	 * Sets the id.
-	 *
-	 * @param id the id to set
+	 * 
+	 * @param id
+	 *            the id to set
 	 */
 	public void setId(Long id) {
 		this.id = id;
@@ -122,7 +127,7 @@ public class Log extends BaseObject {
 
 	/**
 	 * Gets the cluster id.
-	 *
+	 * 
 	 * @return the clusterId
 	 */
 	@JsonIgnore
@@ -132,8 +137,9 @@ public class Log extends BaseObject {
 
 	/**
 	 * Sets the cluster id.
-	 *
-	 * @param clusterId the clusterId to set
+	 * 
+	 * @param clusterId
+	 *            the clusterId to set
 	 */
 	public void setClusterId(Long clusterId) {
 		this.clusterId = clusterId;
@@ -141,7 +147,7 @@ public class Log extends BaseObject {
 
 	/**
 	 * Gets the operation id.
-	 *
+	 * 
 	 * @return the operationId
 	 */
 	@JsonIgnore
@@ -151,8 +157,9 @@ public class Log extends BaseObject {
 
 	/**
 	 * Sets the operation id.
-	 *
-	 * @param operationId the operationId to set
+	 * 
+	 * @param operationId
+	 *            the operationId to set
 	 */
 	public void setOperationId(Long operationId) {
 		this.operationId = operationId;
@@ -160,27 +167,36 @@ public class Log extends BaseObject {
 
 	/**
 	 * Gets the host.
-	 *
+	 * 
 	 * @return the host
 	 */
 	@JsonIgnore
-	@Index(name="log_host_index")
+	@Index(name = "log_host_index")
 	public String getHost() {
 		return host;
 	}
 
 	/**
 	 * Sets the host.
-	 *
-	 * @param host the host to set
+	 * 
+	 * @param host
+	 *            the host to set
 	 */
 	public void setHost(String host) {
 		this.host = host;
 	}
 
+	public String getComponentName() {
+		return componentName;
+	}
+
+	public void setComponentName(String componentName) {
+		this.componentName = componentName;
+	}
+
 	/**
 	 * Gets the type.
-	 *
+	 * 
 	 * @return the type
 	 */
 	public String getType() {
@@ -189,8 +205,9 @@ public class Log extends BaseObject {
 
 	/**
 	 * Sets the type.
-	 *
-	 * @param type the type to set
+	 * 
+	 * @param type
+	 *            the type to set
 	 */
 	public void setType(String type) {
 		this.type = type;
@@ -198,7 +215,7 @@ public class Log extends BaseObject {
 
 	/**
 	 * Gets the message.
-	 *
+	 * 
 	 * @return the message
 	 */
 	@Lob
@@ -209,8 +226,9 @@ public class Log extends BaseObject {
 
 	/**
 	 * Sets the message.
-	 *
-	 * @param message the message to set
+	 * 
+	 * @param message
+	 *            the message to set
 	 */
 	public void setMessage(String message) {
 		this.message = message;
@@ -218,7 +236,7 @@ public class Log extends BaseObject {
 
 	/**
 	 * Gets the created at.
-	 *
+	 * 
 	 * @return the createdAt
 	 */
 	@JsonIgnore
@@ -228,8 +246,9 @@ public class Log extends BaseObject {
 
 	/**
 	 * Sets the created at.
-	 *
-	 * @param createdAt the createdAt to set
+	 * 
+	 * @param createdAt
+	 *            the createdAt to set
 	 */
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
@@ -237,66 +256,19 @@ public class Log extends BaseObject {
 
 	/**
 	 * Gets the long message.
-	 *
+	 * 
 	 * @return the longMessage
 	 */
 	@Transient
 	public String getLongMessage() {
 		if (this.getHost() == null) {
-			longMessage = dateFormat.format(this.getCreatedAt()) + ":" + this.getMessage();
-		} else {
-			longMessage = dateFormat.format(this.getCreatedAt()) + " [" + this.getHost() + "] :"
+			longMessage = dateFormat.format(this.getCreatedAt()) + ":"
 					+ this.getMessage();
+		} else {
+			longMessage = dateFormat.format(this.getCreatedAt()) + " ["
+					+ this.getHost() + "] :" + this.getMessage();
 		}
 		return longMessage;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		Log other = (Log) obj;
-		if (clusterId == null) {
-			if (other.clusterId != null) {
-				return false;
-			}
-		} else if (!clusterId.equals(other.clusterId)) {
-			return false;
-		}
-		if (host == null) {
-			if (other.host != null) {
-				return false;
-			}
-		} else if (!host.equals(other.host)) {
-			return false;
-		}
-		if (id == null) {
-			if (other.id != null) {
-				return false;
-			}
-		} else if (!id.equals(other.id)) {
-			return false;
-		}
-		if (type == null) {
-			if (other.type != null) {
-				return false;
-			}
-		} else if (!type.equals(other.type)) {
-			return false;
-		}
-		return true;
 	}
 
 	/*
@@ -310,10 +282,66 @@ public class Log extends BaseObject {
 		int result = 1;
 		result = prime * result
 				+ ((clusterId == null) ? 0 : clusterId.hashCode());
+		result = prime * result
+				+ ((componentName == null) ? 0 : componentName.hashCode());
 		result = prime * result + ((host == null) ? 0 : host.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Log other = (Log) obj;
+		if (clusterId == null) {
+			if (other.clusterId != null)
+				return false;
+		} else if (!clusterId.equals(other.clusterId))
+			return false;
+		if (componentName == null) {
+			if (other.componentName != null)
+				return false;
+		} else if (!componentName.equals(other.componentName))
+			return false;
+		if (host == null) {
+			if (other.host != null)
+				return false;
+		} else if (!host.equals(other.host))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (type == null) {
+			if (other.type != null)
+				return false;
+		} else if (!type.equals(other.type))
+			return false;
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Log [clusterId=" + clusterId + ", operationId=" + operationId
+				+ ", host=" + host + ", componentName=" + componentName
+				+ ", type=" + type + ", message=" + message + ", createdAt="
+				+ createdAt + "]";
+	}
 }

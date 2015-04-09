@@ -1,0 +1,188 @@
+<!------------------------------------------------------------------------------
+-  ===========================================================
+-  Ankush : Big Data Cluster Management Solution
+-  ===========================================================
+-  
+-  (C) Copyright 2014, by Impetus Technologies
+-  
+-  This is free software; you can redistribute it and/or modify it under
+-  the terms of the GNU Lesser General Public License (LGPL v3) as
+-  published by the Free Software Foundation;
+-  
+-  This software is distributed in the hope that it will be useful, but
+-  WITHOUT ANY WARRANTY; without even the implied warranty of
+-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+-  See the GNU Lesser General Public License for more details.
+-  
+-  You should have received a copy of the GNU Lesser General Public License 
+-  along with this software; if not, write to the Free Software Foundation, 
+- Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+------------------------------------------------------------------------------->
+
+<%@ include file="../../layout/blankheader.jsp"%>
+<script
+	src="<c:out value='${baseUrl}'/>/public/js3.0/tooltip/gangliaClusterCreationTooltip.js"
+	type="text/javascript"></script>
+<!-- header section -->
+<body>
+	<div class="">
+		<div class="">
+			<div class="">
+				<div class="col-md-4">
+					<!-- 	<h2>Ganglia/Configuration</h2> -->
+				</div>
+				<div class="col-md-1">
+					<!-- <button class="btn btn-danger mrgt20" id="validateErrorGanglia"
+						onclick="com.impetus.ankush.common.focusError();"
+						style="display: none;">
+						<span class="badge" id="badgeText"></span>
+					</button> -->
+				</div>
+				<div class="col-md-7 text-right mrgt20 padr45">
+					<!-- <button id="revertGanglia" class="btn btn-default"
+						onclick="com.impetus.ankush.hybridClusterCreation.dynamicRowRemove();">Cancel</button>
+					<button class="btn btn-default" id="applyGanglia"
+						onclick="com.impetus.ankush.hybrid_Ganglia.gangliaConfigValidate();">Apply</button> -->
+				</div>
+			</div>
+		</div>
+
+		<!-- body section  -->
+
+		<div class="" id="main-content">
+			<div class="container-fluid mrgnlft8">
+				<div class="row">
+					<!-- <div id="errorDivMainGanglia" class="col-md-12 errorDiv"
+						style="display: none;"></div> -->
+				</div>
+
+				<!-- <div class="row">
+			<div class=" col-md-2 text-right">
+				<label class=" form-label">Operation Type:</label>
+			</div>
+			<div class="col-md-10 col-lg-2 ">
+				<div class="btn-group" data-toggle="buttons-radio" id="selectBtnGrp"
+					style="margin-top: 8px;">
+					<button class="btn nodeListRadio active btnGrp" data-value="0"
+						id="gangliaDeploy"
+						onclick="">Deploy</button>
+					<button class="btn nodeListRadio btnGrp" data-value="1"
+						id="gangliaRegister"
+						onclick="">Register</button>
+				</div>
+			</div>
+		</div> -->
+				<div class="panel ">
+					<div class="panel-heading">
+						<div class="">
+							<h3 class="panel-title col-md-2 mrgt5">Ganglia/Configuration</h3>
+							<!-- 	<button class="btn btn-default btn-danger"
+								id="validateErrorCassandra"
+								onclick="com.impetus.ankush.common.focusError();"
+								style="display: none;"></button> -->
+							<button id="revertGanglia" class="btn btn-default"
+								onclick="com.impetus.ankush.hybridClusterCreation.dynamicRowRemove();">Cancel</button>
+							<button class="btn btn-default" id="applyGanglia"
+								onclick="com.impetus.ankush.hybrid_Ganglia.gangliaConfigValidate();">Apply</button>
+						</div>
+						<div class="row">
+							<div id="errorDivMainGanglia" class="col-md-12 errorDiv mrgt10"
+								style="display: none;"></div>
+							<!-- <div class="pull-right panelSearch">
+							<input type="text" id="nodeSearchBoxCasandra"
+								placeholder="Search" class="input-medium form-control" />
+						</div> -->
+						</div>
+					</div>
+					<div class="row panel-body">
+						<div id="registerDiv">
+							<div class="row">
+								<div class=" col-md-2 text-right">
+									<label class=" form-label">Grid Name:</label>
+								</div>
+								<div class="col-md-3 col-lg-2 form-group">
+									<input id="gridName" type="text" data-toggle="tooltip"
+										class="input-xlarge form-control" placeholder="Grid Name"
+										title="Enter grid name for ganglia" data-placement="right"></input>
+								</div>
+							</div>
+							<div class="row">
+								<div class=" col-md-2 text-right">
+									<label class=" form-label">Cluster Name:</label>
+								</div>
+								<div class="col-md-3 col-lg-2 form-group">
+									<input id="gangliaClustername" type="text"
+										data-toggle="tooltip" class="input-xlarge form-control"
+										placeholder="Cluster Name"
+										title="Enter cluster name for ganglia" data-placement="right"></input>
+								</div>
+							</div>
+							<div class="row">
+								<div class=" col-md-2 text-right">
+									<label class=" form-label">Gmond Conf Path:</label>
+								</div>
+								<div class="col-md-5 col-lg-4 form-group">
+									<input id="gmondConfPath" type="text" data-toggle="tooltip"
+										class="input-xlarge form-control"
+										placeholder="Gmond Conf Path" title="Enter gmond conf path"
+										data-placement="right"></input>
+								</div>
+							</div>
+							<div class="row">
+								<div class=" col-md-2 text-right">
+									<label class=" form-label">Gmetad Conf Path:</label>
+								</div>
+								<div class="col-md-5 col-lg-4 form-group">
+									<input id="gmetadConfPath" type="text" data-toggle="tooltip"
+										class="input-xlarge form-control"
+										placeholder="Gmetad Conf Path" title="Enter gmetad conf path"
+										data-placement="right"></input>
+								</div>
+							</div>
+							<div class="row" id="pollingIntervalDiv">
+								<div class=" col-md-2 text-right">
+									<label class=" form-label">Polling Interval:</label>
+								</div>
+								<div class="col-md-2 col-lg-1 form-group">
+									<input id="pollingInterval" type="text" data-toggle="tooltip"
+										class="input-mini form-control" placeholder="Polling Interval"
+										title="Enter polling interval" data-placement="right"></input>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class=" col-md-2 text-right">
+									<label class=" form-label">Ganglia Port:</label>
+								</div>
+								<div class="col-md-2 col-lg-1 form-group">
+									<input id="gangliaPort" type="text" data-toggle="tooltip"
+										class="input-mini form-control" placeholder="Ganglia Port"
+										title="Enter ganglia port" data-placement="right"></input>
+								</div>
+							</div>
+							<div class="row">
+								<div class=" col-md-2 text-right">
+									<label class=" form-label">RRD File Path:</label>
+								</div>
+								<div class="col-md-5 col-lg-4 form-group">
+									<input id="rrdFilePath" type="text" data-toggle="tooltip"
+										class="input-xlarge form-control" placeholder="RRD File Path"
+										title="Enter rrd file path" data-placement="right"></input>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		$(document).ready(function() {
+			if ($("#toggleRegisterBtnGanglia .active").data("value") == 0) {
+				$('#pollingIntervalDiv').hide();
+			}
+			$('#gridName').focus();
+			com.impetus.ankush.hybrid_Ganglia.gangliaConfigPopulate();
+		});
+	</script>
+</body>

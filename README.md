@@ -13,7 +13,6 @@ A big data cluster management tool that creates and manages clusters of differen
 
 The software prerequisites are as follow:
 * Java >= 1.6
-* nmap
 * SSh client (ssh)
 * Maven (mvn)
 

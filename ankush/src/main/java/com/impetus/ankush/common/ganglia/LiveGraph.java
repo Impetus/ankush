@@ -29,11 +29,14 @@ import java.util.Map;
 
 import net.sf.json.xml.XMLSerializer;
 
+import com.impetus.ankush.AppStoreWrapper;
 import com.impetus.ankush.common.alerts.ThresholdConf;
+import com.impetus.ankush.common.config.ConfigurationReader;
 import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.constant.Constant.Graph.StartTime;
 import com.impetus.ankush.common.domain.Cluster;
 import com.impetus.ankush.common.utils.AnkushLogger;
+import com.impetus.ankush.common.utils.CommonUtil;
 import com.impetus.ankush.common.utils.FileNameUtils;
 import com.impetus.ankush.common.utils.HostOperation;
 import com.impetus.ankush.common.utils.SSHConnection;
@@ -42,6 +45,10 @@ import com.impetus.ankush.common.utils.SSHConnection;
  * @author hokam
  */
 public class LiveGraph {
+
+	private static final String COULD_NOT_FETCH_DATA_MSG = "Could not fetch the graph data.";
+
+	private static final String COULD_NOT_EXECUTE_COMMAND_MSG = "Could not execute the command to fetch the graph data";
 
 	/** The logger. */
 	private AnkushLogger logger = new AnkushLogger(LiveGraph.class);
@@ -61,25 +68,53 @@ public class LiveGraph {
 	/** The cluster name. */
 	private String clusterName;
 
-	/** The password **/
-	private String password;
-
-	/** The private **/
-	private String privateKey;
-
 	/** The time map. */
 	private static Map<Integer, String> timeMap = null;
 
 	/** second time call flag **/
 	private boolean update = false;
+
+	/** RRD directory path **/
+	private String rrdsDirectory;
+
 	// map for the time periods.
 	static {
 		timeMap = new HashMap<Integer, String>();
-		timeMap.put(StartTime.lasthour.ordinal(), "-s now-1h --step 15 ");
-		timeMap.put(StartTime.lastday.ordinal(), "-s now-1d --step 720 ");
-		timeMap.put(StartTime.lastweek.ordinal(), "-s now-1w --step 5040 ");
-		timeMap.put(StartTime.lastmonth.ordinal(), "-s now-1m --step 20160 ");
-		timeMap.put(StartTime.lastyear.ordinal(), "-s now-1y --step 86400 ");
+		timeMap.put(StartTime.lasthour.ordinal(), "-s now-1h ");
+		timeMap.put(StartTime.lastday.ordinal(), "-s now-1d ");
+		timeMap.put(StartTime.lastweek.ordinal(), "-s now-1w ");
+		timeMap.put(StartTime.lastmonth.ordinal(), "-s now-1m ");
+		timeMap.put(StartTime.lastyear.ordinal(), "-s now-1y ");
+	}
+
+	/**
+	 * 
+	 * @param hostname
+	 * @param username
+	 * @param authInfo
+	 * @param authUsingPassword
+	 * @param clusterName
+	 */
+	public LiveGraph(String hostname, String username, String password,
+			String privateKey, String clusterName) {
+		super();
+		this.hostname = hostname;
+		this.username = username;
+		if (password != null && !password.isEmpty()) {
+			this.authInfo = password;
+			this.authUsingPassword = true;
+		} else {
+			this.authInfo = privateKey;
+			this.authUsingPassword = false;
+		}
+		this.clusterName = clusterName;
+
+		// getting config reader object.
+		ConfigurationReader ankushConf = AppStoreWrapper.getAnkushConfReader();
+
+		// setting rrds directory path
+		rrdsDirectory = CommonUtil.getUserHome(username)
+				+ ankushConf.getStringValue("ganglia.rrds");
 	}
 
 	/**
@@ -95,8 +130,6 @@ public class LiveGraph {
 		super();
 		this.hostname = hostname;
 		this.username = username;
-		this.password = password;
-		this.privateKey = privateKey;
 		if (password != null && !password.isEmpty()) {
 			this.authInfo = password;
 			this.authUsingPassword = true;
@@ -106,6 +139,13 @@ public class LiveGraph {
 		}
 		this.clusterName = clusterName;
 		this.update = update;
+
+		// getting config reader object.
+		ConfigurationReader ankushConf = AppStoreWrapper.getAnkushConfReader();
+
+		// setting rrds directory path
+		rrdsDirectory = CommonUtil.getUserHome(username)
+				+ ankushConf.getStringValue("ganglia.rrds");
 	}
 
 	/**
@@ -123,11 +163,79 @@ public class LiveGraph {
 			throws Exception {
 
 		// rrd cluster directory.
-		String clusterRrdDir = FileNameUtils
-				.convertToValidPath(Constant.Graph.RRD_BASH_PATH + clusterName
-						+ "/__SummaryInfo__");
+		String clusterRrdDir = FileNameUtils.convertToValidPath(rrdsDirectory
+				+ clusterName + "/__SummaryInfo__");
 
 		return generateRrdJSON(startTime, clusterRrdDir, cluster);
+	}
+
+	/**
+	 * Method to provide Data from cluster memory, cpu, load and network data
+	 * for given time period.
+	 * 
+	 * @param startTime
+	 * @param pattern
+	 * @return
+	 * @throws Exception
+	 */
+	public Map fetchGraphJson(StartTime startTime, String type)
+			throws Exception {
+		// output.
+		Map result = new HashMap();
+		// rrd cluster directory.
+		String clusterRrdDir = FileNameUtils.convertToValidPath(rrdsDirectory
+				+ clusterName + "/__SummaryInfo__");
+		// making connection.
+		SSHConnection connection = new SSHConnection(this.hostname,
+				this.username, this.authInfo, this.authUsingPassword);
+
+		if (connection.isConnected()) {
+
+			// json creation command using the rrdtool.
+			StringBuilder command = new StringBuilder();
+			command.append("cd " + clusterRrdDir).append(";rrdtool xport ")
+					.append(timeMap.get(startTime.ordinal()));
+
+			String unit = "%";
+			// cpu graphs
+			if (type.equalsIgnoreCase(Constant.Graph.Type.cpu.toString())) {
+				command.append(getClusterCpu(false));
+				// memory graphs
+			} else if (type.equalsIgnoreCase(Constant.Graph.Type.memory
+					.toString())) {
+				command.append(getClusterMemory(false));
+				// network graphs.
+			} else if (type.equalsIgnoreCase(Constant.Graph.Type.network
+					.toString())) {
+				unit = "MB/s";
+				command.append(getClusterNetwork(false));
+				// load graphs.
+			} else if (type.equalsIgnoreCase(Constant.Graph.Type.load
+					.toString())) {
+				command.append(getClusterLoad(false));
+			} else {
+				return result;
+			}
+
+			logger.debug(command.toString());
+
+			/* Executing the command. */
+			if (connection.exec(command.toString())) {
+				String output = connection.getOutput();
+				if (output == null) {
+					throw new Exception(COULD_NOT_FETCH_DATA_MSG);
+				} else {
+					// puting json in result.
+					Map map = (Map) new XMLSerializer().read(output.replaceAll(
+							"NaN", "0"));
+					map.put("unit", unit);
+					result.put("json", map);
+				}
+			} else {
+				throw new Exception(COULD_NOT_EXECUTE_COMMAND_MSG);
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -135,17 +243,16 @@ public class LiveGraph {
 	 * 
 	 * @param startTime
 	 *            the start time
-	 * @param ip
+	 * @param hostName
 	 *            the ip
 	 * @return the map
 	 * @throws Exception
 	 *             the exception
 	 */
-	public Map extractRRD(String ip, StartTime startTime, Cluster cluster)
+	public Map extractRRD(String hostName, StartTime startTime, Cluster cluster)
 			throws Exception {
 		// node rrd folder.
-		String nodeRrdDir = Constant.Graph.RRD_BASH_PATH + clusterName + "/"
-				+ HostOperation.getAnkushHostName(ip) + "/";
+		String nodeRrdDir = rrdsDirectory + clusterName + "/" + hostName + "/";
 
 		return generateRrdJSON(startTime, nodeRrdDir, cluster);
 	}
@@ -172,8 +279,9 @@ public class LiveGraph {
 			StringBuilder command = new StringBuilder();
 			command.append("cd " + rrdDir).append(";rrdtool xport ")
 					.append(timeMap.get(startTime.ordinal()))
-					.append(getClusterCpu()).append(getClusterMemory())
-					.append(getClusterNetwork()).append(getClusterLoad());
+					.append(getClusterCpu(true)).append(getClusterMemory(true))
+					.append(getClusterNetwork(true))
+					.append(getClusterLoad(true));
 
 			logger.debug(command.toString());
 
@@ -184,7 +292,7 @@ public class LiveGraph {
 					throw new Exception("Unable to fetch graph.");
 				}
 
-				// puting json in result.
+				// putting JSON in result.
 				Map map = (Map) new XMLSerializer().read(output.replaceAll(
 						"NaN", "0"));
 				Map mata = (Map) map.get("meta");
@@ -266,16 +374,20 @@ public class LiveGraph {
 		return Collections.emptyMap();
 	}
 
-	private String getClusterCpu() {
+	private String getClusterCpu(boolean unit) {
 		StringBuilder command = new StringBuilder();
 		command.append("DEF:num_nodes=cpu_user.rrd:num:AVERAGE ");
 		command.append("DEF:cpu_idle=cpu_idle.rrd:sum:AVERAGE ");
 		command.append("CDEF:cpu_usage=100,cpu_idle,num_nodes,/,- ");
-		command.append("XPORT:cpu_usage:\"CPU %\" ");
+		if (unit) {
+			command.append("XPORT:cpu_usage:\"CPU %\" ");
+		} else {
+			command.append("XPORT:cpu_usage:\"CPU\" ");
+		}
 		return command.toString();
 	}
 
-	private String getClusterMemory() {
+	private String getClusterMemory(boolean unit) {
 		StringBuilder command = new StringBuilder();
 		command.append("DEF:mt=mem_total.rrd:sum:AVERAGE ")
 				.append("DEF:mf=mem_free.rrd:sum:AVERAGE ")
@@ -283,23 +395,31 @@ public class LiveGraph {
 				.append("DEF:mc=mem_cached.rrd:sum:AVERAGE ")
 				.append("DEF:ms=mem_shared.rrd:sum:AVERAGE ")
 				.append("CDEF:mu=mt,ms,-,mf,-,mc,-,mb,- ")
-				.append("CDEF:memory=100,mu,*,mt,/ ")
-				.append("XPORT:memory:\"Memory %\" ");
+				.append("CDEF:memory=100,mu,*,mt,/ ");
+		if (unit) {
+			command.append("XPORT:memory:\"Memory %\" ");
+		} else {
+			command.append("XPORT:memory:\"Memory\" ");
+		}
 
 		return command.toString();
 	}
 
-	private String getClusterLoad() {
+	private String getClusterLoad(boolean unit) {
 		// creating xport value.
 		StringBuilder command = new StringBuilder();
 		command.append("DEF:cpu_num=cpu_num.rrd:sum:AVERAGE ");
 		command.append("DEF:load_one=load_one.rrd:sum:AVERAGE ");
 		command.append("CDEF:load=load_one,cpu_num,/,100,* ");
-		command.append("XPORT:load:\"Load %\" ");
+		if (unit) {
+			command.append("XPORT:load:\"Load %\" ");
+		} else {
+			command.append("XPORT:load:\"Load\" ");
+		}
 		return command.toString();
 	}
 
-	private String getClusterNetwork() {
+	private String getClusterNetwork(boolean unit) {
 		// creating xport value.
 		StringBuilder command = new StringBuilder();
 		command.append("DEF:bytes_in=bytes_in.rrd:sum:AVERAGE ");
@@ -307,7 +427,11 @@ public class LiveGraph {
 		command.append("CDEF:bytes=bytes_in,bytes_out,+, ");
 		command.append("CDEF:kbs=bytes,1024,/ ");
 		command.append("CDEF:mbs=kbs,1024,/ ");
-		command.append("XPORT:mbs:\"Network MB/s\" ");
+		if (unit) {
+			command.append("XPORT:mbs:\"Network MB/s\" ");
+		} else {
+			command.append("XPORT:mbs:\"Network\" ");
+		}
 		return command.toString();
 	}
 }

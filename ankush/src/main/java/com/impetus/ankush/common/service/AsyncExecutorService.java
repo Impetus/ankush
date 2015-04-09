@@ -28,19 +28,30 @@ import java.util.concurrent.ScheduledFuture;
  */
 public interface AsyncExecutorService {
 
-    /**
-     * Schedule.
-     *
-     * @param runnable the runnable
-     * @param start the start
-     * @return the scheduled future
-     */
-    ScheduledFuture schedule(Runnable runnable, Date start);
+	/**
+	 * Schedule.
+	 * 
+	 * @param runnable
+	 *            the runnable
+	 * @param start
+	 *            the start
+	 * @return the scheduled future
+	 */
+	ScheduledFuture schedule(Runnable runnable, Date start);
+
+	/**
+	 * 
+	 * @param runnable
+	 * @param seconds
+	 * @return
+	 */
+	ScheduledFuture scheduleWithFixedDelay(Runnable runnable, long seconds);
 
 	/**
 	 * Execute.
-	 *
-	 * @param task the task
+	 * 
+	 * @param task
+	 *            the task
 	 */
 	void execute(Runnable task);
 

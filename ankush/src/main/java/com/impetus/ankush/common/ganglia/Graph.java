@@ -30,11 +30,14 @@ import java.util.regex.Pattern;
 
 import net.sf.json.xml.XMLSerializer;
 
+import com.impetus.ankush.AppStoreWrapper;
+import com.impetus.ankush.common.config.ConfigurationReader;
 import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.constant.Constant.Graph.StartTime;
 import com.impetus.ankush.common.utils.AnkushLogger;
+import com.impetus.ankush.common.utils.CommonUtil;
 import com.impetus.ankush.common.utils.FileNameUtils;
-import com.impetus.ankush.common.utils.HostOperation;
+import com.impetus.ankush.common.utils.GangliaUtils;
 import com.impetus.ankush.common.utils.SSHConnection;
 import com.impetus.ankush.common.utils.SSHUtils;
 
@@ -44,6 +47,12 @@ import com.impetus.ankush.common.utils.SSHUtils;
  * @author hokam
  */
 public class Graph {
+
+	private static final String COULD_NOT_FIND_GANGLIA_HOSTNAME_MSG = "Could not find the Ganglia hostname for the machine.";
+
+	private static final String COULD_NOT_FETCH_DATA_MSG = "Could not fetch the graph data.";
+
+	private static final String COULD_NOT_EXECUTE_COMMAND_MSG = "Could not execute the command to fetch the graph data.";
 
 	/** The logger. */
 	private AnkushLogger logger = new AnkushLogger(Graph.class);
@@ -63,12 +72,6 @@ public class Graph {
 	/** The cluster name. */
 	private String clusterName;
 
-	/** The password *. */
-	private String password;
-
-	/** The private *. */
-	private String privateKey;
-
 	/** The time map. */
 	private static Map<Integer, String> timeMap = null;
 
@@ -77,6 +80,12 @@ public class Graph {
 
 	/** The all files. */
 	private List<String> allFiles;
+
+	/** RRD directory path **/
+	private String rrdsDirectory;
+
+	// host name map.
+//	private Map<String, String> hostnames;
 
 	// map for the time periods.
 	static {
@@ -122,8 +131,6 @@ public class Graph {
 		super();
 		this.hostname = hostname;
 		this.username = username;
-		this.password = password;
-		this.privateKey = privateKey;
 		if (password != null && !password.isEmpty()) {
 			this.authInfo = password;
 			this.authUsingPassword = true;
@@ -132,6 +139,17 @@ public class Graph {
 			this.authUsingPassword = false;
 		}
 		this.clusterName = clusterName;
+
+		// getting config reader object.
+		ConfigurationReader ankushConf = AppStoreWrapper.getAnkushConfReader();
+
+		// setting rrds directory path
+		rrdsDirectory = CommonUtil.getUserHome(username)
+				+ ankushConf.getStringValue("ganglia.rrds");
+
+		// fetching host names.
+//		hostnames = GangliaUtils.getGangliaHostNames(hostname, username,
+//				password, privateKey);
 	}
 
 	/**
@@ -149,9 +167,8 @@ public class Graph {
 		isClusterGraph = true;
 
 		// rrd cluster directory.
-		String clusterRrdDir = FileNameUtils
-				.convertToValidPath(Constant.Graph.RRD_BASH_PATH + clusterName
-						+ "/__SummaryInfo__");
+		String clusterRrdDir = FileNameUtils.convertToValidPath(rrdsDirectory
+				+ clusterName + "/__SummaryInfo__");
 
 		return generateRrdJSON(startTime, pattern, clusterRrdDir);
 	}
@@ -172,9 +189,8 @@ public class Graph {
 		isClusterGraph = true;
 
 		// rrd cluster directory.
-		String clusterRrdDir = FileNameUtils
-				.convertToValidPath(Constant.Graph.RRD_BASH_PATH + clusterName
-						+ "/__SummaryInfo__");
+		String clusterRrdDir = FileNameUtils.convertToValidPath(rrdsDirectory
+				+ clusterName + "/__SummaryInfo__");
 
 		return generateAllRrdJSON(startTime, pattern, clusterRrdDir);
 	}
@@ -182,8 +198,8 @@ public class Graph {
 	/**
 	 * Method to extract json from the rrd file.
 	 * 
-	 * @param ip
-	 *            the ip
+	 * @param hostName
+	 *            the hostName
 	 * @param startTime
 	 *            the start time
 	 * @param pattern
@@ -192,13 +208,13 @@ public class Graph {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public Map extractRRD(String ip, StartTime startTime, String pattern)
+	public Map extractRRD(String hostName, StartTime startTime, String pattern)
 			throws Exception {
 		isClusterGraph = false;
 
 		// node rrd folder.
-		String nodeRrdDir = Constant.Graph.RRD_BASH_PATH + clusterName + "/"
-				+ HostOperation.getAnkushHostName(ip) + "/";
+		String nodeRrdDir = rrdsDirectory + clusterName + "/" + hostName
+				+ "/";
 
 		return generateRrdJSON(startTime, pattern, nodeRrdDir);
 	}
@@ -307,7 +323,7 @@ public class Graph {
 			if (connection.exec(command.toString())) {
 				String output = connection.getOutput();
 				if (output == null) {
-					throw new Exception("Unable to fetch graph.");
+					throw new Exception(COULD_NOT_FETCH_DATA_MSG);
 				}
 
 				// puting json in result.
@@ -315,6 +331,8 @@ public class Graph {
 						"NaN", "0"));
 				map.put("unit", unit);
 				result.put("json", map);
+			} else {
+				throw new Exception(COULD_NOT_EXECUTE_COMMAND_MSG);
 			}
 		}
 		return result;
@@ -404,12 +422,14 @@ public class Graph {
 			if (connection.exec(command.toString())) {
 				String output = connection.getOutput();
 				if (output == null) {
-					throw new Exception("Unable to fetch graph.");
+					throw new Exception(COULD_NOT_FETCH_DATA_MSG);
 				}
 
 				// puting json in result.
 				result.put("json",
 						new XMLSerializer().read(output.replaceAll("NaN", "0")));
+			} else {
+				throw new Exception(COULD_NOT_EXECUTE_COMMAND_MSG);
 			}
 		}
 		return result;
@@ -518,31 +538,35 @@ public class Graph {
 	/**
 	 * Gets the all files.
 	 * 
-	 * @param ip
-	 *            the ip
+	 * @param hostName
+	 *            the hostName
 	 * @return the all files
 	 * @throws Exception
 	 *             the exception
 	 */
-	public List<String> getAllFiles(String ip) throws Exception {
+	public List<String> getAllFiles(String hostName) throws Exception {
 
 		if (allFiles == null) {
 			// node rrd folder.
-			String nodeRrdDir = Constant.Graph.RRD_BASH_PATH + clusterName
-					+ "/";
+			String nodeRrdDir = rrdsDirectory + clusterName + "/";
 
-			if (ip == null) {
+
+
+			if (hostName == null) {
 				nodeRrdDir = nodeRrdDir + "__SummaryInfo__/";
 			} else {
-				nodeRrdDir = nodeRrdDir + HostOperation.getAnkushHostName(ip);
+				nodeRrdDir = nodeRrdDir + hostName;
 			}
 
 			// file strings.
 			String filesString = SSHUtils.getCommandOutput("cd " + nodeRrdDir
-					+ ";ls ", hostname, username, authInfo, authUsingPassword);
+					+ ";ls *.rrd", this.hostname, username, authInfo,
+					authUsingPassword);
 
+			// if files string is null.
 			if (filesString == null) {
-				return null;
+				// throw exception
+				throw new Exception("Could not fetch graph tree data.");
 			}
 			allFiles = new ArrayList<String>(Arrays.asList(filesString
 					.split("\n")));
@@ -608,46 +632,5 @@ public class Graph {
 			}
 		}
 		return files;
-	}
-
-	/**
-	 * Gets the pattern files.
-	 * 
-	 * @param ip
-	 *            the ip
-	 * @param pattern
-	 *            the pattern
-	 * @return the pattern files
-	 * @throws Exception
-	 *             the exception
-	 */
-	public List<String> getPatternFiles(String ip, String pattern)
-			throws Exception {
-
-		// node rrd folder.
-		String nodeRrdDir = Constant.Graph.RRD_BASH_PATH + clusterName + "/"
-				+ HostOperation.getAnkushHostName(ip);
-
-		// file strings.
-		String filesString = SSHUtils.getCommandOutput("cd " + nodeRrdDir
-				+ ";ls " + pattern, this.hostname, this.username,
-				this.authInfo, this.authUsingPassword);
-
-		if (filesString == null) {
-			return null;
-		}
-		List<String> files = new ArrayList(Arrays.asList(filesString
-				.split("\n")));
-		List<String> legends = new ArrayList<String>();
-
-		files.remove("cpu_speed.rrd");
-		files.remove("cpu_num.rrd");
-		files.remove("cpu_aidle.rrd");
-
-		for (String file : files) {
-			legends.add(file.replace(".rrd", "").replace("_", " "));
-		}
-
-		return legends;
 	}
 }

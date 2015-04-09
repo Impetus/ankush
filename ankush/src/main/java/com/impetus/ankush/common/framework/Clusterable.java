@@ -118,14 +118,6 @@ public interface Clusterable {
 	ClusterConf preUndeploy(Cluster dbCluster) throws Exception;
 
 	/**
-	 * Postprocessing after unpdeloy.
-	 * 
-	 * @param clusterConf
-	 *            the cluster conf
-	 */
-	void postUndeploy(ClusterConf clusterConf);
-
-	/**
 	 * Get the lastest error message of Cluster.
 	 * 
 	 * @return the error
@@ -214,4 +206,5 @@ public interface Clusterable {
 	 */
 	boolean preRemoveNodes(List<NodeConf> nodeConfs, ClusterConf clusterConf);
 	
+	List<String> getClusterServiceNames();
 }

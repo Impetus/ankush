@@ -49,7 +49,7 @@ public class KillJPSProcessByName extends AnkushTask {
 	 */
 	@Override
 	public String getCommand() {
-		return "kill -9 `jps | grep " + this.name + " | cut -d' ' -f 1`";
+		return "kill -9 `jps -m | grep " + this.name + " | cut -d' ' -f 1`";
 	}
 
 }

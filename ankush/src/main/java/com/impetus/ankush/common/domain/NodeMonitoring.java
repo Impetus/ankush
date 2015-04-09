@@ -26,7 +26,6 @@ package com.impetus.ankush.common.domain;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 import javax.persistence.Column;
@@ -70,9 +69,6 @@ public class NodeMonitoring extends BaseObject {
 	/** The monitoring info bytes. */
 	private byte[] monitoringInfoBytes;
 
-	/** The service status bytes. */
-	private byte[] serviceStatusBytes;
-
 	/** The technology data bytes. */
 	private byte[] technologyDataBytes;
 
@@ -81,6 +77,9 @@ public class NodeMonitoring extends BaseObject {
 
 	/** Graph View data **/
 	private byte[] graphView;
+
+	/** Technology Service Status **/
+	private byte[] technologyServiceBytes;
 
 	/**
 	 * Gets the id.
@@ -168,45 +167,20 @@ public class NodeMonitoring extends BaseObject {
 	}
 
 	/**
-	 * Sets the service status bytes.
-	 * 
-	 * @param serviceStatusBytes
-	 *            the serviceStatusBytes to set
-	 */
-	private void setServiceStatusBytes(byte[] serviceStatusBytes) {
-		this.serviceStatusBytes = serviceStatusBytes;
-	}
-
-	/**
-	 * Gets the service status bytes.
-	 * 
-	 * @return the serviceStatusBytes
-	 */
-	@Lob
-	@Column(length = Integer.MAX_VALUE - 1)
-	private byte[] getServiceStatusBytes() {
-		return serviceStatusBytes;
-	}
-
-	/**
-	 * Gets the service status.
+	 * Gets the technology service status.
 	 * 
 	 * @return the serviceStatus
 	 */
 	@Transient
-	public Map<String, Boolean> getServiceStatus() {
-		if (getServiceStatusBytes() == null) {
+	public Map<String, Map<String, Boolean>> getTechnologyServiceStatus() {
+		// Get technology status bytes if null return null.
+		if (getTechnologyServiceBytes() == null) {
 			return null;
 		}
-		if (isAgentDown()) {
-			Map<String, Boolean> serviceMap = new HashMap<String, Boolean>();
-			serviceMap.put("Agent", false);
-			return serviceMap;
-		}
-		Map<String, Boolean> serviceMap = (HashMap<String, Boolean>) SerializationUtils
-				.deserialize(getServiceStatusBytes());
-		serviceMap.put("Agent", true);
-		return serviceMap;
+		
+		// serializing the data.
+		return (HashMap<String, Map<String, Boolean>>) SerializationUtils
+				.deserialize(getTechnologyServiceBytes());
 	}
 
 	/**
@@ -215,8 +189,72 @@ public class NodeMonitoring extends BaseObject {
 	 * @param serviceStatus
 	 *            the serviceStatus to set
 	 */
-	public void setServiceStatus(HashMap<String, Boolean> serviceStatus) {
-		setServiceStatusBytes(SerializationUtils.serialize(serviceStatus));
+	public void setTechnologyServiceStatus(
+			HashMap<String, Map<String, Boolean>> serviceStatus) {
+		setTechnologyServiceBytes(SerializationUtils.serialize(serviceStatus));
+	}
+
+	/**
+	 * Method to get Service Status in its raw state i.e. without any check or update.
+	 * 
+	 * @return
+	 */
+	@Transient
+	public HashMap<String, Map<String, Boolean>> getTechnologyGroupedRawServiceStatus() {
+		return getTechnologyGroupedRawServiceStatus(null);
+	}
+	/**
+	 * Method to get Service Status in its raw state i.e. without any check or update.
+	 * 
+	 * @param technology
+	 * @return
+	 */
+	@Transient
+	public HashMap<String, Map<String, Boolean>> getTechnologyGroupedRawServiceStatus(String technology) {
+		HashMap<String, Map<String, Boolean>> techServiceMap = new HashMap<String, Map<String, Boolean>>();
+		HashMap<String, Map<String, Boolean>> serviceMap = new HashMap<String, Map<String, Boolean>>();
+		byte [] techBytes = getTechnologyServiceBytes();
+		if (techBytes == null) {
+			return serviceMap;
+		}
+
+		// deserializing the data.
+		techServiceMap = (HashMap<String, Map<String, Boolean>>) SerializationUtils
+				.deserialize(techBytes);
+
+
+		if (technology != null) {
+			serviceMap.put(technology, techServiceMap.get(technology)); 
+		} else {
+			serviceMap.putAll(techServiceMap);
+		}
+		
+/*		
+		if (technology == null) {
+			Map agentStatus = new HashMap<String, Boolean>();
+			agentStatus.put(Constant.Component.Name.AGENT, isAgentDown());
+			serviceMap.put(Constant.Component.Name.AGENT, agentStatus);
+		}
+*/		
+		
+		// return service status.
+		return serviceMap;
+	}
+
+	/**
+	 * Method to get Service Status.
+	 * 
+	 * @param technology
+	 * @return
+	 */
+	@Transient
+	public Map<String, Boolean> getServiceStatus(String technology) {
+		Map<String, Map<String, Boolean>> techServices = getTechnologyServiceStatus();
+		if (techServices != null) {
+			// Getting technology status.
+			return  techServices.get(technology);
+		}
+		return null;
 	}
 
 	/**
@@ -334,17 +372,21 @@ public class NodeMonitoring extends BaseObject {
 	}
 
 	/**
-	 * Method to get agent status.
-	 * 
-	 * @return true, if is agent down
+	 * @param technologyServiceBytes
+	 *            the technologyServiceBytes to set
 	 */
-	@Transient
-	public boolean isAgentDown() {
-		Date currentTime = new Date();
-		if (currentTime.getTime() - this.updateTime.getTime() > 100000) {
-			return true;
-		}
-		return false;
+	public void setTechnologyServiceBytes(byte[] technologyServiceBytes) {
+		this.technologyServiceBytes = technologyServiceBytes;
+	}
+
+	/**
+	 * @return the technologyServiceBytes
+	 */
+	@JsonIgnore
+	@Lob
+	@Column(length = Integer.MAX_VALUE - 1)
+	public byte[] getTechnologyServiceBytes() {
+		return technologyServiceBytes;
 	}
 
 	/*
@@ -358,7 +400,6 @@ public class NodeMonitoring extends BaseObject {
 		int result = 1;
 		result = prime * result + Arrays.hashCode(monitoringInfoBytes);
 		result = prime * result + ((nodeId == null) ? 0 : nodeId.hashCode());
-		result = prime * result + Arrays.hashCode(serviceStatusBytes);
 		result = prime * result + Arrays.hashCode(technologyDataBytes);
 		result = prime * result
 				+ ((updateTime == null) ? 0 : updateTime.hashCode());
@@ -392,9 +433,6 @@ public class NodeMonitoring extends BaseObject {
 		if (!Arrays.equals(monitoringInfoBytes, other.monitoringInfoBytes)) {
 			return false;
 		}
-		if (!Arrays.equals(serviceStatusBytes, other.serviceStatusBytes)) {
-			return false;
-		}
 		if (!Arrays.equals(technologyDataBytes, other.technologyDataBytes)) {
 			return false;
 		}
@@ -418,16 +456,12 @@ public class NodeMonitoring extends BaseObject {
 		return "NodeMonitoring [id=" + id + ", nodeId=" + nodeId
 				+ ", monitoringInfoBytes="
 				+ Arrays.toString(monitoringInfoBytes)
-				+ ", serviceStatusBytes=" + Arrays.toString(serviceStatusBytes)
 				+ ", technologyDataBytes="
 				+ Arrays.toString(technologyDataBytes) + ", updateTime="
 				+ updateTime + ", getId()=" + getId() + ", getNodeId()="
 				+ getNodeId() + ", getMonitoringInfoBytes()="
 				+ Arrays.toString(getMonitoringInfoBytes())
 				+ ", getMonitoringInfo()=" + getMonitoringInfo()
-				+ ", getServiceStatusBytes()="
-				+ Arrays.toString(getServiceStatusBytes())
-				+ ", getServiceStatus()=" + getServiceStatus()
 				+ ", getTechnologyDataBytes()="
 				+ Arrays.toString(getTechnologyDataBytes())
 				+ ", getTechnologyData()=" + getTechnologyData()

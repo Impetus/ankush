@@ -25,7 +25,11 @@ package com.impetus.ankush.common.zookeeper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Semaphore;
+
+import javax.management.MBeanServerConnection;
+import javax.management.ObjectName;
 
 import net.neoremind.sshxcute.core.Result;
 import net.neoremind.sshxcute.core.SSHExec;
@@ -34,16 +38,24 @@ import net.neoremind.sshxcute.task.impl.ExecCommand;
 
 import com.impetus.ankush.AppStoreWrapper;
 import com.impetus.ankush.common.constant.Constant;
+import com.impetus.ankush.common.exception.AnkushException;
 import com.impetus.ankush.common.framework.Deployable;
 import com.impetus.ankush.common.framework.config.Configuration;
+import com.impetus.ankush.common.framework.config.GenericConfiguration;
 import com.impetus.ankush.common.framework.config.NodeConf;
 import com.impetus.ankush.common.scripting.AnkushTask;
 import com.impetus.ankush.common.scripting.impl.Remove;
 import com.impetus.ankush.common.scripting.impl.RemoveText;
 import com.impetus.ankush.common.scripting.impl.RunInBackground;
 import com.impetus.ankush.common.utils.AnkushLogger;
+import com.impetus.ankush.common.utils.FileUtils;
 import com.impetus.ankush.common.utils.HostOperation;
+import com.impetus.ankush.common.utils.JmxUtil;
 import com.impetus.ankush.common.utils.SSHUtils;
+import com.impetus.ankush.common.utils.validator.ValidationResult;
+import com.impetus.ankush.common.utils.validator.ValidationUtility;
+import com.impetus.ankush2.constant.Constant.Component;
+import com.impetus.ankush2.constant.Constant.Strings;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -53,13 +65,15 @@ import com.impetus.ankush.common.utils.SSHUtils;
  */
 public class ApacheZookeeperDeployer implements Deployable {
 
+	private static final String DOTS = "...";
+
 	/** The log. */
 	private final AnkushLogger LOG = new AnkushLogger(
-			Constant.Component.Name.ZOOKEEPER, ApacheZookeeperDeployer.class);
-	
+			Component.Name.ZOOKEEPER, ApacheZookeeperDeployer.class);
+
 	/** The start. */
 	private final String START = "start";
-	
+
 	/** The stop. */
 	private final String STOP = "stop";
 
@@ -175,6 +189,7 @@ public class ApacheZookeeperDeployer implements Deployable {
 		try {
 			final Semaphore semaphore = new Semaphore(nodeList.size());
 			for (final NodeConf nodeConf : nodeList) {
+				nodeConf.setStatus(statusFlag);
 				semaphore.acquire();
 				AppStoreWrapper.getExecutor().execute(new Runnable() {
 					@Override
@@ -190,10 +205,11 @@ public class ApacheZookeeperDeployer implements Deployable {
 
 							// if connected
 							if (connection != null) {
-								String cmd = conf.getInstallationPath()
-										+ "zookeeper-"
-										+ conf.getComponentVersion()
-										+ "/bin/zkServer.sh" + Constant.STR_SPACE + action;
+								String cmd = FileUtils
+										.getSeparatorTerminatedPathEntry(conf
+												.getComponentHome())
+										+ "bin/zkServer.sh"
+										+ Strings.SPACE + action;
 								LOG.debug("Executing command - " + cmd
 										+ "on node - " + publicIp);
 								Result result;
@@ -204,12 +220,16 @@ public class ApacheZookeeperDeployer implements Deployable {
 									AnkushTask runCmd = new RunInBackground(cmd);
 									result = connection.exec(runCmd);
 								}
+								if (result.rc != 0) {
+									LOG.error(nodeConf, result.error_msg);
+								}
 								nodeConf.setStatus(result.isSuccess);
 							} else {
 								LOG.error(nodeConf, "Authentication failed");
 							}
 						} catch (Exception e) {
 							LOG.error(nodeConf, e.getMessage(), e);
+							nodeConf.setStatus(false);
 						} finally {
 							// disconnect to node/machine
 							if (connection != null) {
@@ -320,12 +340,12 @@ public class ApacheZookeeperDeployer implements Deployable {
 
 							// if connected
 							if (connection != null) {
-								AnkushTask removeZkDir = new Remove(conf
-										.getInstallationPath()
-										+ "zookeeper-"
-										+ conf.getComponentVersion());
-								AnkushTask removeDataDir = new Remove(conf
-										.getDataDirectory());
+								AnkushTask removeZkDir = new Remove(FileUtils
+										.getSeparatorTerminatedPathEntry(conf
+												.getComponentHome()));
+								AnkushTask removeDataDir = new Remove(FileUtils
+										.getSeparatorTerminatedPathEntry(conf
+												.getDataDirectory()));
 								LOG.info("Removing DataDir...");
 								connection.exec(removeDataDir);
 								LOG.info("Removing zookeeper");
@@ -388,8 +408,9 @@ public class ApacheZookeeperDeployer implements Deployable {
 		for (NodeConf nc : removedNodes) {
 
 			// get hostName for node
-			String hostName = HostOperation
-					.getAnkushHostName(nc.getPrivateIp());
+			// String hostName = HostOperation
+			// .getAnkushHostName(nc.getPrivateIp());
+			String hostName = nc.getPrivateIp();
 
 			// add hostName to hostName List
 			hostNameList.add(hostName);
@@ -441,7 +462,6 @@ public class ApacheZookeeperDeployer implements Deployable {
 							if (connection != null) {
 								String filePath = conf.getComponentHome()
 										+ "/conf/zoo.cfg";
-								System.out.println("filePath-" + filePath);
 								boolean createBackUpFile = true;
 								AnkushTask removeText = new RemoveText(
 										hostNameList, filePath, conf
@@ -484,5 +504,195 @@ public class ApacheZookeeperDeployer implements Deployable {
 			status = nodeConf.getStatus() && status;
 		}
 		return status;
+	}
+
+	@Override
+	public boolean registerComponent(Configuration config) {
+		final ZookeeperConf conf = (ZookeeperConf) config;
+		LOG.setLoggerConfig(conf);
+		List<NodeConf> nodeList = conf.getNodes();
+		final Semaphore semaphore = new Semaphore(nodeList.size());
+		try {
+			// iterate over node list
+			for (final NodeConf nodeConf : nodeList) {
+				semaphore.acquire();
+				AppStoreWrapper.getExecutor().execute(new Runnable() {
+
+					@Override
+					public void run() {
+						SSHExec connection = null;
+						try {
+							// connect to node
+							connection = SSHUtils.connectToNode(
+									nodeConf.getPublicIp(), conf.getUsername(),
+									conf.getPassword(), conf.getPrivateKey());
+							// register node
+							nodeConf.setStatus(ZookeeperWorker.register(conf,
+									connection, nodeConf));
+						} catch (Exception e) {
+							LOG.error(e.getMessage(), e);
+						} finally {
+
+							if (semaphore != null) {
+								semaphore.release();
+							}
+							// disconncet to node/machine
+							if (connection != null) {
+								connection.disconnect();
+							}
+						}
+					}
+				});
+			}
+			// block all threads.
+			semaphore.acquire(nodeList.size());
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+		}
+		return status(nodeList);
+	}
+
+	@Override
+	public boolean unregisterComponent(Configuration config) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean validateComponent(String nodeIp, SSHExec connection,
+			GenericConfiguration config) {
+		ZookeeperConf zooConf = (ZookeeperConf) config;
+		System.out.println("Zookeeper config.deployComponentFlag()"
+				+ config.isDeployComponentFlag());
+		if (config.isDeployComponentFlag()) {
+			return validateDeployableComponent(nodeIp, connection, zooConf);
+		} else {
+			return validateRegistrableComponent(nodeIp, connection, zooConf);
+		}
+		// return true;
+	}
+
+	/**
+	 * Validate deployable component.
+	 * 
+	 * @param nodeIp
+	 *            the node ip
+	 * @param connection
+	 *            the connection
+	 * @param zooConf
+	 *            the zoo conf
+	 * @return true, if successful
+	 */
+	private boolean validateDeployableComponent(String nodeIp,
+			SSHExec connection, ZookeeperConf zooConf) {
+		Set<NodeConf> compNodes = zooConf.getCompNodes();
+		NodeConf node = null;
+		for (NodeConf nc : compNodes) {
+			if (nc.getPublicIp().equals(nodeIp)) {
+				node = nc;
+			}
+		}
+		// validating installation path and its permissions.
+		ValidationUtility.validatePathPermissions(connection,
+				Component.Name.ZOOKEEPER, zooConf, node);
+		// validating component paths for local or tarball bundle
+
+		ValidationUtility.validatingComponentPaths(connection,
+				Component.Name.ZOOKEEPER, zooConf, node);
+		return node.getStatus();
+	}
+
+	/**
+	 * Validate registrable component.
+	 * 
+	 * @param nodeIp
+	 *            the node ip
+	 * @param connection
+	 *            the connection
+	 * @param zooConf
+	 *            the zoo conf
+	 * @return true, if successful
+	 */
+	private boolean validateRegistrableComponent(String nodeIp,
+			SSHExec connection, ZookeeperConf zooConf) {
+		boolean returnStatusFlag = true;
+		LOG.setLoggerConfig(zooConf);
+		String message = "Validating Zookeeper home path";
+		LOG.info(nodeIp, message + DOTS);
+		ValidationResult validationResult = ValidationUtility
+				.validatePathExistence(connection, zooConf.getComponentHome());
+		if (!validationResult.isStatus()) {
+			returnStatusFlag = false;
+			LOG.error(nodeIp,
+					Component.Name.ZOOKEEPER + Strings.SPACE
+							+ "componentHome " + validationResult.getMessage());
+		}
+		LOG.log(nodeIp, message, returnStatusFlag);
+		if (!validateJmxPort(Component.Name.ZOOKEEPER, connection,
+				zooConf, nodeIp)) {
+			returnStatusFlag = false;
+		}
+		return returnStatusFlag;
+	}
+
+	/**
+	 * Validate jmx port.
+	 * 
+	 * @param componentName
+	 *            the component name
+	 * @param connection
+	 *            the connection
+	 * @param zooConf
+	 *            the zoo conf
+	 * @param nodeIp
+	 *            the node ip
+	 * @return true, if successful
+	 */
+	private boolean validateJmxPort(String componentName, SSHExec connection,
+			ZookeeperConf zooConf, String nodeIp) {
+		String VALIDATING = "Validating ";
+		LOG.setLoggerConfig(zooConf);
+		LOG.info(nodeIp, VALIDATING + componentName + " jmx port...");
+		boolean status = false;
+		try {
+			LOG.info(nodeIp, "making jmx connection for Zookeeper on port:"
+					+ zooConf.getJmxPort());
+			JmxUtil jmxUtil = new JmxUtil(nodeIp, Integer.parseInt(zooConf
+					.getJmxPort()));
+			MBeanServerConnection jmxConnection = jmxUtil.connect();
+			if (jmxConnection != null) {
+				// get offlinePartitions Value
+				Set<ObjectName> objectNameSet = jmxUtil
+						.getObjectSetFromPatternString("org.apache.ZooKeeperService:name0=*");
+				if (objectNameSet == null && objectNameSet.size() <= 0) {
+					LOG.error(nodeIp, VALIDATING + componentName
+							+ " jmx port failed...");
+					System.out.println("objectNameSet=" + objectNameSet);
+				} else {
+					LOG.info(nodeIp, VALIDATING + componentName
+							+ " jmx port passed.");
+					status = true;
+				}
+			} else {
+				LOG.error(nodeIp,
+						"Couldn't connect with the JMX_PORT of Zookeeper.");
+			}
+		} catch (AnkushException e) {
+			LOG.error(e.getMessage() != null ? e.getMessage()
+					: com.impetus.ankush2.constant.Constant.Keys.GENERAL_EXCEPTION_STRING, e);
+		} catch (NumberFormatException e) {
+			LOG.error(e.getMessage() != null ? e.getMessage()
+					: com.impetus.ankush2.constant.Constant.Keys.GENERAL_EXCEPTION_STRING, e);
+		} catch (Exception e) {
+			LOG.error(e.getMessage() != null ? e.getMessage()
+					: com.impetus.ankush2.constant.Constant.Keys.GENERAL_EXCEPTION_STRING, e);
+		}
+		return status;
+	}
+
+	@Override
+	public boolean deployPatch(Configuration config) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

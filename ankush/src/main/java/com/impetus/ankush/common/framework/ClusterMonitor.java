@@ -33,9 +33,9 @@ import java.util.Set;
 import com.impetus.ankush.AppStoreWrapper;
 import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.domain.Cluster;
+import com.impetus.ankush.common.domain.Node;
 import com.impetus.ankush.common.service.GenericManager;
 import com.impetus.ankush.common.utils.AnkushLogger;
-import com.impetus.ankush.hadoop.HadoopClusterMonitor;
 
 /**
  * It is used for giving the JSON for cluster monitoring.
@@ -65,7 +65,7 @@ public class ClusterMonitor {
 
 	/**
 	 * Return result.
-	 *
+	 * 
 	 * @return The result object.
 	 */
 	private Map returnResult() {
@@ -80,10 +80,13 @@ public class ClusterMonitor {
 
 	/**
 	 * Gets the map.
-	 *
-	 * @param clusterId the cluster id
-	 * @param action the action
-	 * @param parameterMap the parameter map
+	 * 
+	 * @param clusterId
+	 *            the cluster id
+	 * @param action
+	 *            the action
+	 * @param parameterMap
+	 *            the parameter map
 	 * @return the map
 	 */
 	public Map getMap(Long clusterId, String action, Map parameterMap) {
@@ -111,10 +114,13 @@ public class ClusterMonitor {
 
 	/**
 	 * Gets the map post.
-	 *
-	 * @param clusterId the cluster id
-	 * @param action the action
-	 * @param parameterMap the parameter map
+	 * 
+	 * @param clusterId
+	 *            the cluster id
+	 * @param action
+	 *            the action
+	 * @param parameterMap
+	 *            the parameter map
 	 * @return the map post
 	 */
 	public Map getMapPost(Long clusterId, String action, Map parameterMap) {
@@ -152,9 +158,11 @@ public class ClusterMonitor {
 
 	/**
 	 * Method to fetch parameters from HTTPRequestParameterMap.
-	 *
-	 * @param parameterMap the parameter map
-	 * @param name the name
+	 * 
+	 * @param parameterMap
+	 *            the parameter map
+	 * @param name
+	 *            the name
 	 * @return the parameter
 	 */
 	private String getParameter(Map parameterMap, final String name) {
@@ -167,8 +175,9 @@ public class ClusterMonitor {
 
 	/**
 	 * Retriev Key:Value map.
-	 *
-	 * @param parameterMap the parameter map
+	 * 
+	 * @param parameterMap
+	 *            the parameter map
 	 * @return the parameter map
 	 */
 	private Map getParameterMap(Map parameterMap) {
@@ -178,5 +187,86 @@ public class ClusterMonitor {
 			params.put(key, getParameter(parameterMap, key));
 		}
 		return params;
+	}
+
+	/**
+	 * Method to get the maintenance state clusters detail.
+	 */
+	public Map maintenanceDetails() {
+		// List of maintenance state clusters.
+		List<Cluster> clusters = clusterManager.getAllByPropertyValue(
+				com.impetus.ankush2.constant.Constant.Keys.STATE, Constant.Cluster.State.MAINTENANCE);
+
+		// Agent build version
+		String buildAgentVersion = AppStoreWrapper.getAgentBuildVersion();
+
+		// list of cluster map
+		List<Map> clusterMapList = new ArrayList<Map>();
+
+		// iterating over the clusters for creating the cluster details
+		for (Cluster cluster : clusters) {
+			// cluster map.
+			Map clusterMap = new HashMap();
+			// list of nodes
+			List<Map> nodesMap = new ArrayList<Map>();
+
+			// Set of nodes
+			Set<Node> nodes = cluster.getNodes();
+
+			// iterating over the nodes.
+			for (Node node : nodes) {
+				// Node Map
+				Map nodeMap = new HashMap();
+				// status
+				boolean status = node.getNodeConf().getStatus();
+
+				// node agent version
+				String nodeAgentVersion = node.getAgentVersion();
+
+				// node status
+				String nodeStatus = com.impetus.ankush2.constant.Constant.Keys.INPROGRESS;
+				// Setting status.
+				if (status) {
+					// if both version are equals.
+					if (nodeAgentVersion.equals(buildAgentVersion)) {
+						// set status as done.
+						nodeStatus = com.impetus.ankush2.constant.Constant.Keys.DONE;
+					} else {
+						// set status as in progress.
+						nodeStatus = com.impetus.ankush2.constant.Constant.Keys.INPROGRESS;
+					}
+				} else {
+					// if not equals.
+					if (!nodeAgentVersion.equals(buildAgentVersion)) {
+						// set status as failed.
+						nodeStatus = com.impetus.ankush2.constant.Constant.Keys.FAILED;
+					}
+				}
+				// Setting status
+				nodeMap.put(com.impetus.ankush2.constant.Constant.Keys.STATUS, nodeStatus);
+
+				// Set node ip
+				nodeMap.put(com.impetus.ankush2.constant.Constant.Keys.HOST, node.getPublicIp());
+
+				// set errors
+				nodeMap.put(com.impetus.ankush2.constant.Constant.Keys.ERRORS, node.getNodeConf()
+						.getErrors());
+				// add the node in nodesMap
+				nodesMap.add(nodeMap);
+			}
+
+			// setting cluster name
+			clusterMap.put(com.impetus.ankush2.constant.Constant.Keys.CLUSTER_NAME, cluster.getName());
+			// setting cluster id
+			clusterMap.put(com.impetus.ankush2.constant.Constant.Keys.CLUSTERID, cluster.getId());
+			// setting nodes.
+			clusterMap.put(com.impetus.ankush2.constant.Constant.Keys.NODES, nodesMap);
+			// setting cluster and nodes in map.
+			clusterMapList.add(clusterMap);
+		}
+
+		result.put("clusters", clusterMapList);
+		// return result
+		return result;
 	}
 }

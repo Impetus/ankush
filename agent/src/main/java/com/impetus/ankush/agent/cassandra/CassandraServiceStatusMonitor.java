@@ -21,8 +21,6 @@
 package com.impetus.ankush.agent.cassandra;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -37,7 +35,8 @@ import com.impetus.ankush.agent.utils.AgentRestClient;
 public class CassandraServiceStatusMonitor extends Taskable {
 
 	/** The log. */
-	private AgentLogger LOGGER = new AgentLogger(CassandraServiceStatusMonitor.class);
+	private AgentLogger LOGGER = new AgentLogger(
+			CassandraServiceStatusMonitor.class);
 	/** The conf. */
 	private AgentConf conf;
 
@@ -74,10 +73,8 @@ public class CassandraServiceStatusMonitor extends Taskable {
 					.getIntValue(Constant.PROP_NAME_COMMON_UPDATE_TIME);
 			final String techDataUrl = conf
 					.getURL(Constant.PROP_NAME_MONITORING_URL);
-			final String hostIp = conf.getStringValue(Constant.HOST_IP);
+			final String hostIp = conf.getStringValue(Constant.HOST_PRIVATE_IP);
 			final Integer jmxPort = conf.getIntValue(Constant.JMX_PORT);
-			final String cassandraHome = conf
-					.getStringValue(Constant.CASSANDRA_HOME);
 			LOGGER.info("inside seenode : " + hostIp);
 			Runnable topologyThread = new Runnable() {
 
@@ -85,10 +82,12 @@ public class CassandraServiceStatusMonitor extends Taskable {
 				public void run() {
 					try {
 						Map map = getCassandraJMXData(hostIp.trim(), jmxPort);
-						
+
+						// map.put("@class",
+						// "com.impetus.ankush.cassandra.CassandraJMXData");
 						map.put("@class",
-								"com.impetus.ankush.cassandra.CassandraJMXData");
-						
+								"com.impetus.ankush2.cassandra.monitor.CassandraJMXData");
+
 						LOGGER.info("techDataUrl : " + techDataUrl);
 						LOGGER.info("map : " + map);
 						client.sendData(map, techDataUrl);
@@ -101,43 +100,20 @@ public class CassandraServiceStatusMonitor extends Taskable {
 			service.scheduleAtFixedRate(topologyThread, 0, period,
 					TimeUnit.SECONDS);
 		}
-		
+
 	}
-	
-	private Map getCassandraJMXData(String hostIp, Integer jmxPort){
+
+	private Map getCassandraJMXData(String hostIp, Integer jmxPort) {
 		try {
-			
-			CassandraJMXData data = new CassandraJMXData(
-					hostIp, jmxPort);
-			Map map = new ObjectMapper().convertValue(data,
-					HashMap.class);
+
+			CassandraJMXData data = new CassandraJMXData(hostIp, jmxPort);
+			Map map = new ObjectMapper().convertValue(data, HashMap.class);
 			return map;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
-	}
-	
-	private boolean checkJmxData(Map map){
-		try {
-			boolean check = false;
-			Iterator entries = map.entrySet().iterator();
-			while (entries.hasNext()) {
-			    Map.Entry entry = (Map.Entry) entries.next();
-			    if(entry.getKey().equals("datacenters")){
-			    	if(!((List)entry.getValue()).isEmpty()){
-			    		check = check||true; 
-			    	}
-			    }
-			}
-			return check;
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return false;
 	}
 
 }

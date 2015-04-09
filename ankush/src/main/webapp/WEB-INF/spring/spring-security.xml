@@ -11,12 +11,15 @@
 	<http pattern="/app/state" security="none" />
 
 	<http pattern="/monitor/node/**" security="none" />
+	<http pattern="/monitor/**/reporthafailure" security="none" />
+	<http pattern="/monitor/**/nodehaservices" security="none" />
 	<http pattern="/auth/login" security="none" />
 	<http pattern="/uploadFile" security="none" />
-	<http pattern="/auth/config" security="none" />
+	<http pattern="/uploadlicense" security="none" />
 	<http pattern="/app/conf/request" security="none" />
-	<http pattern="/user/forgotpassword" security="none"/>
+	<http pattern="/auth/forget_password" security="none"/>
 	<http pattern="/user/forgotuserid" security="none"/>
+	<http pattern="/manage/*/manage" security="none" />
 	
 	<!-- Non Authenticated paths from /oClusterMonitoring -->
 

@@ -24,6 +24,7 @@
 package com.impetus.ankush.common.framework.config;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
@@ -72,6 +73,8 @@ public class NodeConf implements Configuration {
 	/** The errors. */
 	private HashMap<String, String> errors = new HashMap<String, String>();
 
+	private Map conf;
+
 	/**
 	 * Instantiates a new node conf.
 	 */
@@ -93,6 +96,24 @@ public class NodeConf implements Configuration {
 		this.privateIp = privateIp;
 	}
 
+	
+	public NodeConf(NodeConf nodeConf) {
+		super();
+		this.id = nodeConf.id;
+		this.os = nodeConf.os;
+		this.publicIp = nodeConf.publicIp;
+		this.privateIp = nodeConf.privateIp;
+		this.type = nodeConf.type;
+		this.systemHostName = nodeConf.systemHostName;
+		this.datacenter = nodeConf.datacenter;
+		this.rack = nodeConf.rack;
+		this.status = nodeConf.status;
+		this.state = nodeConf.state;
+		this.message = nodeConf.message;
+		this.errors = nodeConf.errors;
+		this.conf = nodeConf.conf;
+	}
+	
 	/**
 	 * Sets the id.
 	 * 
@@ -390,5 +411,37 @@ public class NodeConf implements Configuration {
 	 */
 	public void setSystemHostName(String systemHostName) {
 		this.systemHostName = systemHostName;
+	}
+
+	/**
+	 * @return the conf
+	 */
+	public Map getConf() {
+		return conf;
+	}
+
+	/**
+	 * @param conf
+	 *            the conf to set
+	 */
+	public void setConf(Map conf) {
+		this.conf = conf;
+	}
+
+	/**
+	 * Method to check whether the role exists in node or not.
+	 * 
+	 * @param role
+	 * @return
+	 */
+	@JsonIgnore
+	public boolean isRoleExists(String role) {
+		// if node type is not null.
+		if (this.getType() != null) {
+			// apply contains check
+			return this.type.contains(role);
+		}
+		// return false.
+		return false;
 	}
 }

@@ -24,6 +24,7 @@
 package com.impetus.ankush.common.framework;
 
 import com.impetus.ankush.AppStoreWrapper;
+import com.impetus.ankush.common.framework.config.ClusterConf;
 
 /**
  * A factory for creating Object objects.
@@ -55,6 +56,16 @@ public class ObjectFactory {
 	}
 
 	/**
+	 * Return the component upgrader.
+	 * 
+	 * @param component
+	 * @return
+	 */
+	public static ComponentUpgrader getComponentUpgrader(String component) {
+		return AppStoreWrapper.getComponentUpgrader(component);
+	}
+
+	/**
 	 * Gets the instance by id.
 	 * 
 	 * @param id
@@ -63,6 +74,10 @@ public class ObjectFactory {
 	 */
 	public static String getConfigurationClassName(String id) {
 		return AppStoreWrapper.getDeployableConfClassName(id);
+	}
+
+	public static String getJsonMapperClassName(String id) {
+		return AppStoreWrapper.getDeployableConfJsonMapperName(id);
 	}
 
 	/**
@@ -74,6 +89,14 @@ public class ObjectFactory {
 	 */
 	public static Clusterable getClusterableInstanceById(String id) {
 		return AppStoreWrapper.getClusterableInstanceById(id);
+	}
+
+	public static ClusterConf getClusterConfInstanceById(String id) {
+		return AppStoreWrapper.getClusterConfInstanceById(id);
+	}
+
+	public static Registerable getRegisterableInstanceById(String id) {
+		return AppStoreWrapper.getRegisterableInstanceById(id);
 	}
 
 	/**
@@ -91,10 +114,12 @@ public class ObjectFactory {
 	 * Gets the Serviceable instance by Service Name.
 	 * 
 	 * @param ServiceName
-	 *            the Service Name 
+	 *            the Service Name
 	 * @return the Serviceable instance by Service Name
 	 */
-	public static ServiceMonitorable getServiceMonitorableInstanceByServiceName(String serviceName) {
-		return AppStoreWrapper.getServiceMonitorableInstanceByServiceName(serviceName);
+	public static ServiceMonitorable getServiceMonitorableInstanceByServiceName(
+			String serviceName) {
+		return AppStoreWrapper
+				.getServiceMonitorableInstanceByServiceName(serviceName);
 	}
 }

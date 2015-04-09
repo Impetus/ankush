@@ -27,35 +27,61 @@ import com.impetus.ankush.common.scripting.AnkushTask;
 
 /**
  * The Class Copy.
- *
+ * 
  * @author mayur
  */
 public class Copy extends AnkushTask {
-	
+
 	/** The source. */
 	private String source = null;
-	
+
 	/** The destination. */
 	private String destination = null;
-	
+
+	/** recursively **/
+	private boolean recursive = false;
+
 	/**
 	 * Instantiates a new copy.
-	 *
-	 * @param source the source
-	 * @param destination the destination
+	 * 
+	 * @param source
+	 *            the source
+	 * @param destination
+	 *            the destination
 	 */
 	public Copy(String source, String destination) {
 		this.source = source;
 		this.destination = destination;
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Instantiates a new copy.
+	 * 
+	 * @param source
+	 *            the source
+	 * @param destination
+	 *            the destination
+	 */
+	public Copy(String source, String destination, boolean recursive) {
+		this.source = source;
+		this.destination = destination;
+		this.recursive = recursive;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.neoremind.sshxcute.task.CustomTask#getCommand()
 	 */
 	@Override
 	public String getCommand() {
-		// TODO Auto-generated method stub
-		return "cp " + this.source + " " + this.destination;
+		// Create command
+		String command = "cp ";
+		if (recursive) {
+			command = "cp -r ";
+		}
+
+		return command + this.source + " " + this.destination;
 	}
 
 }

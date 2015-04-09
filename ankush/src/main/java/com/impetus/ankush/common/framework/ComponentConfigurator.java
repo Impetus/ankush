@@ -35,21 +35,69 @@ import com.impetus.ankush.common.framework.config.ClusterConf;
 import com.impetus.ankush.common.framework.config.Configuration;
 import com.impetus.ankush.common.framework.config.NodeConf;
 import com.impetus.ankush.common.ganglia.GangliaConf;
-import com.impetus.ankush.common.postprocessor.PostProcessorConf;
-import com.impetus.ankush.common.preprocessor.PreprocessorConf;
 import com.impetus.ankush.common.utils.CommonUtil;
+import com.impetus.ankush2.constant.Constant.Component;
 
 /**
- * It is a component configurator class used for configuring the ganglia and
- * agent configuration.
+ * It is a ComponentConfigurator class used for configuring the Ganglia, Agent,
+ * Preprocessor and Post Processor component configuration.
  * 
  * @author Hokam Chauhan
  * 
  */
 public class ComponentConfigurator {
 
+	private static final String KEY_GANGLIA_PORT = "ganglia.port";
+	private static final String KEY_GANGLIA_RRDS = "ganglia.rrds";
+
+	private static final String KEY_GANGLIA_POLLING_INTERVAL = "ganglia.polling.interval";
+
+	private static final String KEY_GMOND_CONF = "gmond.conf";
+
+	private static final String KEY_GMETAD_CONF = "gmetad.conf";
+
 	/** The ankushConf Reader. */
 	ConfigurationReader ankushConf = AppStoreWrapper.getAnkushConfReader();
+
+	/**
+	 * Getting default Ganglia configuration.
+	 * 
+	 * @param clusterName
+	 * @param username
+	 * @return
+	 */
+	public static GangliaConf getDefaultGangliaConf(String clusterName,
+			String username) {
+
+		// getting config reader object.
+		ConfigurationReader ankushConf = AppStoreWrapper.getAnkushConfReader();
+
+		// GangliaConf.
+		GangliaConf gConf = new GangliaConf();
+
+		// Getting gmond configuration path.
+		String gmondConfPath = CommonUtil.getUserHome(username)
+				+ ankushConf.getStringValue(KEY_GMOND_CONF);
+
+		// Getting gmetad configuration path.
+		String gmetadConfPath = CommonUtil.getUserHome(username)
+				+ ankushConf.getStringValue(KEY_GMETAD_CONF);
+
+		// Getting ganglia rrds directory path
+		String rrdDirectory = CommonUtil.getUserHome(username)
+				+ ankushConf.getStringValue(KEY_GANGLIA_RRDS);
+
+		// Setting Ganglia configuration parameters.
+		gConf.setGangliaClusterName(clusterName);
+		gConf.setGridName(com.impetus.ankush2.constant.Constant.Keys.ANKUSH);
+		gConf.setRrdFilePath(rrdDirectory);
+		gConf.setPollingInterval(ankushConf
+				.getIntValue(KEY_GANGLIA_POLLING_INTERVAL));
+		gConf.setPort(ankushConf.getIntValue(KEY_GANGLIA_PORT));
+		gConf.setGmondConfPath(gmondConfPath);
+		gConf.setGmetadConfPath(gmetadConfPath);
+		return gConf;
+	}
 
 	/**
 	 * Gets the ganglia conf.
@@ -61,33 +109,19 @@ public class ComponentConfigurator {
 	 * @return the Ganglia config object to install ganglia
 	 */
 	public static GangliaConf getGangliaConf(ClusterConf clusterConf) {
-		Set<NodeConf> gmondNodes = new HashSet<NodeConf>(
-				clusterConf.getNodeConfs());
-		// getting config reader object.
-		ConfigurationReader ankushConf = AppStoreWrapper.getAnkushConfReader();
-		// gettign resource path.
-		String resourceBasePath = AppStoreWrapper.getResourcePath();
-
-		// making installation path using username.
-		String installationPath = CommonUtil.getUserHome(clusterConf
-				.getUsername()) + ankushConf.getStringValue("ganglia.dir");
 
 		// creating ganglia conf object.
-		GangliaConf conf = new GangliaConf();
+		GangliaConf conf = ComponentConfigurator.getDefaultGangliaConf(
+				clusterConf.getClusterName(), clusterConf.getUsername());
 
 		// setting ganglia conf fields.
 		conf.setClusterConf(clusterConf);
-		conf.setInstallationPath(installationPath);
-		conf.setComponentVersion("3.1.7");
-		conf.setGridName("Ankush");
-		conf.setDwooFilePath("/var/lib/ganglia/dwoo/");
-		conf.setRrdFilePath("/var/lib/ganglia/rrds/");
-		conf.setServerConfFolder(resourceBasePath + "config/ganglia/");
-		conf.setPollingInterval(15);
-		conf.setPort(ankushConf.getIntValue("ganglia.port"));
 		conf.setGmetadNode(clusterConf.getGangliaMaster());
-		conf.setGmondNodes(gmondNodes);
+		// All Nodes.
+		Set<NodeConf> gmondNodes = new HashSet<NodeConf>(
+				clusterConf.getNodeConfs());
 
+		conf.setGmondNodes(gmondNodes);
 		return conf;
 	}
 
@@ -109,19 +143,25 @@ public class ComponentConfigurator {
 		// create agent conf obj.
 		AgentConf conf = new AgentConf();
 
-		// setting the fields of agent conf.
+		// setting cluster conf.
 		conf.setClusterConf(clusterConf);
+		// setting installation path.
 		conf.setInstallationPath(installationPath);
+
+		// Setting technology na,e
 		conf.setTechnologyName(clusterConf.getTechnology());
 
+		// Resource base path.
 		String basePath = AppStoreWrapper.getResourcePath();
-		String localAgentBasePath = basePath + "scripts/agent/";
+		// Creating agent bundle path.
+		String agentBundlePath = basePath + "scripts/agent/agent.zip";
 
-		String localAgentJarsPath = localAgentBasePath + "jars/agent.zip";
-
-		conf.setLocalJarsPath(localAgentJarsPath);
+		// Setting server tarball location.
+		conf.setServerTarballLocation(agentBundlePath);
+		// setting agent main class name.
 		conf.setAgentDaemonClass(ankushConf
 				.getStringValue("agent.daemon.class"));
+		// setting nodes.
 		conf.setNodes(clusterConf.getNodeConfs());
 		return conf;
 	}
@@ -151,59 +191,6 @@ public class ComponentConfigurator {
 		conf.setComponents(components);
 		conf.setNodes(nodeConfs);
 
-		return conf;
-	}
-
-	/**
-	 * Gets the dependency conf.
-	 * 
-	 * @param installJava
-	 *            the install java
-	 * @param javaBinFileName
-	 *            the java bin file name
-	 * @param clusterConf
-	 *            the cluster conf
-	 * @return the dependency conf
-	 */
-	public static PreprocessorConf getPreprocessorConf(ClusterConf clusterConf) {
-
-		Set<NodeConf> nodeConfs = new HashSet<NodeConf>(
-				clusterConf.getNodeConfs());
-		PreprocessorConf conf = new PreprocessorConf();
-		conf.setClusterConf(clusterConf);
-		conf.setClusterNodeConfs(nodeConfs);
-		return conf;
-	}
-
-	/**
-	 * Gets the dependency conf.
-	 * 
-	 * @param installJava
-	 *            the install java
-	 * @param javaBinFileName
-	 *            the java bin file name
-	 * @param clusterConf
-	 *            the cluster conf
-	 * @return the dependency conf
-	 */
-	public static PostProcessorConf getPostProcessorConf(ClusterConf clusterConf) {
-
-		Set<NodeConf> nodeConfs = new HashSet<NodeConf>(
-				clusterConf.getNodeConfs());
-		/** The ankushConf Reader. */
-		ConfigurationReader ankushConf = AppStoreWrapper.getAnkushConfReader();
-		String jmxInstallPath = CommonUtil.getUserHome(clusterConf
-				.getUsername())
-				+ ankushConf.getStringValue("agent.dir")
-				+ ankushConf
-						.getStringValue("jmxtrans.installation.relative.path");
-		String jmxScriptFilePath = jmxInstallPath
-				+ ankushConf.getStringValue("jmx.script.file.name");
-		PostProcessorConf conf = new PostProcessorConf();
-		conf.setClusterConf(clusterConf);
-		conf.setClusterNodeConfs(nodeConfs);
-		conf.setGangliaMasterIp(clusterConf.getGangliaMaster().getPrivateIp());
-		conf.setJmxTransScriptFilePath(jmxScriptFilePath);
 		return conf;
 	}
 }

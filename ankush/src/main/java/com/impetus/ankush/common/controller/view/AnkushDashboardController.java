@@ -30,8 +30,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -41,7 +43,7 @@ import com.impetus.ankush.common.domain.User;
  * The Class AnkushDashboardController.
  */
 @Controller
-@RequestMapping("/dashboardnew")
+@RequestMapping("/dashboard")
 public class AnkushDashboardController extends AbstractController {
 	
 	/** The Constant logger. */
@@ -61,10 +63,6 @@ public class AnkushDashboardController extends AbstractController {
 		// TODO Auto-generated constructor stub
 		cssFiles = new ArrayList<String>();
 		jsFiles = new ArrayList<String>();
-		jsFiles.add("ankush.techlist");
-		jsFiles.add("ankush.dashboard");
-		jsFiles.add("commonMonitoring");
-		jsFiles.add("ankush.password");
 	}
 	
 	/**
@@ -73,29 +71,28 @@ public class AnkushDashboardController extends AbstractController {
 	 * @param model the model
 	 * @return the string
 	 */
-	@RequestMapping(value = "/home", method = RequestMethod.GET)
+	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String home(ModelMap model) {
 		
-		logger.info("User name " + getUserName());
-		logger.info("Inside dashboard home view");
 		model.addAttribute("title", "dashboard");
 		model.addAttribute("cssFiles", cssFiles);
 		model.addAttribute("jsFiles", jsFiles);
+		model.addAttribute("page", "Cluster Overview");
 		return "dashboard/home";
 	}
-	
-	/**
-	 * Gets the default page.
-	 *
-	 * @param model the model
-	 * @return the default page
-	 */
-	@RequestMapping(value="/default",method= RequestMethod.GET)
-	public String getDefaultPage(ModelMap model){
-		model.addAttribute("cssFiles", cssFiles);
-		model.addAttribute("jsFiles", jsFiles);
-		return "systemOverview";
+	@RequestMapping(value = "/clusterMaintenance", method = RequestMethod.GET)
+	public String clusterMaintenance(ModelMap model) {	
+		model.addAttribute("title", "clusterMaintenance");
+		return "dashboard/clusterMaintenance";
 	}
+	@RequestMapping(value = "/nodeMaintenance", method = RequestMethod.GET)
+	public String nodeMaintenance(ModelMap model,@RequestParam("clusterId") String clusterId,@RequestParam("host") String host) {	
+		model.addAttribute("title", "nodeMaintenance");
+		model.addAttribute("clusterId", clusterId);
+		model.addAttribute("host", host);
+		return "dashboard/nodeMaintenance";
+	}
+	
 
 	/* (non-Javadoc)
 	 * @see org.springframework.web.servlet.mvc.AbstractController#handleRequestInternal(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
@@ -106,7 +103,31 @@ public class AnkushDashboardController extends AbstractController {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+	@RequestMapping(value="/changePassword/C-D/{decisionVar}",method= RequestMethod.GET)
+	public String getUpdatePassword(ModelMap model,@PathVariable("decisionVar") String decisionVar){
+		model.addAttribute("decisionVar", decisionVar);
+		model.addAttribute("page", "changePassword");
+		return "changePassword";
+	}
+	@RequestMapping(value = "/listTemplate", method = RequestMethod.GET)
+	public String templateList(ModelMap model) {
+		logger.info("Inside template management view");
+		model.addAttribute("cssFiles", cssFiles);
+		model.addAttribute("jsFiles", jsFiles);
+		model.addAttribute("title", "Template Management");
+		return "templateManage";
+	}
+	@RequestMapping(value = "/configuration/C-D/{decisionVar}", method = RequestMethod.GET)
+	public String getConfigPage(
+		ModelMap model, HttpServletRequest request,@PathVariable("decisionVar") String decisionVar) {
+		logger.info("Received Request to show COnfiguration page");
+		jsFiles = new ArrayList<String>();
+		jsFiles.add("configurationNew");
+		model.addAttribute("jsFiles", jsFiles);
+		model.addAttribute("decisionVar", decisionVar);
+		model.addAttribute("page", "configuration");
+		return "/afterLoginConfigPage";
+	}
 	/**
 	 * Gets the user name.
 	 *
@@ -132,19 +153,7 @@ public class AnkushDashboardController extends AbstractController {
 	 * @param model the model
 	 * @return the update password
 	 */
-	@RequestMapping(value="/getUpdatePassword",method= RequestMethod.GET)
-	public String getUpdatePassword(ModelMap model){
-		model.addAttribute("cssFiles", cssFiles);
-		model.addAttribute("jsFiles", jsFiles);
-		return "changePassword";
-	}
 	
-	@RequestMapping(value = "/listTemplate", method = RequestMethod.GET)
-	public String templateList(ModelMap model) {
-		logger.info("Inside template management view");
-		model.addAttribute("title", "Template Management");
-		return "templateManage";
-	}
 	
 	
 }

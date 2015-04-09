@@ -96,7 +96,7 @@ public class AppConfServiceImplTest {
 	@Test
 	public void manageCommonConfiguration() {
 		Map<String, Object> response = new HashMap<String, Object>();
-		EasyMock.expect(appConfServiceImpl.manageCommonConfiguration(commonConf)).andReturn(response);
+		EasyMock.expect(appConfServiceImpl.manageCommonConfiguration(commonConf,true)).andReturn(response);
 	}
 	
 	/**
@@ -107,7 +107,7 @@ public class AppConfServiceImplTest {
 	@Test
 	public void getCommonConfiguration() {
 		Map<String, Object> response = new HashMap<String, Object>();
-		EasyMock.expect(appConfServiceImpl.getCommonConfiguration()).andReturn(response);
+		EasyMock.expect(appConfServiceImpl.getCommonConfiguration(true)).andReturn(response);
 		
 		List<User> ankushUsers = new ArrayList<User>(); 
 		EasyMock.expect(userManager.getUsers()).andReturn(ankushUsers);

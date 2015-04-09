@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<components>
+	<component id="Dependency">
+		<name>dependency</name>
+		<version>0.1</version>
+		<vendor>ankush</vendor>
+		<priority>0</priority>
+		<deployer>com.impetus.ankush2.preprocessor.DependencyDeployer</deployer>
+	</component>
+	
+	<component id="Agent">
+    <name>Agent</name>
+    <version>0.1</version>
+    <vendor>ankush</vendor>
+    <priority>2</priority>
+    <deployer>com.impetus.ankush2.agent.AgentDeployer</deployer>
+    <service>com.impetus.ankush2.agent.AgentServiceManager</service>
+  </component>
+
+	<component id="Preprocessor">
+		<name>Preprocessor</name>
+		<version>0.1</version>
+		<vendor>ankush</vendor>
+		<priority>1</priority>
+		<deployer>com.impetus.ankush2.preprocessor.PreprocessorDeployer</deployer>
+	</component>
+
+	<component id="Custom">
+		<name>Custom</name>
+		<version>0.1</version>
+		<vendor>ankush</vendor>
+		<priority>4</priority>
+		<deployer>com.impetus.ankush.common.custom.CustomDeployer</deployer>
+	</component>
+
+	<component id="Ganglia">
+		<name>ganglia</name>
+		<version>3.0.7</version>
+		<vendor>ganglia</vendor>
+		<priority>3</priority>
+		<deployer>com.impetus.ankush2.ganglia.GangliaDeployer</deployer>
+		<monitor>com.impetus.ankush2.ganglia.GangliaClusterMonitor</monitor>
+		<service>com.impetus.ankush2.ganglia.GangliaServiceManager</service>
+	</component>
+
+	<component id="Cassandra">
+		<name>cassandra</name>
+		<version>1.0.6</version>
+		<vendor>apache</vendor>
+		<priority>17</priority>
+		<deployer>com.impetus.ankush2.cassandra.deployer.CassandraDeployer</deployer>
+		<monitor>com.impetus.ankush2.cassandra.monitor.CassandraClusterMonitor</monitor>
+		<service>com.impetus.ankush2.cassandra.manager.CassandraServiceManager</service>
+	</component>
+
+	<component id="Hadoop">
+		<name>hadoop</name>
+		<priority>6</priority>
+		<deployer>com.impetus.ankush2.hadoop.deployer.HadoopDeployer</deployer>
+		<monitor>com.impetus.ankush2.hadoop.monitor.HadoopComponentMonitor</monitor>
+		<service>com.impetus.ankush2.hadoop.deployer.servicemanager.HadoopServiceManager</service>
+	</component>
+
+	<component id="Postprocessor">
+		<name>Postprocessor</name>
+		<version>0.1</version>
+		<vendor>ankush</vendor>
+		<priority>100</priority>
+		<deployer>com.impetus.ankush2.agent.PostProcessorDeployer</deployer>
+	</component>
+	
+	<component id="Zookeeper">
+		<name>zookeeper</name>
+		<version>0.9</version>
+		<vendor>apache</vendor>
+		<priority>5</priority>
+		<deployer>com.impetus.ankush2.zookeeper.ZookeeperDeployer</deployer>
+		<monitor>com.impetus.ankush2.zookeeper.ZookeeperMonitor</monitor>
+		<service>com.impetus.ankush2.zookeeper.ZookeeperServiceMonitor</service>
+	</component>
+	
+
+</components>

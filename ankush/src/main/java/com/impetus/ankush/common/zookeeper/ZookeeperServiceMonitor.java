@@ -25,12 +25,13 @@ package com.impetus.ankush.common.zookeeper;
 
 import net.neoremind.sshxcute.core.Result;
 import net.neoremind.sshxcute.core.SSHExec;
-import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.framework.ServiceMonitorable;
 import com.impetus.ankush.common.framework.config.ClusterConf;
 import com.impetus.ankush.common.scripting.AnkushTask;
 import com.impetus.ankush.common.scripting.impl.RunInBackground;
 import com.impetus.ankush.common.utils.AnkushLogger;
+import com.impetus.ankush.common.utils.FileUtils;
+import com.impetus.ankush2.constant.Constant.Component;
 
 /**
  * @author Akhil
@@ -53,10 +54,9 @@ public class ZookeeperServiceMonitor implements ServiceMonitorable {
 	private boolean monitorZookeeper(SSHExec connection, ClusterConf conf, String processName, String action) {
 		try {
 			ZookeeperConf zConf = (ZookeeperConf) conf.getClusterComponents().get(
-					Constant.Component.Name.ZOOKEEPER);
-			String componentHome = zConf.getInstallationPath() + "zookeeper-"
-					+ zConf.getComponentVersion();
-			String command = componentHome + "/bin/zkServer.sh "
+					Component.Name.ZOOKEEPER);
+			String componentHome = FileUtils.getSeparatorTerminatedPathEntry(zConf.getComponentHome());
+			String command = componentHome + "bin/zkServer.sh "
 					+ action;
 			AnkushTask task = new RunInBackground(command);
 			Result res = connection.exec(task);

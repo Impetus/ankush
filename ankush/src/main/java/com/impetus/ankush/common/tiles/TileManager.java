@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.impetus.ankush.AppStoreWrapper;
-import com.impetus.ankush.common.alerts.EventManager;
 import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.domain.Cluster;
 import com.impetus.ankush.common.domain.Event;
@@ -38,7 +37,7 @@ import com.impetus.ankush.common.domain.Tile;
 import com.impetus.ankush.common.service.GenericManager;
 import com.impetus.ankush.common.utils.AnkushLogger;
 import com.impetus.ankush.common.utils.CommonUtil;
-import com.impetus.ankush.common.utils.HibernateUtils;
+import com.impetus.ankush2.db.DBEventManager;
 
 /**
  * The Class TileManager.
@@ -191,7 +190,7 @@ public class TileManager {
 		List<Tile> tiles = null;
 
 		try {
-			tiles = tileManager.getAllByPropertyValue(Constant.Keys.CLUSTERID,
+			tiles = tileManager.getAllByPropertyValue(com.impetus.ankush2.constant.Constant.Keys.CLUSTERID,
 					clusterId);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -219,8 +218,8 @@ public class TileManager {
 	 */
 	public List<Tile> readClusterTile(Long clusterId, String key) {
 		Map<String, Object> propertyValueMap = new HashMap<String, Object>();
-		propertyValueMap.put(Constant.Keys.CLUSTERID, clusterId);
-		propertyValueMap.put(Constant.Keys.KEY, key);
+		propertyValueMap.put(com.impetus.ankush2.constant.Constant.Keys.CLUSTERID, clusterId);
+		propertyValueMap.put(com.impetus.ankush2.constant.Constant.Keys.KEY, key);
 
 		List<Tile> tiles = null;
 
@@ -248,11 +247,12 @@ public class TileManager {
 	 * @author hokam
 	 */
 	public List<TileInfo> getClusterEventTypeTiles(Cluster dbCluster,
-			String type) {
+			Event.Type type) {
 		// event manager object.
-		EventManager eventManager = new EventManager();
+		DBEventManager eventManager = new DBEventManager();
 		// Getting events by cluster id.
-		List<Event> events = eventManager.getEventsByType(dbCluster, type);
+		List<Event> events = eventManager.getEvents(dbCluster.getId(), null,
+				type, null, null, null);
 
 		// Grouped Event Map
 		Map<String, Map> groupedEventMap = new HashMap<String, Map>();
@@ -260,7 +260,7 @@ public class TileManager {
 		// iterating over the events.
 		for (Event event : events) {
 			// group+severity key
-			String groupSeverity = event.getGroupingType() + "-"
+			String groupSeverity = event.getCategory() + "-"
 					+ event.getSeverity();
 			// old grouping type + severity map
 			Map oldTypeMap = (Map) groupedEventMap.get(groupSeverity);
@@ -286,28 +286,22 @@ public class TileManager {
 	public List<TileInfo> getNodeEventTiles(Long clusterId, String host) {
 		List<TileInfo> tiles = new ArrayList<TileInfo>();
 		TileInfo tileInfo = null;
-		EventManager eManager = new EventManager();
-		for (Event event : eManager.getHostEvents(clusterId, host)) {
+		DBEventManager eManager = new DBEventManager();
+		List<Event> events = eManager.getAlerts(clusterId, host, null,
+				null, null);
+		for (Event event : events) {
 			tileInfo = new TileInfo();
-			tileInfo.setLine1(event.getCurrentValue());
+			tileInfo.setLine1(event.getValue());
 
 			tileInfo.setLine2(event.getName());
 			String role = Constant.RoleProcessName.getRoleName(event
-					.getSubType());
-			// Special Handling for Cassandra Event Tiles, Will be changed after
-			// release RC_1_5
-			// For CassandraDaemon, do not change SERVICE NAME t0 ROLE
-			if (event.getSubType().equals(
-					Constant.Component.ProcessName.CASSANDRA)) {
-				role = event.getSubType();
-			}
-
+					.getCategory());
 			if ((role != null) && (!role.isEmpty())) {
 				tileInfo.setLine2(role);
 			}
 
 			tileInfo.setLine3(event.getHost());
-			tileInfo.setStatus(event.getSeverity());
+			tileInfo.setStatus(event.getSeverity().toString());
 			tiles.add(tileInfo);
 		}
 		return tiles;
@@ -346,9 +340,10 @@ public class TileManager {
 	public List<TileInfo> getGroupedClusterTiles(Cluster dbCluster,
 			boolean addClusterName) {
 		// event manager object.
-		EventManager eventManager = new EventManager();
+		DBEventManager eventManager = new DBEventManager();
 		// Getting events by cluster id.
-		List<Event> events = eventManager.getEvents(dbCluster);
+		List<Event> events = eventManager.getEvents(dbCluster.getId(), null,
+				null, null, null, null);		
 
 		// Grouped Event Map
 		Map<String, Map> groupedEventMap = new HashMap<String, Map>();
@@ -356,7 +351,7 @@ public class TileManager {
 		// iterating over the events.
 		for (Event event : events) {
 			// group+severity key
-			String groupSeverity = event.getGroupingType() + "-"
+			String groupSeverity = event.getCategory() + "-"
 					+ event.getSeverity();
 			// old grouping type + severity map
 			Map oldTypeMap = (Map) groupedEventMap.get(groupSeverity);
@@ -380,15 +375,16 @@ public class TileManager {
 			// Getting grouped event map for the grouping+severity key
 			Map eventMap = ((Map) groupedEventMap.get(key));
 			// Get sub type.
-			String subType = (String) eventMap.get(Constant.Keys.SUBTYPE);
+			String subType = (String) eventMap.get(com.impetus.ankush2.constant.Constant.Keys.CATEGORY);
 			// get severity
-			String severity = (String) eventMap.get(Constant.Keys.SEVERITY);
+			String severity = (String) eventMap.get(com.impetus.ankush2.constant.Constant.Keys.SEVERITY);
 			// event name.
-			String name = (String) eventMap.get(Constant.Keys.NAME);
+			String groupingType = (String) eventMap
+					.get(com.impetus.ankush2.constant.Constant.Keys.GROUPING_TYPE);
 			// event count.
-			Integer count = (Integer) eventMap.get(Constant.Keys.COUNT);
+			Integer count = (Integer) eventMap.get(com.impetus.ankush2.constant.Constant.Keys.COUNT);
 			// event type.
-			String type = (String) eventMap.get(Constant.Keys.TYPE);
+			String type = (String) eventMap.get(com.impetus.ankush2.constant.Constant.Keys.TYPE);
 
 			// tile object.
 			TileInfo tile = new TileInfo();
@@ -396,21 +392,14 @@ public class TileManager {
 			tile.setLine1(subType);
 
 			// if it is usage type then replacing usage by utilisation.
-			if (type.equals(Constant.Alerts.Type.USAGE)) {
-				tile.setLine2(name.replaceAll(Constant.Alerts.Type.USAGE,
-						" Utilization"));
+			if (type.equals(Event.Type.USAGE.toString())) {
+				tile.setLine2(groupingType + " Utilization");
 			} else {
 				// else setting line 2 as down for service events.
-				tile.setLine2(Constant.Keys.DOWN);
+				tile.setLine2(com.impetus.ankush2.constant.Constant.Keys.DOWN);
 				// Getting process role name.
 				String role = Constant.RoleProcessName.getRoleName(subType);
 
-				// Special Handling for Cassandra Event Tiles, Will be
-				// changed after release RC_1_5
-				// For CassandraDaemon, do not change SERVICE NAME t0 ROLE
-				if (subType.equals(Constant.Component.ProcessName.CASSANDRA)) {
-					role = subType;
-				}
 				// if role is not null and not empty
 				if ((role != null) && (!role.isEmpty())) {
 					tile.setLine1(role);
@@ -427,7 +416,7 @@ public class TileManager {
 			} else {
 				tile.setLine3(line3);
 				// setting url
-				tile.setUrl(Constant.Tile.Url.NODE_LIST);
+				tile.setUrl("Node List");
 			}
 
 			// setting status as severity
@@ -435,9 +424,9 @@ public class TileManager {
 			// preparing cluster data.
 			Map data = new HashMap();
 			// setting cluster id.
-			data.put(Constant.Keys.CLUSTERID, dbCluster.getId());
+			data.put(com.impetus.ankush2.constant.Constant.Keys.CLUSTERID, dbCluster.getId());
 			// setting type as technology in data
-			data.put(Constant.Keys.TYPE, dbCluster.getTechnology());
+			data.put(com.impetus.ankush2.constant.Constant.Keys.TYPE, dbCluster.getTechnology());
 			// setting data in tile
 			tile.setData(data);
 			// adding tile in tiles list.
@@ -450,29 +439,29 @@ public class TileManager {
 		// new grouping type + severity map
 		Map newTypeMap = new HashMap();
 		// setting severity
-		newTypeMap.put(Constant.Keys.SEVERITY, event.getSeverity());
+		newTypeMap.put(com.impetus.ankush2.constant.Constant.Keys.SEVERITY, event.getSeverity());
 		// setting name
-		newTypeMap.put(Constant.Keys.NAME, event.getName());
+		newTypeMap.put(com.impetus.ankush2.constant.Constant.Keys.NAME, event.getName());
 		// setting subtype
-		newTypeMap.put(Constant.Keys.SUBTYPE, event.getSubType());
+		newTypeMap.put(com.impetus.ankush2.constant.Constant.Keys.CATEGORY, event.getCategory());
 		// setting type
-		newTypeMap.put(Constant.Keys.TYPE, event.getType());
+		newTypeMap.put(com.impetus.ankush2.constant.Constant.Keys.TYPE, event.getType());
 
 		// if it is null.
 		if (oldTypeMap == null) {
 			// set count to 1
-			newTypeMap.put(Constant.Keys.COUNT, 1);
+			newTypeMap.put(com.impetus.ankush2.constant.Constant.Keys.COUNT, 1);
 		} else {
 			// removing the count from old grouping+severity map for
 			// comparison
-			Integer count = (Integer) oldTypeMap.remove(Constant.Keys.COUNT);
+			Integer count = (Integer) oldTypeMap.remove(com.impetus.ankush2.constant.Constant.Keys.COUNT);
 			// comparing old and new map.
 			if (oldTypeMap.equals(newTypeMap)) {
 				// increasing old count by 1
-				newTypeMap.put(Constant.Keys.COUNT, ++count);
+				newTypeMap.put(com.impetus.ankush2.constant.Constant.Keys.COUNT, ++count);
 			} else {
 				// setting the count to 1
-				newTypeMap.put(Constant.Keys.COUNT, 1);
+				newTypeMap.put(com.impetus.ankush2.constant.Constant.Keys.COUNT, 1);
 			}
 		}
 		return newTypeMap;

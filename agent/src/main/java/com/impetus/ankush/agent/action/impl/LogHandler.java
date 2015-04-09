@@ -54,12 +54,12 @@ public class LogHandler implements Actionable {
 			skip = Long.parseLong(argsList.get(1));
 		}
 
-		if (argsList.size() > 1) {
+		if (argsList.size() > 2) {
 			bytesCount = Long.parseLong(argsList.get(2));
 		}
 
 		if (!new File(filePath).isFile()) {
-			System.err.println("File does not exist.");
+			System.err.println("File does not exist, Please provide valid path.");
 			System.exit(1);
 		}
 

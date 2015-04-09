@@ -42,9 +42,9 @@ import org.xml.sax.InputSource;
 
 import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.scripting.AnkushTask;
-import com.impetus.ankush.common.scripting.impl.AddConfProperty;
-import com.impetus.ankush.common.scripting.impl.AppendFile;
-import com.impetus.ankush.hadoop.config.Parameter;
+import com.impetus.ankush.common.scripting.impl.AppendFileUsingEcho;
+import com.impetus.ankush2.common.scripting.impl.AddConfProperty;
+import com.impetus.ankush2.hadoop.utils.Parameter;
 
 /**
  * The Class XmlUtil.
@@ -112,7 +112,7 @@ public class XmlUtil {
 		fileContents.append("<configuration>").append("\n")
 				.append("</configuration>");
 
-		AnkushTask createConfFile = new AppendFile(fileContents.toString(),
+		AnkushTask createConfFile = new AppendFileUsingEcho(fileContents.toString(),
 				filePath);
 
 		try {
@@ -217,7 +217,7 @@ public class XmlUtil {
 		// returning items.
 		return items;
 	}
-
+	
 	/**
 	 * Gets the tag content.
 	 * 
@@ -227,7 +227,7 @@ public class XmlUtil {
 	 *            the tag name
 	 * @return the tag content
 	 */
-	private static String getTagContent(Element element, String tagName) {
+	public static String getTagContent(Element element, String tagName) {
 		String content = "";
 		Element e = element.getChild(tagName);
 		if (e != null) {

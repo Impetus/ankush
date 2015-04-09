@@ -57,7 +57,7 @@ import com.impetus.ankush.common.dao.GenericDao;
  */
 public class GenericDaoJpa<T, P extends Serializable> implements
 		GenericDao<T, P> {
-	
+
 	/** The Constant UNCHECKED. */
 	private static final String UNCHECKED = "unchecked";
 
@@ -70,10 +70,13 @@ public class GenericDaoJpa<T, P extends Serializable> implements
 	 */
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 
-	/** Entity manager, injected by Spring using @PersistenceContext annotation on setEntityManager(). */
+	/**
+	 * Entity manager, injected by Spring using @PersistenceContext annotation
+	 * on setEntityManager().
+	 */
 	@PersistenceContext
 	private EntityManager entityManager;
-	
+
 	/** The persistent class. */
 	private final Class<T> persistentClass;
 
@@ -105,15 +108,18 @@ public class GenericDaoJpa<T, P extends Serializable> implements
 
 	/**
 	 * Gets the entity manager.
-	 *
+	 * 
 	 * @return the entity manager
 	 */
 	public EntityManager getEntityManager() {
 		return this.entityManager;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.impetus.ankush.common.dao.GenericDao#getAll(int, int, java.lang.String[])
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.impetus.ankush.common.dao.GenericDao#getAll(int, int,
+	 * java.lang.String[])
 	 */
 	public List<T> getAll(int start, int maxResults, String... orderBy) {
 		Query query = this.entityManager.createQuery(getAllQueryString()
@@ -127,14 +133,16 @@ public class GenericDaoJpa<T, P extends Serializable> implements
 
 	/**
 	 * Gets the all query string.
-	 *
+	 * 
 	 * @return the all query string
 	 */
 	private String getAllQueryString() {
 		return SELECT_OBJ_FROM + this.persistentClass.getName() + " obj";
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.impetus.ankush.common.dao.GenericDao#getAllCount()
 	 */
 	public int getAllCount() {
@@ -221,8 +229,12 @@ public class GenericDaoJpa<T, P extends Serializable> implements
 		return (T) createSelectQuery(propertyValueMap).getSingleResult();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.impetus.ankush.common.dao.GenericDao#getAllByPropertyValue(java.util.Map, int, int, java.lang.String[])
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.impetus.ankush.common.dao.GenericDao#getAllByPropertyValue(java.util
+	 * .Map, int, int, java.lang.String[])
 	 */
 	@SuppressWarnings(UNCHECKED)
 	public List<T> getAllByPropertyValue(Map<String, Object> propertyValueMap,
@@ -233,8 +245,12 @@ public class GenericDaoJpa<T, P extends Serializable> implements
 		return query.getResultList();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.impetus.ankush.common.dao.GenericDao#getAllByPropertyValueCount(java.util.Map)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.impetus.ankush.common.dao.GenericDao#getAllByPropertyValueCount(java
+	 * .util.Map)
 	 */
 	public int getAllByPropertyValueCount(Map<String, Object> propertyValueMap) {
 		LinkedHashMap<String, Object> orderedMap = getOrderedMap(propertyValueMap);
@@ -244,16 +260,24 @@ public class GenericDaoJpa<T, P extends Serializable> implements
 				.getCount(convertToCountQuery(selectQueryString), orderedMap);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.impetus.ankush.common.dao.GenericDao#getAllByNativeQuery(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.impetus.ankush.common.dao.GenericDao#getAllByNativeQuery(java.lang
+	 * .String)
 	 */
 	public List<T> getAllByNativeQuery(String sql) {
 		return entityManager.createNativeQuery(sql, persistentClass)
 				.getResultList();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.impetus.ankush.common.dao.GenericDao#executeNativeQuery(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.impetus.ankush.common.dao.GenericDao#executeNativeQuery(java.lang
+	 * .String)
 	 */
 	public int executeNativeQuery(String sql) {
 		return entityManager.createNativeQuery(sql, persistentClass)
@@ -273,9 +297,11 @@ public class GenericDaoJpa<T, P extends Serializable> implements
 
 	/**
 	 * Create a select query from the given property value map.
-	 *
-	 * @param propertyValueMap query key value
-	 * @param orderBy the order by
+	 * 
+	 * @param propertyValueMap
+	 *            query key value
+	 * @param orderBy
+	 *            the order by
 	 * @return Query object
 	 */
 	private Query createSelectQuery(Map<String, Object> propertyValueMap,
@@ -297,8 +323,9 @@ public class GenericDaoJpa<T, P extends Serializable> implements
 
 	/**
 	 * Creates the select query string.
-	 *
-	 * @param orderedMap the ordered map
+	 * 
+	 * @param orderedMap
+	 *            the ordered map
 	 * @return the string builder
 	 */
 	private StringBuilder createSelectQueryString(
@@ -310,8 +337,9 @@ public class GenericDaoJpa<T, P extends Serializable> implements
 
 	/**
 	 * Removes the all.
-	 *
-	 * @param objects the objects
+	 * 
+	 * @param objects
+	 *            the objects
 	 */
 	private void removeAll(List<T> objects) {
 		for (Object o : objects) {
@@ -319,8 +347,12 @@ public class GenericDaoJpa<T, P extends Serializable> implements
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.impetus.ankush.common.dao.GenericDao#getAllByNamedQuery(java.lang.String, java.util.Map, int, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.impetus.ankush.common.dao.GenericDao#getAllByNamedQuery(java.lang
+	 * .String, java.util.Map, int, int)
 	 */
 	@SuppressWarnings(UNCHECKED)
 	public List<T> getAllByNamedQuery(String queryName,
@@ -334,8 +366,12 @@ public class GenericDaoJpa<T, P extends Serializable> implements
 		return query.getResultList();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.impetus.ankush.common.dao.GenericDao#getAllOfOrMatch(java.util.Map, int, int, java.lang.String[])
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.impetus.ankush.common.dao.GenericDao#getAllOfOrMatch(java.util.Map,
+	 * int, int, java.lang.String[])
 	 */
 	@SuppressWarnings(UNCHECKED)
 	public List<T> getAllOfOrMatch(Map<String, Object> queryMap, int start,
@@ -358,8 +394,9 @@ public class GenericDaoJpa<T, P extends Serializable> implements
 
 	/**
 	 * Creates the select or query string.
-	 *
-	 * @param orderedMap the ordered map
+	 * 
+	 * @param orderedMap
+	 *            the ordered map
 	 * @return the string builder
 	 */
 	private StringBuilder createSelectOrQueryString(
@@ -369,8 +406,12 @@ public class GenericDaoJpa<T, P extends Serializable> implements
 				.append(this.createOrClause(orderedMap, 1));
 	}
 
-	/* (non-Javadoc)
-	 * @see com.impetus.ankush.common.dao.GenericDao#getAllOfOrMatchCount(java.util.Map)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.impetus.ankush.common.dao.GenericDao#getAllOfOrMatchCount(java.util
+	 * .Map)
 	 */
 	public int getAllOfOrMatchCount(Map<String, Object> queryMap) {
 
@@ -381,8 +422,12 @@ public class GenericDaoJpa<T, P extends Serializable> implements
 						.toString()), orderedMap);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.impetus.ankush.common.dao.GenericDao#getAllByDisjunctionveNormalQuery(java.util.List, int, int, java.lang.String[])
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.impetus.ankush.common.dao.GenericDao#getAllByDisjunctionveNormalQuery
+	 * (java.util.List, int, int, java.lang.String[])
 	 */
 	@SuppressWarnings(UNCHECKED)
 	public List<T> getAllByDisjunctionveNormalQuery(
@@ -408,8 +453,9 @@ public class GenericDaoJpa<T, P extends Serializable> implements
 
 	/**
 	 * Creates the disjunction normal query string.
-	 *
-	 * @param orderedMaps the ordered maps
+	 * 
+	 * @param orderedMaps
+	 *            the ordered maps
 	 * @return the string builder
 	 */
 	private StringBuilder createDisjunctionNormalQueryString(
@@ -430,8 +476,11 @@ public class GenericDaoJpa<T, P extends Serializable> implements
 		return builder;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.impetus.ankush.common.dao.GenericDao#getAllByDisjunctionveNormalQueryCount(java.util.List)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.impetus.ankush.common.dao.GenericDao#
+	 * getAllByDisjunctionveNormalQueryCount(java.util.List)
 	 */
 	public int getAllByDisjunctionveNormalQueryCount(
 			List<Map<String, Object>> disjunctionMaps) {
@@ -445,10 +494,13 @@ public class GenericDaoJpa<T, P extends Serializable> implements
 
 	/**
 	 * Gets the ordered map.
-	 *
-	 * @param <K> the key type
-	 * @param <V> the value type
-	 * @param maps the maps
+	 * 
+	 * @param <K>
+	 *            the key type
+	 * @param <V>
+	 *            the value type
+	 * @param maps
+	 *            the maps
 	 * @return the ordered map
 	 */
 	private <K, V> List<LinkedHashMap<K, V>> getOrderedMap(List<Map<K, V>> maps) {
@@ -462,10 +514,13 @@ public class GenericDaoJpa<T, P extends Serializable> implements
 
 	/**
 	 * Gets the ordered map.
-	 *
-	 * @param <K> the key type
-	 * @param <V> the value type
-	 * @param map the map
+	 * 
+	 * @param <K>
+	 *            the key type
+	 * @param <V>
+	 *            the value type
+	 * @param map
+	 *            the map
 	 * @return the ordered map
 	 */
 	private <K, V> LinkedHashMap<K, V> getOrderedMap(Map<K, V> map) {
@@ -474,8 +529,9 @@ public class GenericDaoJpa<T, P extends Serializable> implements
 
 	/**
 	 * Flatten parameter list.
-	 *
-	 * @param parameterMaps the parameter maps
+	 * 
+	 * @param parameterMaps
+	 *            the parameter maps
 	 * @return the list
 	 */
 	private List<Object> flattenParameterList(
@@ -491,9 +547,11 @@ public class GenericDaoJpa<T, P extends Serializable> implements
 
 	/**
 	 * Assign query parameters.
-	 *
-	 * @param query the query
-	 * @param parameters the parameters
+	 * 
+	 * @param query
+	 *            the query
+	 * @param parameters
+	 *            the parameters
 	 */
 	private void assignQueryParameters(Query query, List<Object> parameters) {
 		for (int i = 0; i < parameters.size(); i++) {
@@ -503,9 +561,11 @@ public class GenericDaoJpa<T, P extends Serializable> implements
 
 	/**
 	 * Creates the and clause.
-	 *
-	 * @param queryMap the query map
-	 * @param startIndex the start index
+	 * 
+	 * @param queryMap
+	 *            the query map
+	 * @param startIndex
+	 *            the start index
 	 * @return the string
 	 */
 	private String createAndClause(LinkedHashMap<String, Object> queryMap,
@@ -515,9 +575,11 @@ public class GenericDaoJpa<T, P extends Serializable> implements
 
 	/**
 	 * Creates the or clause.
-	 *
-	 * @param queryMap the query map
-	 * @param startIndex the start index
+	 * 
+	 * @param queryMap
+	 *            the query map
+	 * @param startIndex
+	 *            the start index
 	 * @return the string
 	 */
 	private String createOrClause(LinkedHashMap<String, Object> queryMap,
@@ -527,10 +589,13 @@ public class GenericDaoJpa<T, P extends Serializable> implements
 
 	/**
 	 * Creates the clause list.
-	 *
-	 * @param queryMap the query map
-	 * @param startIndex the start index
-	 * @param joiner the joiner
+	 * 
+	 * @param queryMap
+	 *            the query map
+	 * @param startIndex
+	 *            the start index
+	 * @param joiner
+	 *            the joiner
 	 * @return the string
 	 */
 	private String createClauseList(LinkedHashMap<String, Object> queryMap,
@@ -547,8 +612,9 @@ public class GenericDaoJpa<T, P extends Serializable> implements
 
 	/**
 	 * Creates the order by clause.
-	 *
-	 * @param orderBy the order by
+	 * 
+	 * @param orderBy
+	 *            the order by
 	 * @return the string
 	 */
 	private String createOrderByClause(String[] orderBy) {
@@ -571,8 +637,9 @@ public class GenericDaoJpa<T, P extends Serializable> implements
 
 	/**
 	 * Convert to count query.
-	 *
-	 * @param query the query
+	 * 
+	 * @param query
+	 *            the query
 	 * @return the string
 	 */
 	private String convertToCountQuery(String query) {
@@ -587,9 +654,11 @@ public class GenericDaoJpa<T, P extends Serializable> implements
 
 	/**
 	 * Gets the count.
-	 *
-	 * @param queryString the query string
-	 * @param orderedMap the ordered map
+	 * 
+	 * @param queryString
+	 *            the query string
+	 * @param orderedMap
+	 *            the ordered map
 	 * @return the count
 	 */
 	private int getCount(String queryString,
@@ -604,9 +673,11 @@ public class GenericDaoJpa<T, P extends Serializable> implements
 
 	/**
 	 * Gets the count.
-	 *
-	 * @param queryString the query string
-	 * @param parameterList the parameter list
+	 * 
+	 * @param queryString
+	 *            the query string
+	 * @param parameterList
+	 *            the parameter list
 	 * @return the count
 	 */
 	private int getCount(String queryString, List<Object> parameterList) {
@@ -615,5 +686,10 @@ public class GenericDaoJpa<T, P extends Serializable> implements
 			assignQueryParameters(query, parameterList);
 		}
 		return ((Long) query.getSingleResult()).intValue();
+	}
+
+	public List getCustomQuery(String queryString) {
+		Query query = this.entityManager.createQuery(queryString);
+		return query.getResultList();
 	}
 }

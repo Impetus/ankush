@@ -58,7 +58,7 @@ public abstract class ClusterConf extends ExtendedConfiguration {
 
 	/** The ganglia master. */
 	protected NodeConf gangliaMaster;
-
+	
 	/** The ip pattern. */
 	protected String ipPattern;
 
@@ -69,9 +69,16 @@ public abstract class ClusterConf extends ExtendedConfiguration {
 	protected String technology;
 
 	/** The java conf. */
-	protected JavaConf javaConf;
-
+	private JavaConf javaConf;
+	
+	/** The common components. */
+	private Map<String, GenericConfiguration> commonComponents;
+	
+	private boolean registerableCluster = false; 
+	
 	/**
+	 * Gets the cluster components.
+	 *
 	 * @return the clusterComponents
 	 */
 	@JsonIgnore
@@ -295,15 +302,6 @@ public abstract class ClusterConf extends ExtendedConfiguration {
 	}
 
 	/**
-	 * Gets the java conf.
-	 * 
-	 * @return the javaConf
-	 */
-	public JavaConf getJavaConf() {
-		return javaConf;
-	}
-
-	/**
 	 * Sets the java conf.
 	 * 
 	 * @param javaConf
@@ -311,5 +309,50 @@ public abstract class ClusterConf extends ExtendedConfiguration {
 	 */
 	public void setJavaConf(JavaConf javaConf) {
 		this.javaConf = javaConf;
+	}
+
+	/**
+	 * Gets the java conf.
+	 * 
+	 * @return the javaConf
+	 */
+	public JavaConf getJavaConf() {
+		return javaConf;
+	}
+	
+	/**
+	 * Gets the common components.
+	 *
+	 * @return the commonComponents
+	 */
+	@JsonIgnore
+	public Map<String, GenericConfiguration> getCommonComponents() {
+		return commonComponents;
+	}
+
+	/**
+	 * Sets the common components.
+	 *
+	 * @param commonComponents the commonComponents to set
+	 */
+	@JsonIgnore
+	public void setCommonComponents(
+			Map<String, GenericConfiguration> commonComponents) {
+		this.commonComponents = commonComponents;
+	}
+
+	/**
+	 * @return the registerableCluster
+	 */
+	@JsonIgnore
+	public boolean isRegisterableCluster() {
+		return registerableCluster;
+	}
+
+	/**
+	 * @param registerableCluster the registerableCluster to set
+	 */
+	public void setRegisterableCluster(boolean registerableCluster) {
+		this.registerableCluster = registerableCluster;
 	}
 }

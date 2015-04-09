@@ -29,8 +29,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 import java.util.Random;
+import java.util.Scanner;
 
 /**
  * The Class CommonUtil.
@@ -41,6 +45,18 @@ public class CommonUtil {
 	private static AnkushLogger logger = new AnkushLogger(CommonUtil.class);
 
 	/**
+	 * Method to return singular or plural by the count value.
+	 * 
+	 * @param count
+	 * @param singular
+	 * @param plural
+	 * @return
+	 */
+	public static String singlePlural(int count, String singular, String plural) {
+		return count == 1 ? singular : plural;
+	}
+
+	/**
 	 * Method to get random request id.
 	 * 
 	 * @param rndVal
@@ -49,6 +65,15 @@ public class CommonUtil {
 	 */
 	public static String getRandomReqId(int rndVal) {
 		return System.currentTimeMillis() + "_" + rndVal;
+	}
+
+	/**
+	 * Method to convert ip value in long.
+	 */
+	public static Long toNumeric(String ip) {
+		Scanner sc = new Scanner(ip).useDelimiter("\\.");
+		return (sc.nextLong() << 24) + (sc.nextLong() << 16)
+				+ (sc.nextLong() << 8) + (sc.nextLong());
 	}
 
 	/**
@@ -119,18 +144,6 @@ public class CommonUtil {
 			inStream.close();
 		}
 		return properties;
-	}
-
-	/**
-	 * Method to return singular or plural by the count value.
-	 * 
-	 * @param count
-	 * @param singular
-	 * @param plural
-	 * @return
-	 */
-	public static String singlePlural(int count, String singular, String plural) {
-		return count == 1 ? singular : plural;
 	}
 
 	/**
@@ -235,5 +248,10 @@ public class CommonUtil {
 	 */
 	public static String getMyIPAddress() throws UnknownHostException {
 		return InetAddress.getLocalHost().getHostAddress();
+	}
+	
+	public static String getCurrentDate() {
+		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+		return dateFormat.format(new Date());
 	}
 }

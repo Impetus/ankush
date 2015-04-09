@@ -29,8 +29,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
@@ -40,7 +38,7 @@ import com.impetus.ankush.common.constant.Constant;
 
 /**
  * @author Akhil
- *
+ * 
  */
 public class AnkushRestClient {
 
@@ -53,7 +51,7 @@ public class AnkushRestClient {
 		mapper.setVisibilityChecker(mapper.getVisibilityChecker()
 				.withFieldVisibility(Visibility.ANY));
 	}
-	
+
 	private AnkushLogger logger = new AnkushLogger(AnkushRestClient.class);
 
 	/**
@@ -66,21 +64,19 @@ public class AnkushRestClient {
 	 * @return String
 	 * @throws IOException
 	 */
-	public Map sendRequest(String urlPath, String input, String method,
-			String accept, String contentType){
+	public HttpResult sendRequest(String urlPath, String input, String method,
+			String accept, String contentType) {
 		HttpURLConnection conn = null;
 		String output = "";
 		OutputStream os = null;
-		
-		//Initialise responseCode with -1 as default value
-		int  responseCode = -1;
-		
-		//outputMap to return after putting responseCode and output in it
-		Map outputMap = new HashMap();
-		
+
+		// Http Response object.
+		HttpResult result = new HttpResult();
+		boolean status = true;
+
 		try {
-			System.out.println(" URL Path : " + urlPath);
 			URL url = new URL(urlPath);
+			logger.info("Executing request : " + urlPath);
 			conn = (HttpURLConnection) url.openConnection();
 			conn.setDoOutput(true);
 			conn.setRequestMethod(method);
@@ -93,28 +89,29 @@ public class AnkushRestClient {
 			}
 			String buffer = "";
 			BufferedReader br;
-			responseCode = conn.getResponseCode();
 			if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
-				//get ErrorStream
+				status = false;
+				String error = "";
+				// get ErrorStream
 				br = new BufferedReader(new InputStreamReader(
 						(conn.getErrorStream())));
 
 				while ((buffer = br.readLine()) != null) {
-					output += buffer;
+					error += buffer;
 				}
-				/*throw new RuntimeException("Failed : HTTP error code : "
-						+ conn.getResponseCode());*/
+				result.setError(error);
 			}
 			br = new BufferedReader(new InputStreamReader(
 					(conn.getInputStream())));
 
-			
 			while ((buffer = br.readLine()) != null) {
 				output += buffer;
 			}
-		}catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception e) {
 			logger.debug(e.getMessage());
+			logger.error("Exception in executing request : " + urlPath, e);
+			result.setError(e.getLocalizedMessage());
+			status = false;
 		} finally {
 			if (conn != null) {
 				conn.disconnect();
@@ -123,24 +120,48 @@ public class AnkushRestClient {
 				IOUtils.closeQuietly(os);
 			}
 		}
-		outputMap.put(Constant.Keys.RESPONSE_CODE, responseCode);
-		outputMap.put(Constant.Keys.OUTPUT,output);
-		
-		return outputMap;
+		result.setStatus(status);
+		result.setOutput(output);
+
+		return result;
 	}
 
 	/**
 	 * Method to send get request.
+	 * 
 	 * @param url
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	public String getRequest(String url){
-		Map outputMap =	sendRequest(url, null, Constant.Method_Type.GET, APPLICATION_JSON, APPLICATION_JSON);
-		return (String) outputMap.get(Constant.Keys.OUTPUT);
+	public String getRequest(String url) {
+		HttpResult output = sendRequest(url, null, Constant.Method_Type.GET,
+				APPLICATION_JSON, APPLICATION_JSON);
+		return output.getOutput();
 	}
-	
-	public Map postRequest(String url,String postData){
-		return sendRequest(url, postData, Constant.Method_Type.POST, APPLICATION_JSON, APPLICATION_JSON);
+
+	/**
+	 * Method to send get request.
+	 * 
+	 * @param url
+	 * @return
+	 * @throws Exception
+	 */
+	public HttpResult get(String url) {
+		HttpResult output = sendRequest(url, null, Constant.Method_Type.GET,
+				APPLICATION_JSON, APPLICATION_JSON);
+		return output;
+	}
+
+	/**
+	 * Post Method to send the data.
+	 * 
+	 * @param url
+	 * @param postData
+	 * @return
+	 */
+	public HttpResult postRequest(String url, String postData) {
+		HttpResult output = sendRequest(url, postData,
+				Constant.Method_Type.POST, APPLICATION_JSON, APPLICATION_JSON);
+		return output;
 	}
 }

@@ -33,9 +33,11 @@ public class AppStore {
 
 	/**
 	 * Sets the object.
-	 *
-	 * @param key the key
-	 * @param value the value
+	 * 
+	 * @param key
+	 *            the key
+	 * @param value
+	 *            the value
 	 */
 	public static void setObject(String key, Object value) {
 		store.put(key, value);
@@ -43,12 +45,23 @@ public class AppStore {
 
 	/**
 	 * Gets the object.
-	 *
-	 * @param key the key
+	 * 
+	 * @param key
+	 *            the key
 	 * @return the object
 	 */
 	public static Object getObject(String key) {
 		return store.get(key);
+	}
+
+	/**
+	 * Method to remove the object
+	 * 
+	 * @param key
+	 * @return
+	 */
+	public static Object removeObject(String key) {
+		return store.remove(key);
 	}
 
 	/**
@@ -58,5 +71,5 @@ public class AppStore {
 		store.clear();
 		store = null;
 	}
-	
+
 }

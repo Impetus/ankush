@@ -44,20 +44,18 @@ public class AgentConf extends GenericConfiguration {
 
 	/** The technology name. */
 	private String technologyName = null;
-	
+
 	/** The nodes. */
 	private List<NodeConf> nodes = new ArrayList<NodeConf>();
-	
-	/** The local jars path. */
-	private String localJarsPath = null;
-	
+
 	/** The agent daemon class. */
 	private String agentDaemonClass = null;
 
 	/**
 	 * Sets the technology name.
-	 *
-	 * @param technologyName the technologyName to set
+	 * 
+	 * @param technologyName
+	 *            the technologyName to set
 	 */
 	public void setTechnologyName(String technologyName) {
 		this.technologyName = technologyName;
@@ -65,7 +63,7 @@ public class AgentConf extends GenericConfiguration {
 
 	/**
 	 * Gets the technology name.
-	 *
+	 * 
 	 * @return the technologyName
 	 */
 	public String getTechnologyName() {
@@ -74,8 +72,9 @@ public class AgentConf extends GenericConfiguration {
 
 	/**
 	 * Sets the nodes.
-	 *
-	 * @param nodes the new nodes
+	 * 
+	 * @param nodes
+	 *            the new nodes
 	 */
 	public void setNodes(List<NodeConf> nodes) {
 		this.nodes = nodes;
@@ -83,7 +82,7 @@ public class AgentConf extends GenericConfiguration {
 
 	/**
 	 * Gets the nodes.
-	 *
+	 * 
 	 * @return the nodeMap
 	 */
 	public List<NodeConf> getNodes() {
@@ -91,27 +90,10 @@ public class AgentConf extends GenericConfiguration {
 	}
 
 	/**
-	 * Sets the local jars path.
-	 *
-	 * @param localJarsPath the localJarsPath to set
-	 */
-	public void setLocalJarsPath(String localJarsPath) {
-		this.localJarsPath = localJarsPath;
-	}
-
-	/**
-	 * Gets the local jars path.
-	 *
-	 * @return the localJarsPath
-	 */
-	public String getLocalJarsPath() {
-		return localJarsPath;
-	}
-
-	/**
 	 * Sets the agent daemon class.
-	 *
-	 * @param agentDaemonClass the agentDaemonClass to set
+	 * 
+	 * @param agentDaemonClass
+	 *            the agentDaemonClass to set
 	 */
 	public void setAgentDaemonClass(String agentDaemonClass) {
 		this.agentDaemonClass = agentDaemonClass;
@@ -119,7 +101,7 @@ public class AgentConf extends GenericConfiguration {
 
 	/**
 	 * Gets the agent daemon class.
-	 *
+	 * 
 	 * @return the agentDaemonClass
 	 */
 	public String getAgentDaemonClass() {

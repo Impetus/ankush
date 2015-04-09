@@ -21,19 +21,20 @@
 package com.impetus.ankush.common.zookeeper;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.impetus.ankush.common.constant.Constant;
+import com.impetus.ankush.common.framework.ComponentJsonMapper;
 import com.impetus.ankush.common.framework.config.GenericConfiguration;
 import com.impetus.ankush.common.framework.config.NodeConf;
+import com.impetus.ankush.common.framework.config.RegisterClusterConf;
 import com.impetus.ankush.common.utils.HostOperation;
+import com.impetus.ankush.common.utils.JsonMapperUtil;
 
 /**
  * The Class ZookeeperConf.
@@ -213,54 +214,42 @@ public class ZookeeperConf extends GenericConfiguration {
 	 * @return zoo.cfg file contents
 	 */
 	@JsonIgnore
-	public Map<String, String> getZooConfContentsAsMap() {
-		
-		Map<String, String> zooCfgContentsAsMap = new HashMap<String, String>();
+	public String getZooConfContents() {
+
+		// Building first part of zoo.cfg file
+		StringBuilder partOneBuilder = new StringBuilder();
 		String dataDir = this.dataDirectory;
 		if((dataDir != null) && (dataDir.endsWith("/"))){
-			dataDir = dataDir.substring(0, dataDir.length()-1);		
+			dataDir = dataDir.substring(0, dataDir.length()-1);
 		}
-		zooCfgContentsAsMap.put("dataDir", dataDir);
-		zooCfgContentsAsMap.put("clientPort", String.valueOf(this.clientPort));
-		zooCfgContentsAsMap.put("tickTime", String.valueOf(this.tickTime));
-		zooCfgContentsAsMap.put("initLimit", String.valueOf(this.initLimit));
-		zooCfgContentsAsMap.put("syncLimit", String.valueOf(this.syncLimit));
-		
+		partOneBuilder.append("dataDir=").append(dataDir)
+				.append("\n").append("clientPort=").append(this.clientPort)
+				.append("\n").append("tickTime=").append(this.tickTime)
+				.append("\n").append("initLimit=").append(this.initLimit)
+				.append("\n").append("syncLimit=").append(this.syncLimit)
+				.append("\n");
+
+		// Building second part of zoo.cfg file
 		int i = 1;
+		StringBuilder partTwoBuilder = new StringBuilder();
 		for (Iterator<NodeConf> iterator = this.nodeConfs.iterator(); iterator
 				.hasNext();) {
+
 			String hostName = "";
 			if (this.nodeConfs.get(i - 1) != null)
-				hostName = HostOperation.getAnkushHostName(
-							this.nodeConfs.get(i - 1).getPrivateIp());
-			
-			String tmpServerKey = "server." + i;
-			String tmpServerValue = hostName + ":2888:3888";
-			zooCfgContentsAsMap.put(tmpServerKey, tmpServerValue);
-			
+//				hostName = HostOperation.getAnkushHostName(this.nodeConfs.get(
+//						i - 1).getPrivateIp());
+			hostName = this.nodeConfs.get(i - 1).getPrivateIp();
+			partTwoBuilder.append("server.").append(i).append("=")
+					.append(hostName).append(":2888:3888").append("\n");
 			++i;
 			iterator.next();
 		}
 
-		return zooCfgContentsAsMap;
-	}
-	
-	/**
-	 * Gets the zoo conf contents.
-	 * 
-	 * @return zoo.cfg file contents
-	 */
-	@JsonIgnore
-	public String getZooConfContents() {
-		Map<String, String> zooConfContentsAsMap =  this.getZooConfContentsAsMap();
-		StringBuilder zooCfgContents = new StringBuilder();
-		
-		for(String key : zooConfContentsAsMap.keySet()) {
-			zooCfgContents.append(key).append("=")
-						  .append(zooConfContentsAsMap.get(key))
-						  .append(Constant.LINE_SEPERATOR);
-		}
-		return zooCfgContents.toString();
+		// merging both buffers
+		StringBuilder zooConfContent = partOneBuilder.append(partTwoBuilder);
+
+		return zooConfContent.toString();
 	}
 
 	/**
@@ -323,12 +312,10 @@ public class ZookeeperConf extends GenericConfiguration {
 		return new HashSet<NodeConf>(this.getNodes());
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see com.impetus.ankush.common.framework.config.GenericConfiguration#addNewNodes()
-	 */
 	@Override
 	public void addNewNodes() {
 		this.getNodes().addAll(this.getNewNodes());
 	}
+
+	
 }

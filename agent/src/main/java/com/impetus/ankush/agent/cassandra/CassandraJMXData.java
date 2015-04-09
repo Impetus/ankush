@@ -21,6 +21,7 @@
 package com.impetus.ankush.agent.cassandra;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -58,23 +59,26 @@ public class CassandraJMXData implements Serializable {
 	/** The Constant CASSANDRA_JMX_SIMPLESTATES. */
 	private static final String CASSANDRA_JMX_ATTRIBUTE_SIMPLESTATES = "SimpleStates";
 
-	/** The Constant CASSANDRA_JMX_ATTRIBUTE_PARTITIONERNAME. */
-	private static final String CASSANDRA_JMX_ATTRIBUTE_PARTITIONERNAME = "PartitionerName";
-
-	/** The Constant CASSANDRA_JMX_ATTRIBUTE_SNICTHNAME. */
-	private static final String CASSANDRA_JMX_ATTRIBUTE_SNICTHNAME = "SubsnitchClassName";
-
 	/** The Constant CASSANDRA_JMX_ATTRIBUTE_OWNERSHIP. */
 	private static final String CASSANDRA_JMX_ATTRIBUTE_OWNERSHIP = "Ownership";
 
-	/** The Constant CASSANDRA_JMX_ENDPOINTSTATE. */
-	private static final String CASSANDRA_JMX_ATTRIBUTE_ENDPOINTSTATE = "getEndpointState";
+	/** The Constant CASSANDRA_JMX_ATTRIBUTE_GETRACK. */
+	private static final String CASSANDRA_JMX_ATTRIBUTE_GETRACK = "getRack";
+
+	/** The Constant CASSANDRA_JMX_ATTRIBUTE_GETDATACENTER. */
+	private static final String CASSANDRA_JMX_ATTRIBUTE_GETDATACENTER = "getDatacenter";
 
 	/** The Constant CASSANDRA_JMX_OBJECT_STORAGESERVICE. */
 	private static final String CASSANDRA_JMX_OBJECT_STORAGESERVICE = "StorageService";
 
+	/** The Constant CASSANDRA_JMX_OBJECT_ENDPOINT_SNITCH_INFO. */
+	private static final String CASSANDRA_JMX_OBJECT_ENDPOINT_SNITCH_INFO = "EndpointSnitchInfo";
+
 	/** The Constant CASSANDRA_JMX_OBJECT_DYNAMICENDPOINTSNITCH. */
 	private static final String CASSANDRA_JMX_OBJECT_DYNAMICENDPOINTSNITCH = "DynamicEndpointSnitch";
+
+	/** The Constant CASSANDRA_JMX_ENDPOINTSTATE. */
+	private static final String CASSANDRA_JMX_ATTRIBUTE_ENDPOINTSTATE = "getEndpointState";
 
 	/** The Constant CASSANDRA_JMX_ATTRIBUTE_LOADMAP. */
 	private static final String CASSANDRA_JMX_ATTRIBUTE_LOADMAP = "LoadMap";
@@ -135,6 +139,10 @@ public class CassandraJMXData implements Serializable {
 						ORG_APACHE_CASSANDRA + "db:type="
 								+ CASSANDRA_JMX_OBJECT_STORAGESERVICE);
 
+				ObjectName mObjNameEndPointSnitchInfo = new ObjectName(
+						ORG_APACHE_CASSANDRA + "db:type="
+								+ CASSANDRA_JMX_OBJECT_ENDPOINT_SNITCH_INFO);
+
 				Object attributeLiveNodes = jmxUtil.getAttribute(
 						mObjNameStorageService,
 						CASSANDRA_JMX_ATTRIBUTE_LIVE_NODES);
@@ -151,10 +159,13 @@ public class CassandraJMXData implements Serializable {
 						mObjNameStorageService,
 						CASSANDRA_JMX_ATTRIBUTE_OWNERSHIP);
 				LinkedHashMap ownership = (LinkedHashMap) attrOwnership;
+				DecimalFormat df = new DecimalFormat("###.##");
 				for (Object key : ownership.keySet()) {
-					ownershipMap.put(key.toString().trim().substring(1),
-							String.valueOf(((Float) ownership.get(key)) * 100)
-									+ " %");
+					ownershipMap.put(
+							key.toString().substring(
+									key.toString().lastIndexOf("/")),
+							String.valueOf(df.format(((Float) ownership
+									.get(key)) * 100)) + " %");
 				}
 
 				// Getting load
@@ -184,8 +195,10 @@ public class CassandraJMXData implements Serializable {
 				String nodeOwnership = new String();
 				for (Map.Entry<String, String> entry : status.entrySet()) {
 
-					stateMap.put(entry.getKey().trim().substring(1), entry
-							.getValue().trim());
+					stateMap.put(
+							entry.getKey().substring(
+									entry.getKey().lastIndexOf("/")),
+							entry.getValue());
 				}
 				nodes.addAll((List<String>) attributeLiveNodes);
 				nodes.addAll((List<String>) attributeUnreachableNodes);
@@ -198,33 +211,42 @@ public class CassandraJMXData implements Serializable {
 
 					Object opParams[] = { cNodeConf };
 					String opSig[] = { String.class.getName() };
-					Object result = connection.invoke(mObjNameFailureDetector,
+
+					Node node = new Node();
+					Object result = connection.invoke(
+							mObjNameEndPointSnitchInfo,
+							CASSANDRA_JMX_ATTRIBUTE_GETRACK, opParams, opSig);
+					node.setRack((String) result);
+
+					result = connection.invoke(mObjNameEndPointSnitchInfo,
+							CASSANDRA_JMX_ATTRIBUTE_GETDATACENTER, opParams,
+							opSig);
+					node.setDataCenter((String) result);
+
+					node.setHost(cNodeConf);
+					node.setOwnership(ownershipMap.get(cNodeConf));
+					node.setLoad((loadMap.get(cNodeConf) != null
+							&& !loadMap.get(cNodeConf).isEmpty() ? loadMap
+							.get(cNodeConf) : "?"));
+					node.setStatus(stateMap.get(cNodeConf));
+					node.setHostId(hostIdMap.get(cNodeConf));
+
+					result = connection.invoke(mObjNameFailureDetector,
 							CASSANDRA_JMX_ATTRIBUTE_ENDPOINTSTATE, opParams,
 							opSig);
 					String strResult = (String) result;
 
 					List<String> sysoutList = new ArrayList<String>(
 							Arrays.asList(strResult.split("\n")));
-
-					Node node = new Node();
-
-					node.setHost(cNodeConf);
-					node.setOwnership(ownershipMap.get(cNodeConf));
-					node.setLoad(loadMap.get(cNodeConf));
-					node.setStatus(stateMap.get(cNodeConf));
-					node.setHostId(hostIdMap.get(cNodeConf));
 					for (String outData : sysoutList) {
-
 						List<String> paramList = new ArrayList<String>(
 								Arrays.asList(outData.split(":")));
 						String key = paramList.get(0).trim();
-
-						if (key.equals("DC")) {
-							node.setDataCenter(paramList.get(1).trim());
-						} else if (key.equals("RACK")) {
-							node.setRack(paramList.get(1).trim());
-						} else if (key.equals("STATUS")) {
-							node.setState(paramList.get(1).trim().split(",")[0]);
+						if (key.equals("STATUS")) {
+							node.setState((!paramList.get(1).trim().split(",")[0]
+									.isEmpty() ? paramList.get(1).trim()
+									.split(",")[0] : "?"));
+							break;
 						}
 					}
 
@@ -266,11 +288,9 @@ public class CassandraJMXData implements Serializable {
 					datacenter.setRacks(racks);
 					datacenters.add(datacenter);
 				}
-
 			}
 
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} finally {
 			jmxUtil.disconnect();
@@ -287,19 +307,6 @@ public class CassandraJMXData implements Serializable {
 			ObjectName mObjNameDynamicEndpointSnitch = new ObjectName(
 					ORG_APACHE_CASSANDRA + "db:type="
 							+ CASSANDRA_JMX_OBJECT_DYNAMICENDPOINTSNITCH);
-			// Getting partitioner
-			Object attrPartitioner = jmxUtil.getAttribute(
-					mObjNameStorageService,
-					CASSANDRA_JMX_ATTRIBUTE_PARTITIONERNAME);
-			String partitioner = attrPartitioner.toString().substring(
-					attrPartitioner.toString().lastIndexOf(".") + 1);
-
-			// Getting snitch
-			Object attrSnitch = jmxUtil.getAttribute(
-					mObjNameDynamicEndpointSnitch,
-					CASSANDRA_JMX_ATTRIBUTE_SNICTHNAME);
-			String snitch = attrSnitch.toString().substring(
-					attrSnitch.toString().lastIndexOf(".") + 1);
 
 			// Get keyspace count
 			Object attrKeyspace = jmxUtil.getAttribute(mObjNameStorageService,
@@ -312,14 +319,10 @@ public class CassandraJMXData implements Serializable {
 			}
 
 			// Create tiles
-			// Create RepNode down tile
 			if (keyspaceCount > 0) {
 				tiles.add(getTile(String.valueOf(keyspaceCount), keyspace,
 						"Keyspace"));
 			}
-			tiles.add(getTile(partitioner, "Partitioner", null));
-			tiles.add(getTile(snitch, "Snitch", null));
-
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
@@ -335,7 +338,6 @@ public class CassandraJMXData implements Serializable {
 			tileInfo.setStatus(Constant.Tile.Status.NORMAL);
 			tileInfo.setUrl(url);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return tileInfo;

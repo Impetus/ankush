@@ -212,8 +212,7 @@ public class AnkushHadoopClusterCreation extends AbstractController {
 	}
 	
 	/**
-	 * Hive component details.
-	 *
+	 * 
 	 * @param model the model
 	 * @param componentName the component name
 	 * @return the string

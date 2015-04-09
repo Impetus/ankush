@@ -37,7 +37,8 @@ import com.impetus.ankush.agent.utils.AgentRestClient;
  */
 public class SigarInfoMonitor extends Taskable {
 
-	private AgentLogger LOGGER = new AgentLogger(SigarInfoMonitor.class);
+	private static final AgentLogger LOGGER = new AgentLogger(
+			SigarInfoMonitor.class);
 	private AgentConf agentConf;
 	private AgentRestClient client;
 
