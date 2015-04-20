@@ -26,8 +26,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +38,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.impetus.ankush.common.domain.Template;
-import com.impetus.ankush.common.framework.ClusterManager;
 import com.impetus.ankush.common.framework.ClusterPreValidator;
 import com.impetus.ankush.common.framework.TemplateManager;
 import com.impetus.ankush.common.service.UserManager;
@@ -207,51 +204,6 @@ public class ClusterController extends BaseController {
 				"Cluster creation activity in progress");
 	}
 
-	@RequestMapping(method = RequestMethod.DELETE, value = "/removecluster/{id}")
-	@ResponseBody
-	public ResponseEntity<ResponseWrapper<Map<String, Object>>> removeNewCluster(
-			@PathVariable Long id, Principal principal) throws Exception {
-		Map<String, Object> returnMap = new HashMap<String, Object>();
-		try {
-			// Remove Cluster
-			com.impetus.ankush2.framework.manager.ClusterManager manager = new com.impetus.ankush2.framework.manager.ClusterManager(
-					principal.getName());
-			returnMap = manager.undeploy(id);
-			return wrapResponse(returnMap, HttpStatus.OK,
-					HttpStatus.OK.toString(), "Cluster removal is inprogress");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		returnMap.put(com.impetus.ankush2.constant.Constant.Keys.STATUS, false);
-		return wrapResponse(returnMap, HttpStatus.OK, HttpStatus.OK.toString(),
-				"Cluster removal failed.");
-	}/**
-	 * Deploys technology patch.
-	 * 
-	 * @param serverPatchTarballLocation
-	 *            the patch bundle location on server
-	 * @param clusterId
-	 *            the cluster id
-	 * @param componentId
-	 *            the componentId for which patch will be deployed
-	 * @param principal
-	 *            the principal
-	 * @return the response entity
-	 * @throws Exception
-	 *             the exception
-	 */
-	@RequestMapping(method = RequestMethod.POST, value = "/patchDeploy/{clusterId}/{componentId}")
-	@ResponseBody
-	public ResponseEntity<ResponseWrapper<Object>> deployPatch(
-			@RequestBody Map map, @PathVariable long clusterId,
-			@PathVariable String componentId, HttpServletRequest request)
-			throws Exception {
-		ClusterManager manager = new ClusterManager();
-		Object objectret = manager.deployPatch(clusterId, componentId, map);
-		return wrapResponse(objectret, HttpStatus.OK, HttpStatus.OK.toString(),
-				"Patch deployment activity in progress");
-	}
-
 	@RequestMapping(method = RequestMethod.POST, value = "{clusterId}/addnode")
 	@ResponseBody
 	public ResponseEntity<ResponseWrapper<Object>> addNodes(
@@ -303,26 +255,6 @@ public class ClusterController extends BaseController {
 		returnMap.put(com.impetus.ankush2.constant.Constant.Keys.ERROR, error);
 		return wrapResponse((Object) returnMap, HttpStatus.OK,
 				HttpStatus.OK.toString(), "Node deletion failed.");
-	}
-
-	@RequestMapping(method = RequestMethod.DELETE, value = "/unregisterCluster/{id}")
-	@ResponseBody
-	public ResponseEntity<ResponseWrapper<Map<String, Object>>> unregisterNewCluster(
-			@PathVariable Long id, Principal principal) throws Exception {
-		Map<String, Object> returnMap = new HashMap<String, Object>();
-		try {
-			// Remove Cluster
-			com.impetus.ankush2.framework.manager.ClusterManager manager = new com.impetus.ankush2.framework.manager.ClusterManager(principal.getName());
-			returnMap = manager.unregister(id);
-			return wrapResponse(returnMap, HttpStatus.OK,
-					HttpStatus.OK.toString(),
-					"Cluster unregister is inprogress");
-		} catch (Exception e) {
-			
-		}
-		returnMap.put(com.impetus.ankush2.constant.Constant.Keys.STATUS, false);
-		return wrapResponse(returnMap, HttpStatus.OK, HttpStatus.OK.toString(),
-				"Cluster unregister failed.");
 	}
 
 	@RequestMapping(method = RequestMethod.DELETE, value = "/removemixcluster/{id}")

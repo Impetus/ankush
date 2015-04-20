@@ -40,11 +40,12 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.xml.sax.InputSource;
 
-import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.scripting.AnkushTask;
 import com.impetus.ankush.common.scripting.impl.AppendFileUsingEcho;
 import com.impetus.ankush2.common.scripting.impl.AddConfProperty;
+import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush2.hadoop.utils.Parameter;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 /**
  * The Class XmlUtil.
@@ -112,8 +113,8 @@ public class XmlUtil {
 		fileContents.append("<configuration>").append("\n")
 				.append("</configuration>");
 
-		AnkushTask createConfFile = new AppendFileUsingEcho(fileContents.toString(),
-				filePath);
+		AnkushTask createConfFile = new AppendFileUsingEcho(
+				fileContents.toString(), filePath);
 
 		try {
 			return connection.exec(createConfFile).isSuccess;
@@ -217,7 +218,7 @@ public class XmlUtil {
 		// returning items.
 		return items;
 	}
-	
+
 	/**
 	 * Gets the tag content.
 	 * 

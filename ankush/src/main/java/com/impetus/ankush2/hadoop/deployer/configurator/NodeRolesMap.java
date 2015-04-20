@@ -23,7 +23,6 @@
  */
 package com.impetus.ankush2.hadoop.deployer.configurator;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;

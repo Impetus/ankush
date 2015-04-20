@@ -55,7 +55,6 @@ com.impetus.ankush.hybrid_Cassandra={
 			for ( var key in jsonDataHybrid.hybrid.Cassandra.Defaults.Snitch){
 				$("#snitchDropDown").append("<option value=\"" + key + "\">" + key + "</option>");
 			}
-			console.log(cassandraObj);
 			$('#downloadPath').val(cassandraData.Vendors[$("#vendorDropdown").val()][$("#versionDropdown").val()].downloadUrl);
 			if(Object.keys(cassandraObj.Defaults).length > 1){
 				cassandraData.Defaults.installationPath=cassandraObj.Defaults.installationPath;

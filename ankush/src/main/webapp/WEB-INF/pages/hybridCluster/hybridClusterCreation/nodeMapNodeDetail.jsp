@@ -26,11 +26,6 @@
 		<a id="nodeHead"></a>
 	</h3> -->
 	<div class="container-fluid  mrgnlft8">
-		<!-- <div class="row">
-			<div class="col-md-10">
-				<h4 class="section-heading">Node Details</h4>
-			</div>
-		</div> -->
 		<br>
 		<div class="row">
 			<div class="col-md-2 ">

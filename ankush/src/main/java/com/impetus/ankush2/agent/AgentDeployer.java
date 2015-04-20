@@ -49,7 +49,6 @@ import com.impetus.ankush.common.scripting.impl.Untar;
 import com.impetus.ankush.common.service.GenericManager;
 import com.impetus.ankush.common.utils.FileUtils;
 import com.impetus.ankush.common.utils.JsonMapperUtil;
-import com.impetus.ankush.common.utils.validator.JavaValidator;
 import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush2.constant.Constant.Strings.ExceptionsMessage;
 import com.impetus.ankush2.framework.AbstractDeployer;

@@ -26,6 +26,14 @@ com.impetus.ankush.nodes = {
 			//com.impetus.ankush.commonMonitoring.nodesTileCreate();
 			var nodesUrl = baseUrl + '/monitor/' + clusterId + '/deployednodes';
 			com.impetus.ankush.placeAjaxCall(nodesUrl, 'GET', true, null, function(data){
+				if(!data.output.status){
+					com.impetus.ankush.validation
+					.showAjaxCallErrors(
+							data.output.error,
+							'popover-content', 'error-div',
+							'');
+					return;
+				}
 				$("#nodesDetailTable_filter").css({
 					'display' : 'none'
 				});

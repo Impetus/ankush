@@ -27,7 +27,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.impetus.ankush.AppStoreWrapper;
-import com.impetus.ankush.common.alerts.AlertsConf;
 import com.impetus.ankush.common.domain.Cluster;
 import com.impetus.ankush.common.domain.Node;
 import com.impetus.ankush.common.domain.Operation;
@@ -35,6 +34,7 @@ import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush2.db.DBClusterManager;
 import com.impetus.ankush2.db.DBNodeManager;
 import com.impetus.ankush2.db.DBOperationManager;
+import com.impetus.ankush2.framework.config.AlertsConf;
 import com.impetus.ankush2.framework.config.ClusterConfig;
 import com.impetus.ankush2.framework.config.NodeConfig;
 import com.impetus.ankush2.logger.AnkushLogger;

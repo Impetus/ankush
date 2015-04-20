@@ -24,19 +24,10 @@
 		<div class="">
 			<div class="">
 				<div class="col-md-4">
-					<!-- 		<h2>Node Mapping</h2> -->
 				</div>
 				<div class="col-md-1">
-					<!-- <button class="btn btn-danger header_errmsg" id="validateErrorGanglia"
-						onclick="com.impetus.ankush.common.focusError();"
-						style="display: none; padding: 0 15px; left: 15px; position: relative"></button> -->
-
 				</div>
 				<div class="col-md-7 text-right mrgt20 padr45">
-					<!-- 	<button id="gangliaNodesRevert" class="btn btn-default"
-						onclick="com.impetus.ankush.hybridClusterCreation.dynamicRowRemove();">Cancel</button>
-					<button class="btn btn-default" id="gangliaNodesApply"
-						onclick="com.impetus.ankush.hybrid_Ganglia.gangliaNodesPopulateApplyValidate();">Apply</button> -->
 				</div>
 			</div>
 		</div>
@@ -44,8 +35,6 @@
 		<div class="" id="main-content">
 			<div class="container-fluid mrgnlft8">
 				<div class="row">
-					<!-- <div id="errorDivGangliaNodes" class="col-md-12 errorDiv"
-						style="display: none;"></div> -->
 				</div>
 				<div class="panel">
 					<div class="panel-heading">

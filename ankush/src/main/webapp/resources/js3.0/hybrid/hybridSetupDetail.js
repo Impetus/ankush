@@ -30,7 +30,6 @@ com.impetus.ankush.hybridSetupDetail={
 			$('#nodeListDiv').show();
 			cassandraObj.Defaults={};
 			cassandraObj.Defaults.advanceConf={};
-			//com.impetus.ankush.hybridClusterCreation.defaultValue();
 		},
 /*Function for template loading*/
 		loadTemplate:function(loadTemplateName){
@@ -306,7 +305,6 @@ com.impetus.ankush.hybridSetupDetail={
 		},
 	
 		redeployDataFunctionMap:function(){
-			
 			for ( var key in setupDetailData.components) {
 				if(key=='Agent'){
 	      			continue;
@@ -319,7 +317,6 @@ com.impetus.ankush.hybridSetupDetail={
 					}
 				}
 			}
-		
 			if(undefined !=setupDetailData.components.Cassandra){
 				if(!setupDetailData.components.Cassandra.register){
 					com.impetus.ankush.hybrid_Cassandra.redeployDataPrepare();
@@ -505,21 +502,7 @@ com.impetus.ankush.hybridSetupDetail={
 					}
 			}
 	},
-	//function to modify nodes object(removing all keys from unused node object)
-		hadoopDataReprepare:function(techData){
-			if(techData.componentVersion.split(".")[0]!='2'){
-				setupDetailData.components.Hadoop2.ResourceManager={};
-			}
-			if(!techData.webAppProxyServerEnabled){
-				setupDetailData.components.Hadoop2.WebAppProxyServer={};
-			}
-			if(!techData.jobHistoryServerEnabled){
-				setupDetailData.components.Hadoop2.JobHistoryServer={};
-			}
-			if(!techData.haEnabled){
-				setupDetailData.components.Hadoop2.standByNamenode={};
-			}
-		},
+	
 		nodeRoleMapSetupDetailPage:function(nodeObj){
 			if (nodeObj==null){
 				return;
@@ -645,8 +628,6 @@ com.impetus.ankush.hybridSetupDetail={
 			}else{
 				$(".nodeDiv").remove();
 			}
-			
-			
 		},
 		inspectNodeFunction:function(){
 			$('.validation-inspect-node').hide();
@@ -706,9 +687,7 @@ com.impetus.ankush.hybridSetupDetail={
 		    	if(undefined==key){
 		    	key=technology;
 		    	}
-	
 	    	var tech=key.split(' ').join('_');
-	    
 	    	 com.impetus.ankush.hybridClusterCreation.dynamicRowCreate(technology,key);
 		  
 			
@@ -718,8 +697,6 @@ com.impetus.ankush.hybridSetupDetail={
 				if(undefined==key){
 			    	key=technology;
 			    	}
-		    
-		    	
 		    	var tech=key.split(' ').join('_');
 		    	if(!$('#nodeCheck'+tech).is(':checked')){
 		    		return;

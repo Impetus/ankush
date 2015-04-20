@@ -30,73 +30,28 @@
 		<!-- header section -->
 		<div class="">
 			<div class="">
-				<div class="col-md-4">
-					<!-- <h2>Cassandra/Configuration</h2> -->
-				</div>
-				<!-- <div class="col-md-1">
-					<button class="btn btn-default btn-danger mrgt20" id="validateErrorCassandra"
-						onclick="com.impetus.ankush.common.focusError();"
-						style="display: none; padding: 0 15px; left: 15px; position: relative"></button>
-				</div>
-				<div class="col-md-7 text-right mrgt20 padr45">
-					<button id="cassandraRevertBtn" class="btn btn-default"
-						onclick="com.impetus.ankush.hybridClusterCreation.dynamicRowRemove();">Cancel</button>
-					<button class="btn btn-default" id="cassandraApplyBtn"
-						onclick="com.impetus.ankush.hybrid_Cassandra.cassandraConfigValidate();">Apply</button>
-				</div> -->
+				<div class="col-md-4"></div>
+
 			</div>
 		</div>
 		<div class="" id="main-content">
 			<div class="container-fluid mrgnlft8">
-				<div class="row mrgb20" style="">
-					<!-- <div id="errorDivMainCassandra" class="col-md-12 errorDiv"
-						style="display: none;"></div> -->
-				</div>
+				<div class="row mrgb20" style=""></div>
 				<div class="panel ">
 					<div class="panel-heading">
 						<div class="">
 							<h3 class="panel-title col-md-2 mrgt5">Cassandra/Configuration</h3>
-						<!-- 	<button class="btn btn-default btn-danger"
-								id="validateErrorCassandra"
-								onclick="com.impetus.ankush.common.focusError();"
-								style="display: none;"></button> -->
 							<button id="cassandraRevertBtn" class="btn btn-default"
 								onclick="com.impetus.ankush.hybridClusterCreation.dynamicRowRemove();">Cancel</button>
 							<button class="btn btn-default" id="cassandraApplyBtn"
 								onclick="com.impetus.ankush.hybrid_Cassandra.cassandraConfigValidate();">Apply</button>
 						</div>
 						<div class="row">
-					<div id="errorDivMainCassandra" class="col-md-12 errorDiv"
-						style="display: none;"></div>
-				</div>
-						<!-- <div class="pull-right panelSearch">
-							<input type="text" id="nodeSearchBoxCasandra"
-								placeholder="Search" class="input-medium form-control" />
-						</div> -->
+							<div id="errorDivMainCassandra" class="col-md-12 errorDiv"
+								style="display: none;"></div>
+						</div>
 					</div>
 					<div class="row panel-body">
-						<!-- <div class="col-md-12" style="">
-							<table class="table table-striped tblborder1"
-								id="cassandraNodeTable">
-								<thead class="tblborder2">
-									<tr>
-										<th><input type='checkbox' id='nodeCheckCassandraHead'
-											onclick="com.impetus.ankush.hybrid_Cassandra.checkAllNodes('nodeCheckCassandraHead','cassandraNodeCheckBox')"></th>
-										<th>IP</th>
-										<th>Node Roles</th>
-										<th>SeedNode</th>
-										<th>OS</th>
-										<th>VNode Count</th>
-										<th></th>
-									</tr>
-								</thead>
-								<tbody>
-								</tbody>
-							</table>
-						</div> -->
-
-
-
 						<div class="row">
 							<div class="col-md-2 text-right">
 								<label id="lblVendor-Cassandra" class="form-label">Vendor:</label>
@@ -131,10 +86,10 @@
 									<button class="btn btn-default nodeListRadio active btnGrp"
 										data-value="0" id="bundleSourceDownload-Cassandra"
 										name="sourcePathBtnCassandra"
-										onclick="com.impetus.ankush.common.buttonClick('downloadPathDiv','localPathDiv');">Download</button>
+										onclick="com.impetus.ankush.hybridClusterCreation.buttonClick('downloadPathDiv','localPathDiv');">Download</button>
 									<button class="btn btn-default nodeListRadio btnGrp"
 										data-value="1" id="bundleSourceLocalPath-Cassandra"
-										onclick="com.impetus.ankush.common.buttonClick('localPathDiv','downloadPathDiv');">Local
+										onclick="com.impetus.ankush.hybridClusterCreation.buttonClick('localPathDiv','downloadPathDiv');">Local
 									</button>
 								</div>
 							</div>

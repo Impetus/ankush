@@ -20,7 +20,6 @@
  ******************************************************************************/
 package com.impetus.ankush2.hadoop.deployer.configurator;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -35,7 +34,6 @@ import com.impetus.ankush.common.scripting.AnkushTask;
 import com.impetus.ankush.common.scripting.impl.AddEnvironmentVariables;
 import com.impetus.ankush.common.scripting.impl.AppendFileUsingEcho;
 import com.impetus.ankush.common.scripting.impl.ClearFile;
-import com.impetus.ankush.common.scripting.impl.ExecSudoCommand;
 import com.impetus.ankush.common.scripting.impl.SourceFile;
 import com.impetus.ankush.common.service.ConfigurationManager;
 import com.impetus.ankush2.constant.Constant;
@@ -202,12 +200,6 @@ public class Hadoop1Configurator extends HadoopConfigurator {
 					.put(HadoopUtils.KEY_HADOOP_CONF_DIR,
 							(String) compConfig
 									.getAdvanceConfProperty(HadoopConstants.AdvanceConfKeys.DIR_CONF));
-			// String valPathvariable = HadoopUtils
-			// .getPathVariableValue(nodeConfig)
-			// + ":"
-			// + HadoopUtils.getHadoopBinDir(this.compConfig);
-			// envVariableMap.put(HadoopUtils.KEY_PATH_VARIABLE,
-			// valPathvariable);
 
 			AnkushTask addEnvVariables = new AddEnvironmentVariables(
 					envVariableMap, Constant.LinuxEnvFiles.BASHRC,

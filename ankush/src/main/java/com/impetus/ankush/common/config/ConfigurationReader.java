@@ -21,16 +21,16 @@
 package com.impetus.ankush.common.config;
 
 import java.io.File;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import com.impetus.ankush.common.utils.AnkushLogger;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 /**
  * The Class ConfigurationReader.

@@ -46,12 +46,12 @@ import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 import org.springframework.web.servlet.support.WebContentGenerator;
 
-import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.domain.User;
 import com.impetus.ankush.common.exception.ControllerException;
 import com.impetus.ankush.common.framework.config.ErrorInfo;
 import com.impetus.ankush.common.service.UserManager;
 import com.impetus.ankush.common.utils.ResponseWrapper;
+import com.impetus.ankush2.constant.Constant;
 
 /**
  * Implementation of <strong>SimpleFormController</strong> that contains

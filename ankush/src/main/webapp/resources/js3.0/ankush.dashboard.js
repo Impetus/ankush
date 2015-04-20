@@ -342,9 +342,6 @@ com.impetus.ankush.dashboard = {
 	                }
 	        });	
 	},
-	
-	
-	
 	// this method will get user name will be shown in profile pop up box
 	getUserId : function() {
 		url = baseUrl + '/user/userid';
@@ -361,116 +358,5 @@ com.impetus.ankush.dashboard = {
 			errorCountMsg = errorCount + " Error";
 		}
 		return errorCountMsg;
-	},
-	underMaintenanceClusters : function(){
-		url = baseUrl + '/dashboardnew/clusterMaintenance';
-		$('#content-panel').sectionSlider('addChildPanel', {
-            current : 'login-panel',
-            url : url,
-            method : 'get',
-            params : {
-            	
-            },
-            title : 'Cluster Maintenance',
-            tooltipTitle : 'Cluster Overview',
-            callback : function(data) {
-            com.impetus.ankush.dashboard.getMaintenanceClusterData();
-            },
-        	callbackData : {
-            }
-        });	
-	},
-	
-	getMaintenanceClusterData:function(){
-		var url=baseUrl + '/monitor/maintenancedetails';
-		com.impetus.ankush.placeAjaxCall(url,'GET',true,null,function(result){
-		
-			var tableObj = new Array();
-			for ( var i = 0; i < result.output.clusters.length; i++) {
-				for ( var j = 0; j < result.output.clusters[i].nodes.length; j++) {
-					var rowObj = new Array();
-					rowObj.push( '<ins class="left"></ins><div class="left">&nbsp;&nbsp;&nbsp;&nbsp;'+result.output.clusters[i].clusterName+'</div>');
-					rowObj.push("");
-					rowObj.push(result.output.clusters[i].nodes[j].host);
-					rowObj.push(result.output.clusters[i].nodes[j].status);
-					rowObj.push("<a href='#' onclick='com.impetus.ankush.dashboard.loadMaintenanceNode(\""+ result.output.clusters[i].clusterId+"\",\""+ result.output.clusters[i].nodes[j].host+"\")'>"+ right_arrow+ "</a>");
-					tableObj.push(rowObj);
-				}
-			}if(maintenanceNodeTable==null){
-				maintenanceNodeTable.dataTable();
-			}else{
-				maintenanceNodeTable.fnClearTable();
-			}	
-			maintenanceNodeTable.fnAddData(tableObj);	
-		});
-	},
-	loadMaintenanceNode : function(clusterId,host){
-		url = baseUrl + '/dashboardnew/nodeMaintenance';
-		lastLogMaintenance=0;
-		$('#content-panel').sectionSlider('addChildPanel', {
-            current : 'login-panel',
-            url : url,
-            method : 'get',
-            params : {
-            	clusterId:clusterId,
-            	host:host
-            },
-            title : 'Node Maintenance',
-            tooltipTitle : 'Cluster Maintenance',
-            callback : function(data) {
-            com.impetus.ankush.dashboard.getMaintenanceNodeData();
-            },
-        	callbackData : {
-            }
-        });	
-	},
-	getMaintenanceNodeData:function(){
-		var url=baseUrl + '/monitor/'+clusterId+'/mlogs?ip='+host+'&lastlog=' + lastLogMaintenance;
-		com.impetus.ankush.placeAjaxCall(url,'GET',true,null,function(result){
-			lastLogMaintenance=result.output.lastlog;
-			$("#nodeMaintenanceStatus").text(result.output.nodeStatus);
-				$("#nodeMaintenanceStatusLabel").removeClass('label-success').removeClass('label-important');
-				 if (result.output.nodeStatus=="Failed") {
-					$("#nodeMaintenanceStatusLabel").addClass('label-important');
-					$("#nodeMaintenanceStatusLabel").html('').text("Error during maintenance");
-				} else if (result.output.nodeStatus=="Done") {
-					$("#nodeMaintenanceStatusLabel").addClass('label-success');
-					$("#nodeMaintenanceStatusLabel").html('').text("Maintenance progress completed");
-				}else{
-					$("#nodeMaintenanceStatusLabel").html('').text("Maintenance in progress");
-				}
-				for ( var i = 0; i < result.output.logs.length; i++) {
-					if (result.output.logs[i].type == 'error') {
-						$('#nodeMaintenanceProgress').prepend('<div style="color:red">'	+ result.output.logs[i].longMessage+ '</div>');
-					} else {
-						$('#nodeMaintenanceProgress').prepend('<div>'+ result.output.logs[i].longMessage + '</div>');
-					}
-				}
-				if(result.output.nodeStatus=="Done" ||result.output.nodeStatus=="Failed"){
-					autoRefreshCallsObject[$.data(
-							document, "panels").children.length][0].varName = window.clearInterval(autoRefreshCallsObject[$.data(
-							document, "panels").children.length][0].varName);
-					autoRefreshCallsObject[$.data(
-							document, "panels").children.length][0].varName = window.clearInterval(autoRefreshCallsObject[$.data(
-							document, "panels").children.length][0].varName);
-				}
-				
-				
-				if (result.output.nodeStatus=="Failed") {
-					$('#nodeErrorDiv').show();
-				}
-				$('#errorOnNodeDiv').css("margin-top","12px");
-				for ( var key in result.output.errors) {
-					$('#errorOnNodeDiv').append('<label class="text-left" style="color: black;" id="'+ key+ '">'+ result.output.errors[key]+ '</label>');
-				}
-				
-				
-		});
-	},
-	dialogRemove:function(){
-		$("#templateCreate").remove();
-		$("#confirmTemplate").remove();
-		$("#deleteClusterDialogDeploy").remove();
-		$("#deleteClusterDialogcommonMonitor").remove();
 	},
 };

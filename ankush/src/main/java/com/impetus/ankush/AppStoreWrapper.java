@@ -43,28 +43,19 @@ import org.springframework.core.io.Resource;
 
 import com.impetus.ankush.common.config.ConfigurationReader;
 import com.impetus.ankush.common.domain.Log;
-import com.impetus.ankush.common.framework.AbstractMonitor;
-import com.impetus.ankush.common.framework.Clusterable;
-import com.impetus.ankush.common.framework.ComponentUpgrader;
-import com.impetus.ankush.common.framework.Deployable;
-import com.impetus.ankush.common.framework.Registerable;
-import com.impetus.ankush.common.framework.ServiceMonitorable;
-import com.impetus.ankush.common.framework.config.ClusterConf;
 import com.impetus.ankush.common.mail.MailConf;
 import com.impetus.ankush.common.mail.MailManager;
 import com.impetus.ankush.common.service.AsyncExecutorService;
 import com.impetus.ankush.common.service.GenericManager;
-import com.impetus.ankush.common.utils.AnkushLogger;
 import com.impetus.ankush.common.utils.FileUtils;
 import com.impetus.ankush.common.utils.PasswordUtil;
-import com.impetus.ankush.common.utils.ReflectionUtil;
 import com.impetus.ankush.common.utils.XmlUtil;
 import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush2.hadoop.config.CmpConfigMapping;
 import com.impetus.ankush2.hadoop.config.CmpConfigMappingSet;
 import com.impetus.ankush2.hadoop.utils.HadoopConstants;
-import com.impetus.ankush2.hadoop.utils.HadoopUtils;
 import com.impetus.ankush2.hadoop.utils.HadoopConstants.ConfigXmlKeys.Attributes;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 /**
  * The Class AppStoreWrapper.
@@ -518,19 +509,19 @@ public class AppStoreWrapper {
 			String filePath = resource.getFile().getAbsolutePath();
 
 			List<String> subItems = new ArrayList<String>();
-			subItems.add(com.impetus.ankush2.constant.Constant.AppStore.ComponentConf.Key.NAME);
-			subItems.add(com.impetus.ankush2.constant.Constant.AppStore.ComponentConf.Key.PRIORITY);
-			subItems.add(com.impetus.ankush2.constant.Constant.AppStore.ComponentConf.Key.DEPLOYER);
-			subItems.add(com.impetus.ankush2.constant.Constant.AppStore.ComponentConf.Key.MONITOR);
-			subItems.add(com.impetus.ankush2.constant.Constant.AppStore.ComponentConf.Key.SERVICE);
+			subItems.add(Constant.AppStore.ComponentConf.Key.NAME);
+			subItems.add(Constant.AppStore.ComponentConf.Key.PRIORITY);
+			subItems.add(Constant.AppStore.ComponentConf.Key.DEPLOYER);
+			subItems.add(Constant.AppStore.ComponentConf.Key.MONITOR);
+			subItems.add(Constant.AppStore.ComponentConf.Key.SERVICE);
 
 			Map items = XmlUtil
 					.loadConfigXMLParameters(
 							filePath,
-							com.impetus.ankush2.constant.Constant.AppStore.ComponentConf.Key.COMPONENT,
+							Constant.AppStore.ComponentConf.Key.COMPONENT,
 							subItems);
 			AppStore.setObject(
-					com.impetus.ankush2.constant.Constant.AppStore.COMPONENT_MAP,
+					Constant.AppStore.COMPONENT_MAP,
 					items);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
@@ -540,7 +531,7 @@ public class AppStoreWrapper {
 	public static CmpConfigMappingSet getCmpConfigMapping(String component) {
 
 		Map<String, CmpConfigMappingSet> cmpConfigMapping = (HashMap) AppStore
-				.getObject(com.impetus.ankush2.constant.Constant.AppStore.CompConfigXmlMapping.KEY_APP_STORE_OBJECT);
+				.getObject(Constant.AppStore.CompConfigXmlMapping.KEY_APP_STORE_OBJECT);
 		return cmpConfigMapping.get(component.toLowerCase());
 	}
 
@@ -583,7 +574,7 @@ public class AppStoreWrapper {
 			}
 		}
 		AppStore.setObject(
-				com.impetus.ankush2.constant.Constant.AppStore.CompConfigXmlMapping.KEY_APP_STORE_OBJECT,
+				Constant.AppStore.CompConfigXmlMapping.KEY_APP_STORE_OBJECT,
 				cmpConfigMapping);
 	}
 
@@ -707,112 +698,6 @@ public class AppStoreWrapper {
 	}
 
 	/**
-	 * Gets the clusterable instance by id.
-	 * 
-	 * @param id
-	 *            the id
-	 * @return the clusterable instance by id
-	 */
-	public static Clusterable getClusterableInstanceById(String id) {
-		// get clusterable class from id
-		Map map = (Map) AppStore.getObject("cluster");
-		Map classConfMap = (Map) map.get(id);
-		try {
-			String className = (String) classConfMap.get("class");
-			/*
-			 * if (className == null) { return null; }
-			 */
-			// create clusterable object
-			return ReflectionUtil.getClusterableObject(className);
-		} catch (NullPointerException e) {
-			return null;
-		}
-	}
-
-	public static ClusterConf getClusterConfInstanceById(String id) {
-		// get clusterable class from id
-		Map map = (Map) AppStore.getObject("clusterconf");
-		Map classConfMap = (Map) map.get(id);
-		try {
-			String className = (String) classConfMap.get("class");
-			/*
-			 * if (className == null) { return null; }
-			 */
-			return ReflectionUtil.getClusterConfObject(className);
-		} catch (NullPointerException e) {
-			return null;
-		}
-	}
-
-	public static Registerable getRegisterableInstanceById(String id) {
-		// get clusterable class from id
-		Map map = (Map) AppStore.getObject("cluster");
-		Map classConfMap = (Map) map.get(id);
-		try {
-			String className = (String) classConfMap.get("class");
-			/*
-			 * if (className == null) { return null; }
-			 */
-			// create Registerable object
-			return ReflectionUtil.getRegisterableObject(className);
-		} catch (NullPointerException e) {
-			return null;
-		}
-	}
-
-	/**
-	 * Gets the monitorable instance by id.
-	 * 
-	 * @param id
-	 *            the id
-	 * @return the monitorable instance by id
-	 */
-	public static AbstractMonitor getMonitorableInstanceById(String id) {
-		// get clusterable class from id
-		Map map = (Map) AppStore.getObject("monitor");
-		Map classConfMap = (Map) map.get(id);
-		// no class conf map is found, return null
-		if (classConfMap == null) {
-			return null;
-		}
-		String className = (String) classConfMap.get("class");
-
-		// if no class name found then return null.
-		if (className == null) {
-			return null;
-		}
-
-		// create clusterable object
-		return ReflectionUtil.getMonitorableObject(className);
-	}
-
-	/**
-	 * Gets the monitorable instance by id.
-	 * 
-	 * @param serviceName
-	 *            the id
-	 * @return the monitorable instance by id
-	 */
-	public static ServiceMonitorable getServiceMonitorableInstanceByServiceName(
-			String serviceName) {
-
-		Map map = (Map) AppStore.getObject("service");
-
-		Map classConfMap = (Map) map.get(serviceName);
-		// no class conf map is found, return null
-		if (classConfMap == null) {
-			return null;
-		}
-		String className = (String) classConfMap.get("class");
-
-		if (className == null) {
-			return null;
-		}
-		// create ServiceMonitorable object
-		return ReflectionUtil.getServiceMonitorableObject(className);
-	}
-
-	/**
 	 * Gets the deployable priority.
 	 * 
 	 * @param className
@@ -828,45 +713,6 @@ public class AppStoreWrapper {
 			return Integer.MAX_VALUE;
 		}
 		return Integer.parseInt(priority);
-	}
-
-	/**
-	 * Gets the instance by id.
-	 * 
-	 * @param id
-	 *            the id
-	 * @return the instance by id
-	 */
-	public static Deployable getDeployableInstanceById(String id) {
-		Map map = (Map) AppStore.getObject("deployer");
-		Map classConfMap = (Map) map.get(id);
-		String className = (String) classConfMap.get("class");
-
-		if (className == null) {
-			return null;
-		}
-		// create deployable object
-		return ReflectionUtil.getDeployableObject(className);
-	}
-
-	/**
-	 * Gets the instance by id.
-	 * 
-	 * @param id
-	 *            the id
-	 * @return the instance by id
-	 */
-	public static ComponentUpgrader getComponentUpgrader(String id) {
-		Map map = (Map) AppStore.getObject("deployer");
-		Map classConfMap = (Map) map.get(id);
-		String className = (String) classConfMap.get("upgrader");
-
-		if (className == null) {
-			return null;
-		}
-		// create deployable object
-		return ReflectionUtil.getObjectInstance(className,
-				ComponentUpgrader.class);
 	}
 
 	/**

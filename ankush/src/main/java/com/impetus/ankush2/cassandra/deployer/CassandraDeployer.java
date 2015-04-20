@@ -37,7 +37,6 @@ import net.neoremind.sshxcute.task.impl.ExecCommand;
 import org.apache.commons.lang3.StringUtils;
 
 import com.impetus.ankush.AppStoreWrapper;
-import com.impetus.ankush.common.agent.ComponentService;
 import com.impetus.ankush.common.exception.AnkushException;
 import com.impetus.ankush.common.scripting.AnkushTask;
 import com.impetus.ankush.common.scripting.impl.AppendFileUsingEcho;
@@ -50,6 +49,7 @@ import com.impetus.ankush.common.utils.FileNameUtils;
 import com.impetus.ankush.common.utils.JmxMonitoringUtil;
 import com.impetus.ankush2.agent.AgentConstant;
 import com.impetus.ankush2.agent.AgentUtils;
+import com.impetus.ankush2.agent.ComponentService;
 import com.impetus.ankush2.cassandra.monitor.CassandraJMX;
 import com.impetus.ankush2.cassandra.utils.CassandraConstants;
 import com.impetus.ankush2.cassandra.utils.CassandraUtils;

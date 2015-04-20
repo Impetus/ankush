@@ -1,1 +1,0 @@
-yum -q -y install httpd

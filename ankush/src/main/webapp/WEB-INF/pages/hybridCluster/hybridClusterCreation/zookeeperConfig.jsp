@@ -32,40 +32,20 @@
 	<div class="">
 		<div class="">
 			<div class="col-md-4">
-			<h2 id="zookeeperConfigHeader" style="display: none;">Configuration</h2>
-				<!-- 	<h2 id="zookeeperConfigHeader1">Zookeeper/Configuration</h2>
-				 -->
+				<h2 id="zookeeperConfigHeader" style="display: none;">Configuration</h2>
 			</div>
-			<div class="col-md-1">
-				<!-- 	<button class="btn btn-danger mrgt20" id="validateErrorZookeeper"
-					onclick="com.impetus.ankush.common.focusError();"
-					style="display: none;" type="button">
-					Messages <span class="badge" id="badgeText"></span>
-				</button> -->
-			</div>
-			<div class="col-md-7 text-right mrgt20 padr45">
-				<!-- <button id="revertZookeeper" class="btn btn-default"
-					onclick="com.impetus.ankush.hybridClusterCreation.dynamicRowRemove();">Cancel</button>
-				<button class="btn btn-default" id="applyZookeeper"
-					onclick="com.impetus.ankush.hybrid_Zookeeper.zookeeperConfigValidate();">Apply</button> -->
-			</div>
+			<div class="col-md-1"></div>
+			<div class="col-md-7 text-right mrgt20 padr45"></div>
 		</div>
 	</div>
 	<div class="" id="main-content">
 		<div class="container-fluid mrgnlft8">
-			<div class="row">
-				<!-- <div id="errorDivMainZookeeper" class="col-md-12 errorDiv"
-					style="display: none;"></div> -->
-			</div>
+			<div class="row"></div>
 
 			<div class="panel ">
 				<div class="panel-heading">
 					<div class="">
 						<h2 id="zookeeperConfigHeader1" class="panel-title col-md-2 mrgt5">Zookeeper/Configuration</h2>
-						<!-- 	<button class="btn btn-default btn-danger"
-								id="validateErrorCassandra"
-								onclick="com.impetus.ankush.common.focusError();"
-								style="display: none;"></button> -->
 						<button id="revertZookeeper" class="btn btn-default"
 							onclick="com.impetus.ankush.hybridClusterCreation.dynamicRowRemove();">Cancel</button>
 						<button class="btn btn-default" id="applyZookeeper"
@@ -75,10 +55,6 @@
 						<div id="errorDivMainZookeeper" class="errorDiv mrgt10"
 							style="display: none;"></div>
 					</div>
-					<!-- <div class="pull-right panelSearch">
-							<input type="text" id="nodeSearchBoxCasandra"
-								placeholder="Search" class="input-medium form-control" />
-						</div> -->
 				</div>
 				<div class="row panel-body">
 					<div class="row">
@@ -108,7 +84,8 @@
 							<label class=" form-label">Source:</label>
 						</div>
 						<div class="col-md-10 col-lg-2 form-group ">
-							<div class="btn-group" id="sourcePathBtnGrp" data-toggle="buttons-radio">
+							<div class="btn-group" id="sourcePathBtnGrp"
+								data-toggle="buttons-radio">
 								<button class="btn btn-default nodeListRadio active btnGrp"
 									data-value="0" id="zookeeperDownloadRadio"
 									onclick="com.impetus.ankush.hybridClusterCreation.buttonClick('zookeeperDownloadPathDiv','zookeeperLocalPathDiv');">Download</button>
@@ -120,9 +97,7 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class=" col-md-2 text-right">
-							<!-- <label class=" form-label">Path:</label> -->
-						</div>
+						<div class=" col-md-2 text-right"></div>
 						<div class="col-md-5 col-lg-4 form-group"
 							id="zookeeperDownloadPathDiv">
 							<input id="zookeeperDownloadPath" type="text"
@@ -130,8 +105,7 @@
 								title="Enter download path of zookeeper binary file"
 								data-placement="right"></input>
 						</div>
-						<div class="col-md-5 col-lg-4 form-group"
-							style="display: none;"
+						<div class="col-md-5 col-lg-4 form-group" style="display: none;"
 							id="zookeeperLocalPathDiv">
 							<input id="zookeeperLocalPath" type="text"
 								class="input-xlarge form-control" placeholder="Source  Path"

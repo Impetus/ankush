@@ -26,7 +26,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
@@ -36,10 +35,7 @@ import net.neoremind.sshxcute.core.SSHExec;
 import com.impetus.ankush.AppStoreWrapper;
 import com.impetus.ankush.common.domain.Cluster;
 import com.impetus.ankush.common.domain.Operation;
-import com.impetus.ankush.common.domain.Tile;
 import com.impetus.ankush.common.exception.AnkushException;
-import com.impetus.ankush.common.tiles.TileInfo;
-import com.impetus.ankush.common.tiles.TileManager;
 import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush2.db.DBClusterManager;
 import com.impetus.ankush2.db.DBOperationManager;
@@ -573,54 +569,6 @@ public class ServiceManager {
 			throw new AnkushException(
 					"There is some exception while getting nodes on which "
 							+ role + " exists.", e);
-		}
-	}
-
-	/**
-	 * Used to create operation tile
-	 */
-	private void createOperationTile(String operation) {
-
-		Map<String, Object> data = new HashMap<String, Object>();
-		Long operationDbId = new DBOperationManager()
-				.getOperationDbId(clusterConfig);
-		if (operationDbId == null) {
-			logger.error("Could not get operation id for operation "
-					+ operation);
-			return;
-		}
-		data.put("operationDbId", operationDbId);
-		data.put("clusterId", clusterConfig.getClusterId());
-		data.put("operationId", clusterConfig.getOperationId());
-
-		// Create operation tile
-		TileInfo tileInfo = new TileInfo();
-		tileInfo.setLine1(operation);
-		tileInfo.setLine2("Is in progress");
-		tileInfo.setUrl(SERVICE_MANAGE_OPERATION);
-		tileInfo.setStatus(Constant.Tile.Status.NORMAL);
-		tileInfo.setData(data);
-		Tile tile = new TileManager().saveTile(tileInfo, dbCluster.getId());
-		this.tileId = tile.getId();
-	}
-
-	/**
-	 * Used to destroy operation tile
-	 */
-	private void removeOperationTile() {
-		// Fetch operation tile
-		TileManager tileManager = new TileManager();
-		Tile tile = tileManager.getTile(tileId);
-
-		if (tile != null) {
-			TileInfo tileInfo = tile.getTileInfoObj();
-			// TODO: Deciding operation fail or completed using clusterConfig
-			// data
-			// Save tile
-			tileInfo.setUrl(null);
-			tile.setTileInfoObj(tileInfo);
-			tile.setDestroy(true);
-			tileManager.saveTile(tile);
 		}
 	}
 

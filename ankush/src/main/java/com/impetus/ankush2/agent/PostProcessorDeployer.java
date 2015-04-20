@@ -28,7 +28,6 @@ import java.util.concurrent.Semaphore;
 import net.neoremind.sshxcute.core.SSHExec;
 
 import com.impetus.ankush.AppStoreWrapper;
-import com.impetus.ankush.common.agent.AgentUtils;
 import com.impetus.ankush.common.config.ConfigurationReader;
 import com.impetus.ankush.common.exception.AnkushException;
 import com.impetus.ankush2.constant.Constant;
@@ -301,35 +300,10 @@ public class PostProcessorDeployer extends AbstractDeployer {
 	}
 
 	private boolean startNode(NodeConfig nodeConfig) throws AnkushException {
-//		final String host = nodeConfig.getHost();
-//		try {
-//			SSHExec connection = nodeConfig.getConnection();
-//			if (connection == null) {
-//				throw new AnkushException("Could not get connection.");
-//			}
-//			return new AgentServiceManager().startJmxTrans(clusterConfig,
-//					connection, host);
-//		} catch (AnkushException e) {
-//			throw e;
-//		} catch (Exception e) {
-//			throw new AnkushException("Could not start Agent");
-//		}
 		return true;
 	}
 
 	private boolean stopNode(NodeConfig nodeConfig) throws AnkushException {
-//		try {
-//			final String host = nodeConfig.getHost();
-//			SSHExec connection = nodeConfig.getConnection();
-//			if (connection == null) {
-//				throw new AnkushException("Could not get connection.");
-//			}
-//			return new AgentServiceManager().stopJmxTrans(clusterConfig,
-//					connection, host);
-//			
-//		} catch (AnkushException e) {
-//			throw e;
-//		}
 		return true;
 	}
 

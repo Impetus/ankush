@@ -20,7 +20,6 @@
  ******************************************************************************/
 package com.impetus.ankush.common.controller.rest;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,18 +58,6 @@ public class CommonController extends BaseController {
 	public void setClusterService(
 			@Qualifier("clusterService") ClusterService clusterManager) {
 		this.clusterService = clusterManager;
-	}
-
-	/**
-	 * Gets the dashboard.
-	 *
-	 * @return the dashboard
-	 */
-	@RequestMapping(method = RequestMethod.GET, value = "/dashboard", headers = "Accept=application/json")
-	@ResponseBody
-	public ResponseEntity<ResponseWrapper<List<Map<String, Object>>>> getDashboard() {
-		return wrapResponse(clusterService.getDashboardInfo(), HttpStatus.OK,
-				HttpStatus.OK.toString(), "DASHBOARD CLUSTERS");
 	}
 
 	/**

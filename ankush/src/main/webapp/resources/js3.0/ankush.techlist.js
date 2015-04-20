@@ -34,28 +34,10 @@ com.impetus.ankush.selectTechnology = {
 			}else {
 				url = baseUrl + '/'+cluster+'/clusterCreation/C-D/'+clusterTechnology+'/'+templateName;
 			}
-			/*if(undefined == templateName){
-				url = baseUrl + '/'+cluster+'/clusterCreation/C-D/';
-			}else{
-				url = baseUrl + '/'+cluster+'/clusterCreation/C-D/'+templateName;
-			}*/
+			
 			 $('#technologyDialogBox').modal('hide');
 				 title = capitalize(cluster.split('-').join(" "))+"Creation";
 				 tooltipTittle='Cluster Overview';
 				   $(location).attr('href',(url));
-			     /*$('#content-panel').sectionSlider('addChildPanel', {
-	 		    	current : 'login-panel',
-			    
-			        method : 'get',
-			        title : title,
-			        tooltipTitle :tooltipTittle ,
-	    			params : {
-	    				templateName:templateName,
-	    			},
-	                callback : function(){
-	                	
-	                }		 
-	    			
-	  		});*/
 		}	
 };

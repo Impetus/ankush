@@ -29,20 +29,11 @@
 		<div class="">
 			<div class="">
 				<div class="col-md-4">
-					<!-- 	<h2>Ganglia/Configuration</h2> -->
 				</div>
 				<div class="col-md-1">
-					<!-- <button class="btn btn-danger mrgt20" id="validateErrorGanglia"
-						onclick="com.impetus.ankush.common.focusError();"
-						style="display: none;">
-						<span class="badge" id="badgeText"></span>
-					</button> -->
+				
 				</div>
 				<div class="col-md-7 text-right mrgt20 padr45">
-					<!-- <button id="revertGanglia" class="btn btn-default"
-						onclick="com.impetus.ankush.hybridClusterCreation.dynamicRowRemove();">Cancel</button>
-					<button class="btn btn-default" id="applyGanglia"
-						onclick="com.impetus.ankush.hybrid_Ganglia.gangliaConfigValidate();">Apply</button> -->
 				</div>
 			</div>
 		</div>
@@ -52,34 +43,12 @@
 		<div class="" id="main-content">
 			<div class="container-fluid mrgnlft8">
 				<div class="row">
-					<!-- <div id="errorDivMainGanglia" class="col-md-12 errorDiv"
-						style="display: none;"></div> -->
 				</div>
-
-				<!-- <div class="row">
-			<div class=" col-md-2 text-right">
-				<label class=" form-label">Operation Type:</label>
-			</div>
-			<div class="col-md-10 col-lg-2 ">
-				<div class="btn-group" data-toggle="buttons-radio" id="selectBtnGrp"
-					style="margin-top: 8px;">
-					<button class="btn nodeListRadio active btnGrp" data-value="0"
-						id="gangliaDeploy"
-						onclick="">Deploy</button>
-					<button class="btn nodeListRadio btnGrp" data-value="1"
-						id="gangliaRegister"
-						onclick="">Register</button>
-				</div>
-			</div>
-		</div> -->
 				<div class="panel ">
 					<div class="panel-heading">
 						<div class="">
 							<h3 class="panel-title col-md-2 mrgt5">Ganglia/Configuration</h3>
-							<!-- 	<button class="btn btn-default btn-danger"
-								id="validateErrorCassandra"
-								onclick="com.impetus.ankush.common.focusError();"
-								style="display: none;"></button> -->
+							
 							<button id="revertGanglia" class="btn btn-default"
 								onclick="com.impetus.ankush.hybridClusterCreation.dynamicRowRemove();">Cancel</button>
 							<button class="btn btn-default" id="applyGanglia"
@@ -88,10 +57,6 @@
 						<div class="row">
 							<div id="errorDivMainGanglia" class="col-md-12 errorDiv mrgt10"
 								style="display: none;"></div>
-							<!-- <div class="pull-right panelSearch">
-							<input type="text" id="nodeSearchBoxCasandra"
-								placeholder="Search" class="input-medium form-control" />
-						</div> -->
 						</div>
 					</div>
 					<div class="row panel-body">

@@ -109,16 +109,7 @@
 							title="Enter JobTracker" data-placement="right"></input>
 					</div>
 				</div>
-				<!-- <div class="row" id="homeDirDiv">
-					<div class=" col-md-2 text-right">
-						<label class=" form-label">Home Directory:</label>
-					</div>
-					<div class="col-md-10 col-lg-2 form-group">
-						<input id="homeDir" type="text" data-toggle="tooltip"
-							class="input-small form-control" placeholder="Home Directory"
-							title="Enter Home Directory" data-placement="right"></input>
-					</div>
-				</div> -->
+				
 				<div class="row">
 					<div class=" col-md-2 text-right">
 						<label class=" form-label">HTTP Port NameNode:</label>
@@ -150,55 +141,6 @@
 						</select>
 					</div>
 				</div>
-				<!-- <div id="hadoop2Conf">
-					<div class="row" id="webAppProxyDiv">
-						<div class="col-md-2 text-right">
-							<label class=" form-label">Web Application Proxy:</label>
-						</div>
-						<div class="col-md-10 col-lg-2 form-group">
-							<div style="margin-top: 8px; margin-bottom: 15px"
-								id="webAppProxyGroupBtn" data-toggle="buttons-radio"
-								class="btn-group">
-								<button onclick="" id="webAppProxyEnable" data-value="0"
-									class="btn btn-default active btnGrp">Enable</button>
-								<button onclick="" id="webAppProxyDisable" data-value="1"
-									class="btn btn-default btnGrp">Disable</button>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-2 text-right">
-							<label class=" form-label">High Availability:</label>
-						</div>
-						<div class="col-md-10 col-lg-2 form-group">
-							<div class="btn-group" data-toggle="buttons-radio" id="haBtnGrp"
-								style="margin-top: 8px;">
-								<button class="btn btn-default nodeListRadio active btnGrp"
-									data-value="0" id="haBtnEnable"
-									onclick="com.impetus.ankush.register_Hadoop.divToggle('haPropDiv','Enable');">Enable</button>
-								<button class="btn btn-default nodeListRadio btnGrp"
-									data-value="1" id="haBtnDisable"
-									onclick="com.impetus.ankush.register_Hadoop.divToggle('haPropDiv','Disable');">Disable</button>
-							</div>
-						</div>
-					</div>
-					<div id="haPropDiv">
-						<div class="row">
-							<div class="col-md-2 text-right">
-								<label class=" form-label">Automatic Failover:</label>
-							</div>
-							<div class="col-md-10 col-lg-2 form-group">
-								<div class="btn-group" data-toggle="buttons-radio"
-									id="autoFailBtnGrp" style="margin-top: 8px;">
-									<button class="btn btn-default nodeListRadio active btnGrp"
-										data-value="0" id="autoFailEnable" onclick="">Enable</button>
-									<button class="btn btn-default nodeListRadio btnGrp"
-										data-value="1" id="autoFailDisable" onclick="">Disable</button>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div> -->
 			</div>
 		</div>
 	</div>

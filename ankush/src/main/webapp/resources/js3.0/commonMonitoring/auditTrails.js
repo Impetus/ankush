@@ -19,6 +19,7 @@
 * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 *******************************************************************************/
 com.impetus.ankush.auditTrail = {
+		//this function will populate audit trail page
 		commonAuditTrail :  function() {
 			if((clusterId == null) || (clusterId == undefined))
 				return ;

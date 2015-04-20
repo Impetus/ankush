@@ -43,7 +43,6 @@ import org.apache.commons.lang.text.StrSubstitutor;
 import org.aspectj.util.FileUtil;
 
 import com.impetus.ankush.AppStoreWrapper;
-import com.impetus.ankush.common.agent.ComponentService;
 import com.impetus.ankush.common.exception.AnkushException;
 import com.impetus.ankush.common.scripting.AnkushTask;
 import com.impetus.ankush.common.scripting.impl.AppendFileUsingEcho;
@@ -54,6 +53,7 @@ import com.impetus.ankush.common.utils.FileNameUtils;
 import com.impetus.ankush.common.utils.Symbols;
 import com.impetus.ankush2.agent.AgentConstant;
 import com.impetus.ankush2.agent.AgentUtils;
+import com.impetus.ankush2.agent.ComponentService;
 import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush2.framework.AbstractDeployer;
 import com.impetus.ankush2.framework.config.ClusterConfig;

@@ -39,8 +39,6 @@ import javax.persistence.Transient;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.Index;
 
-import com.impetus.ankush.common.constant.Constant;
-
 /**
  * It is used for storing the events of the cluster.
  * 

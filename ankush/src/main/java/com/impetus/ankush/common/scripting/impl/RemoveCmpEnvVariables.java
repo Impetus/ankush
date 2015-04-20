@@ -23,41 +23,50 @@
  */
 package com.impetus.ankush.common.scripting.impl;
 
-import com.impetus.ankush.common.constant.Constant;
+import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush.common.scripting.AnkushTask;
 
 /**
  * @author Akhil
- *
+ * 
  */
 public class RemoveCmpEnvVariables extends AnkushTask {
 
 	private String componentName;
-	
+
 	/** The file path. */
 	private String filePath;
 
 	/**
 	 * Instantiates a new remove env variable.
-	 *
-	 * @param password the password
-	 * @param name the name
-	 * @param value the value
-	 * @param filePath the file path
+	 * 
+	 * @param password
+	 *            the password
+	 * @param name
+	 *            the name
+	 * @param value
+	 *            the value
+	 * @param filePath
+	 *            the file path
 	 */
 	public RemoveCmpEnvVariables(String componentName, String filePath) {
 		this.componentName = componentName;
 		this.filePath = filePath;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.neoremind.sshxcute.task.CustomTask#getCommand()
 	 */
 	@Override
 	public String getCommand() {
-		String startPattern = Constant.TEXT_COMMENT_START + this.componentName;
-		String endPattern = Constant.TEXT_COMMENT_END + this.componentName;
-		AnkushTask task = new RemoveTextBetweenPatterns(startPattern, endPattern, filePath);
+		String startPattern = Constant.Strings.TEXT_COMMENT_START
+				+ this.componentName;
+		String endPattern = Constant.Strings.TEXT_COMMENT_END
+				+ this.componentName;
+		AnkushTask task = new RemoveTextBetweenPatterns(startPattern,
+				endPattern, filePath);
 		return task.getCommand();
 	}
 }

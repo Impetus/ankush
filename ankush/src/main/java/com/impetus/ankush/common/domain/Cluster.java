@@ -32,8 +32,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
@@ -43,8 +41,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.SerializationUtils;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
-import com.impetus.ankush.common.alerts.AlertsConf;
-import com.impetus.ankush.common.framework.config.ClusterConf;
+import com.impetus.ankush2.framework.config.AlertsConf;
 import com.impetus.ankush2.framework.config.ClusterConfig;
 
 /**
@@ -101,9 +98,6 @@ public class Cluster extends BaseObject {
 	/** The configurations. */
 	private List<Configuration> configurations;
 
-	/** The tiles. */
-	private List<Tile> tiles;
-
 	/** The operations. */
 	private List<Operation> operations;
 
@@ -148,27 +142,6 @@ public class Cluster extends BaseObject {
 	 */
 	public void setHaServices(List<HAService> haServices) {
 		this.haServices = haServices;
-	}
-
-	/**
-	 * Gets the tiles.
-	 * 
-	 * @return the tiles
-	 */
-	@OneToMany(mappedBy = CLUSTER_ID, fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-	@JsonIgnore
-	public List<Tile> getTiles() {
-		return tiles;
-	}
-
-	/**
-	 * Sets the tiles.
-	 * 
-	 * @param tiles
-	 *            the tiles to set
-	 */
-	public void setTiles(List<Tile> tiles) {
-		this.tiles = tiles;
 	}
 
 	/**
@@ -505,24 +478,6 @@ public class Cluster extends BaseObject {
 	 */
 	public void setUser(String user) {
 		this.user = user;
-	}
-
-	/**
-	 * Gets the cluster conf.
-	 * 
-	 * @return the cluster conf
-	 */
-	@Transient
-	public ClusterConf getClusterConf() {
-		if (getConfBytes() == null) {
-			return null;
-		}
-		return (ClusterConf) SerializationUtils.deserialize(getConfBytes());
-	}
-
-	@Transient
-	public void setClusterConf(ClusterConf clusterConf) {
-		setConfBytes(SerializationUtils.serialize(clusterConf));
 	}
 
 	@Transient

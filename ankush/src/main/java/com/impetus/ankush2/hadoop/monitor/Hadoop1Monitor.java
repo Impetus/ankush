@@ -34,7 +34,6 @@ import java.util.Set;
 import net.sf.json.JSONArray;
 
 import com.impetus.ankush.common.exception.AnkushException;
-
 import com.impetus.ankush.common.utils.JsonMapperUtil;
 import com.impetus.ankush.common.utils.LogViewHandler;
 import com.impetus.ankush2.constant.Constant;

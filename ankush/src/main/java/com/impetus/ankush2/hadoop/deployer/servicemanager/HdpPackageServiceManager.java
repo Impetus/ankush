@@ -26,24 +26,15 @@ package com.impetus.ankush2.hadoop.deployer.servicemanager;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.neoremind.sshxcute.task.CustomTask;
-import net.neoremind.sshxcute.task.impl.ExecCommand;
-
-import com.impetus.ankush.common.agent.AgentUtils;
-import com.impetus.ankush.common.agent.ComponentService;
-import com.impetus.ankush.common.agent.Parameter;
-import com.impetus.ankush.common.scripting.impl.AppendFileUsingEcho;
-import com.impetus.ankush2.agent.AgentDeployer;
+import com.impetus.ankush2.agent.AgentUtils;
+import com.impetus.ankush2.agent.ComponentService;
+import com.impetus.ankush2.common.Parameter;
 import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush2.constant.Constant.Component;
-import com.impetus.ankush2.framework.Serviceable;
 import com.impetus.ankush2.framework.config.ClusterConfig;
 import com.impetus.ankush2.framework.config.ComponentConfig;
 import com.impetus.ankush2.framework.config.NodeConfig;
-import com.impetus.ankush2.hadoop.deployer.configurator.HadoopConfigurator;
-import com.impetus.ankush2.hadoop.utils.HadoopConstants;
 import com.impetus.ankush2.hadoop.utils.HadoopUtils;
-import com.impetus.ankush2.hadoop.utils.HadoopUtils.RolePidFilePathMap;
 
 /**
  * @author Akhil
@@ -85,10 +76,8 @@ public class HdpPackageServiceManager extends HadoopServiceManager {
 				// Get the PID path for Hadoop Daemon
 				String pidFilePath = HdpRolePidFilePath
 						.getRolePidFilePath(role);
-				serviceParams
-						.add(new com.impetus.ankush.common.agent.Parameter(
-								Constant.Agent.ServiceParams.PIDFILE,
-								pidFilePath));
+				serviceParams.add(new com.impetus.ankush2.common.Parameter(
+						Constant.Agent.ServiceParams.PIDFILE, pidFilePath));
 
 				// Adding component services as PID process with PID
 				// file path as parameter.
@@ -97,7 +86,8 @@ public class HdpPackageServiceManager extends HadoopServiceManager {
 
 			}
 			return AgentUtils.createServiceXML(nodeConfig.getConnection(),
-					componentServices, Component.Name.HADOOP);
+					componentServices, Component.Name.HADOOP,
+					clusterConfig.getAgentHomeDir());
 		} catch (Exception e) {
 			HadoopUtils.addAndLogError(this.LOG, this.clusterConfig,
 					"Could not configure Hadoop service xml",

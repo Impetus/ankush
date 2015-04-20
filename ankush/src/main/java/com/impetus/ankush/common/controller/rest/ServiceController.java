@@ -42,10 +42,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.impetus.ankush.common.exception.AnkushException;
-import com.impetus.ankush.common.utils.AnkushLogger;
 import com.impetus.ankush.common.utils.ResponseWrapper;
 import com.impetus.ankush2.db.DBHAServiceManager;
 import com.impetus.ankush2.framework.manager.ServiceManager;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 /**
  * Manage deployed cluster.

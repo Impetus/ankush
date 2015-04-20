@@ -23,12 +23,7 @@ package com.impetus.ankush.common.utils;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import com.impetus.ankush.common.framework.AbstractMonitor;
-import com.impetus.ankush.common.framework.Clusterable;
-import com.impetus.ankush.common.framework.ComponentJsonMapper;
-import com.impetus.ankush.common.framework.Deployable;
-import com.impetus.ankush.common.framework.Registerable;
-import com.impetus.ankush.common.framework.config.ClusterConf;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 /**
  * The Class ReflectionUtil.
@@ -40,64 +35,6 @@ public class ReflectionUtil {
 	/** The log. */
 	private static final AnkushLogger LOG = new AnkushLogger(
 			ReflectionUtil.class);
-
-	/**
-	 * Gets the clusterable object.
-	 * 
-	 * @param className
-	 *            the class name
-	 * @return the clusterable object
-	 */
-	public static Clusterable getClusterableObject(String className) {
-		return (com.impetus.ankush.common.framework.Clusterable) getObject(className);
-	}
-
-	public static ClusterConf getClusterConfObject(String className) {
-		return (com.impetus.ankush.common.framework.config.ClusterConf) getObject(className);
-	}
-
-	public static Registerable getRegisterableObject(String className) {
-		return (com.impetus.ankush.common.framework.Registerable) getObject(className);
-	}
-
-	/**
-	 * Gets the deployable object.
-	 * 
-	 * @param className
-	 *            the class name
-	 * @return the deployable object
-	 */
-	public static Deployable getDeployableObject(String className) {
-		return (com.impetus.ankush.common.framework.Deployable) getObject(className);
-	}
-
-	/**
-	 * Gets the monitorable object.
-	 * 
-	 * @param className
-	 *            the class name
-	 * @return the monitorable object
-	 */
-	public static AbstractMonitor getMonitorableObject(String className) {
-		return (com.impetus.ankush.common.framework.AbstractMonitor) getObject(className);
-	}
-
-	/**
-	 * Gets the Serviceable object.
-	 * 
-	 * @param className
-	 *            the class name
-	 * @return the Serviceable object
-	 */
-	public static com.impetus.ankush.common.framework.ServiceMonitorable getServiceMonitorableObject(
-			String className) {
-		return (com.impetus.ankush.common.framework.ServiceMonitorable) getObject(className);
-	}
-
-	public static ComponentJsonMapper getComponentJsonMapperObject(
-			String className) {
-		return (ComponentJsonMapper) getObject(className);
-	}
 
 	public static <S> S getObjectInstance(String className, Class<S> classType) {
 		return (S) getObject(className);

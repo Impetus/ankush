@@ -447,12 +447,6 @@ com.impetus.ankush.hadoopJobs={
 				}
 
 				if((Object.keys(data.jobs)).length == 0) {
-					/*$("#div_Request_JobMonitoring").modal('show');
-					$('.ui-dialog-titlebar').hide();
-					$("#lblJobRequestMessage").text('Select at least one running job to kill.');
-					$("#divOkbtn_JobMonitoring").click(function() {
-						$('#div_Request_JobMonitoring').modal('hide');
-					});*/
 					com.impetus.ankush.validation.showAjaxCallErrors(['Select atleast one running job to kill.'],
 							'popover-content-jobDetail', 'error-div-jobDetail', 'errorBtnJobDetail');
 					return;
@@ -496,12 +490,6 @@ com.impetus.ankush.hadoopJobs={
 					}
 				}
 				if((Object.keys(data)).length == 0) {
-					/*$("#div_Request_JobMonitoring").modal('show');
-					$('.ui-dialog-titlebar').hide();
-					$("#lblJobRequestMessage").text('Select at least one running job to update priority.');
-					$("#divOkbtn_JobMonitoring").click(function() {
-						$('#div_Request_JobMonitoring').modal('hide');
-					});*/
 					com.impetus.ankush.validation.showAjaxCallErrors(['Select atleast one running job to update priority.'],
 							'popover-content-jobDetail', 'error-div-jobDetail', 'errorBtnJobDetail');
 					return;
@@ -739,18 +727,6 @@ com.impetus.ankush.hadoopJobs={
 			});
 		},
 		
-		// Function to start auto-refresh call for Job Details page
-		/*autoRefresh_JobDetails : function(functionName) {
-			refreshInterval_JobDetails = setInterval(function() {
-				eval(functionName);
-			}, refreshTimeInterval_JobDetails);
-		},*/
-		
-		// Function to stop auto-refresh call for Job Details page		
-		/*stopAutoRefresh_JobDetails : function() {
-			IsAutoRefreshON_JobDetails = false;
-			refreshInterval_JobDetails = window.clearInterval(refreshInterval_JobDetails);
-		},*/
 
 		// Function to populate Job Details on page load event of Job Details page		
 		loadJobDetails_Content : function(jobObject) {
@@ -773,20 +749,5 @@ com.impetus.ankush.hadoopJobs={
 			$('#jobDetails_reduceTotal').text(jobObject.reduceTotal);
 			$('#jobDetails_reduceCompleted').text(jobObject.reduceCompleted);
 
-//			if(jobObject.setupProgress == '1')
-//				$('#jobDetails_setupProgress').text('Successful');
-//			else
-//				$('#jobDetails_setupProgress').text('Pending');
-//			$('#jobDetails_setupProgress').css('display', 'none');  // Field Removed from the UI - To be changed later
-			
-//			if (!((jobObject.jobState == 'RUNNING') || (jobObject.jobState == 'PREP'))) {
-//				//com.impetus.ankush.hadoopJobs.stopAutoRefresh_JobDetails();
-//			}
-//			else if((jobObject.jobState == 'RUNNING') || (jobObject.jobState == 'PREP')) {
-//				
-//					com.impetus.ankush.hadoopJobs.autoRefresh_JobDetails('com.impetus.ankush.hadoopJobs.loadJobDetails("'+ jobObject.jobId + '");');	
-//				
-//
-//			}
 		},
 };

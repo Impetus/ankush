@@ -186,9 +186,7 @@
 							</table>
 						</div>
 					</div>
-
 				</div>
-
 				<div class="panel" style="width: 50%;">
 					<div class="panel-heading">
 						<h3 class="panel-title">HA Configurations</h3>
@@ -212,7 +210,6 @@
 									</tr>
 								</thead>
 								<tbody>
-
 								</tbody>
 							</table>
 						</div>

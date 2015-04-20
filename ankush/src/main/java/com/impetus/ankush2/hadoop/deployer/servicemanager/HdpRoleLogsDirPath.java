@@ -26,11 +26,11 @@ package com.impetus.ankush2.hadoop.deployer.servicemanager;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.impetus.ankush.common.constant.Constant;
+import com.impetus.ankush2.constant.Constant;
 
 /**
  * @author Akhil
- *
+ * 
  */
 public class HdpRoleLogsDirPath {
 

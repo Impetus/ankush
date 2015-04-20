@@ -50,7 +50,6 @@ import com.impetus.ankush2.utils.AnkushUtils;
 
 public class AgentServiceManager implements Serviceable {
 
-
 	private String errMessage(String action) {
 		return "Could not " + action + " " + getComponentName()
 				+ " . Please view server logs for more details.";
@@ -122,7 +121,8 @@ public class AgentServiceManager implements Serviceable {
 			SSHExec connection = clusterConfig.getNodes().get(host)
 					.getConnection();
 			if (connection == null) {
-				throw new AnkushException(Constant.Strings.ExceptionsMessage.CONNECTION_NULL_STRING);
+				throw new AnkushException(
+						Constant.Strings.ExceptionsMessage.CONNECTION_NULL_STRING);
 			}
 
 			if (!clusterConfig.getNodes().containsKey(host)) {
@@ -275,7 +275,8 @@ public class AgentServiceManager implements Serviceable {
 			SSHExec connection = clusterConfig.getNodes().get(host)
 					.getConnection();
 			if (connection == null) {
-				throw new AnkushException(Constant.Strings.ExceptionsMessage.CONNECTION_NULL_STRING);
+				throw new AnkushException(
+						Constant.Strings.ExceptionsMessage.CONNECTION_NULL_STRING);
 			}
 		} catch (AnkushException e) {
 			throw e;
@@ -461,11 +462,9 @@ public class AgentServiceManager implements Serviceable {
 
 			// Password is set to NULL to run the script command without sudo
 			// option
-			final String command = JmxMonitoringUtil
-					.getJmxTransCommand(
-							jmxTransScriptFilePath,
-							null,
-							com.impetus.ankush.common.constant.Constant.JmxTransServiceAction.START);
+			final String command = JmxMonitoringUtil.getJmxTransCommand(
+					jmxTransScriptFilePath, null,
+					Constant.JmxTransServiceAction.START);
 			final AnkushTask task = new RunInBackground(command);
 			if (!connection.exec(task).isSuccess) {
 				throw new AnkushException(
@@ -482,11 +481,9 @@ public class AgentServiceManager implements Serviceable {
 	public boolean stopJmxTrans(ClusterConfig clusterConfig,
 			SSHExec connection, String host) throws AnkushException {
 		try {
-			final String command = JmxMonitoringUtil
-					.getJmxTransCommand(
-							getJmxTransScriptFilePath(clusterConfig),
-							null,
-							com.impetus.ankush.common.constant.Constant.JmxTransServiceAction.STOP);
+			final String command = JmxMonitoringUtil.getJmxTransCommand(
+					getJmxTransScriptFilePath(clusterConfig), null,
+					Constant.JmxTransServiceAction.STOP);
 
 			final AnkushTask task = new RunInBackground(command);
 			if (!connection.exec(task).isSuccess) {
@@ -560,8 +557,8 @@ public class AgentServiceManager implements Serviceable {
 	}
 
 	@Override
-	public String getLogFilesRegex(ClusterConfig clusterConfig,
-			String host, String role, Map<String, Object> parameters) {
+	public String getLogFilesRegex(ClusterConfig clusterConfig, String host,
+			String role, Map<String, Object> parameters) {
 		// TODO Auto-generated method stub
 		return null;
 	}

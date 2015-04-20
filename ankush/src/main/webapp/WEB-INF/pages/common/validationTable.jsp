@@ -24,18 +24,9 @@
 		<div class="col-md-6 text-left">
 		
 		</div>
-		<!-- <div class="text-right col-md-6">
-			<input id="searchvalidationTable" type="text" placeholder="Search">
-		</div> -->
+	
 	</div>
 	<div class="panel panel-default">
-		<!-- <div class="panel-heading">
-			<h3 class="panel-title">Validation</h3>
-			<div class="pull-right panelSearch">
-				<input type="text" id="searchvalidationTable" style=""
-					class="input-medium form-control" placeholder="Search" />
-			</div>
-		</div> -->
 		<div class="row">
 			<div class="col-md-12">
 				<table class="table table-striped table-border" id="validationTable">

@@ -45,8 +45,8 @@ import com.impetus.ankush.common.mail.MailMsg;
 import com.impetus.ankush.common.service.AppConfService;
 import com.impetus.ankush.common.service.GenericManager;
 import com.impetus.ankush.common.service.UserManager;
-import com.impetus.ankush.common.utils.AnkushLogger;
 import com.impetus.ankush.common.utils.PasswordUtil;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 /**
  * Implementation of UserManager interface.

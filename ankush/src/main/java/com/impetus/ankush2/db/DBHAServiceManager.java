@@ -27,17 +27,17 @@ import java.util.Map;
 import java.util.Set;
 
 import com.impetus.ankush.AppStoreWrapper;
-import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.domain.Cluster;
 import com.impetus.ankush.common.domain.HAService;
 import com.impetus.ankush.common.domain.Service;
 import com.impetus.ankush.common.exception.AnkushException;
 import com.impetus.ankush.common.service.GenericManager;
-import com.impetus.ankush.common.utils.AnkushLogger;
 import com.impetus.ankush.common.utils.JsonMapperUtil;
+import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush2.framework.Serviceable;
 import com.impetus.ankush2.framework.config.ClusterConfig;
 import com.impetus.ankush2.framework.utils.ObjectFactory;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 public class DBHAServiceManager {
 	private static AnkushLogger logger = new AnkushLogger(

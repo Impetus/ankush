@@ -22,8 +22,6 @@
 <!-- Page for cluster level deployment logs -->
 <head>
 <%@ include file="../layout/header.jsp"%>
-<link rel="stylesheet" type="text/css"
-	href="<c:out value="${baseUrl}" />/public/css3.0/main.css" media="all" />
 <%@ include file="../layout/navigation.jsp"%>
 <script>
 $(document).ready(function() {
@@ -63,7 +61,6 @@ $(document).ready(function() {
 	$('#nodeSearchBox').keyup(function() {
 		nodeIpStatusTable.fnFilter($(this).val());
 		});
-	console.log(clusterTechnology)
 	com.impetus.ankush.common.nodeStatus(clusterId,clusterTechnology);
 });
 </script>

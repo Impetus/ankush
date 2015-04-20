@@ -40,8 +40,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.impetus.ankush.common.domain.NodeMonitoring;
 import com.impetus.ankush.common.framework.TechnologyData;
 import com.impetus.ankush.common.service.MonitoringManager;
-import com.impetus.ankush.common.utils.AnkushLogger;
 import com.impetus.ankush.common.utils.ResponseWrapper;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 /**
  * The Class NodeMonitoringController.
@@ -128,20 +128,6 @@ public class NodeMonitoringController extends BaseController {
 		try {
 			MonitoringManager monitoringManager = new MonitoringManager();
 			monitoringManager.saveMonitoringData(id, technologyData);
-			return new ResponseEntity<HttpStatus>(HttpStatus.OK);
-		} catch (Exception e) {
-			LOG.error(e.getMessage(), e);
-			return new ResponseEntity<HttpStatus>(HttpStatus.BAD_REQUEST);
-		}
-	}
-
-	@RequestMapping(method = RequestMethod.POST, value = "/node/{id}/nnrole", headers = "Accept=application/json")
-	@ResponseBody
-	public ResponseEntity<HttpStatus> updateNameNodeRole(@PathVariable Long id,
-			@RequestBody HashMap<String, String> roleInfoMap) throws Exception {
-		try {
-//			HadoopCluster hadoopCluster = new HadoopCluster();
-//			hadoopCluster.updateNameNodeRole(id, roleInfoMap);
 			return new ResponseEntity<HttpStatus>(HttpStatus.OK);
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);

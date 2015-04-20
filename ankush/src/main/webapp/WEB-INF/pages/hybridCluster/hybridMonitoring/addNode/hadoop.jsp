@@ -49,33 +49,7 @@
 </script>
 
 <!-- header section -->
-<!-- <div class="section-header">
-	<div class="row headermargin">
-		<div class="col-md-7">
-			<h2 class="heading text-left left">Hadoop</h2>
-			<button class="btn btn-danger" id="validateErrorMapNodeAdd"
-				onclick="com.impetus.ankush.common.focusError();"
-				style="display: none;"></button>
 
-		</div>
-
-		
-		<div class="span3">
-			<button class="span3 btn-error header_errmsg" id="validateErrorMapNodeAdd"
-				onclick="com.impetus.ankush.common.focusError();"
-				style="display: none;"></button>
-		</div>
-		
-
-		<div class="col-md-5 text-right">
-			<button id="hadoopNodesRevert"
-				class="btn btn-default headerright-setting"
-				onclick="com.impetus.ankush.hybridAddNode.nodeMappingCancel('Hadoop');">Cancel</button>
-			<button class="btn btn-default" id="hadoopNodesApply"
-				onclick="com.impetus.ankush.hybridAddNode.nodeMappingApply('Hadoop');">Apply</button>
-		</div>
-	</div>
-</div> -->
 <div class="">
 	<div class="">
 		<div class="">
@@ -83,9 +57,7 @@
 				<!-- <h2>Node Mapping</h2> -->
 			</div>
 			<div class="col-md-1">
-				<!-- 	<button class="btn-error header_errmsg" id="validateError"
-						onclick="com.impetus.ankush.common.focusError();"
-						style="display: none; padding: 0 15px; left: 15px; position: relative"></button> -->
+				
 			</div>
 			<div class="col-md-7 text-right mrgt20 padr45"></div>
 		</div>
@@ -93,10 +65,6 @@
 	<div class="main-content">
 		<div class="container-fluid">
 			<div class="row">
-				<!-- <div id="error-div-mapNodeAddNode" class="col-md-12 error-div-hadoop"
-				style="display: none;">
-				<span id="popover-content-mapNodeAddNode" style="color: red"></span>
-			</div> -->
 			</div>
 			<div class="panel">
 				<div class="panel-heading">

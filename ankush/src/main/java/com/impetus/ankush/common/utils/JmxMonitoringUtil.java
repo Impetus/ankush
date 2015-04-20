@@ -31,9 +31,9 @@ import net.neoremind.sshxcute.core.SSHExec;
 
 import com.impetus.ankush.AppStoreWrapper;
 import com.impetus.ankush.common.config.ConfigurationReader;
-import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.scripting.AnkushTask;
 import com.impetus.ankush.common.scripting.impl.ReplaceText;
+import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush2.framework.config.AuthConfig;
 
 // TODO: Auto-generated Javadoc

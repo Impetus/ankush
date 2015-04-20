@@ -20,7 +20,6 @@
  ******************************************************************************/
 package com.impetus.ankush.common.framework;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -46,14 +45,13 @@ import com.impetus.ankush.common.domain.Cluster;
 import com.impetus.ankush.common.exception.AnkushException;
 import com.impetus.ankush.common.scripting.impl.ExecSudoCommand;
 import com.impetus.ankush.common.service.GenericManager;
-import com.impetus.ankush.common.utils.AnkushLogger;
-import com.impetus.ankush.common.utils.CommandExecutor;
 import com.impetus.ankush.common.utils.ParserUtil;
 import com.impetus.ankush.common.utils.SSHUtils;
 import com.impetus.ankush.common.utils.validator.PortValidator;
 import com.impetus.ankush2.agent.AgentDeployer;
 import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush2.framework.config.ClusterConfig;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 /**
  * @author hokam
@@ -330,10 +328,11 @@ public class ClusterPreValidator {
 	 * @param conn
 	 * @return
 	 */
-	private Status checkDotAnkushAgentFolder(SSHExec conn) {
+	private Status checkDotAnkushAgentFolder(SSHExec conn,
+			String agentInstallDir) {
 		// checking .ankush folder existance.
-		boolean taskStatus = !SSHUtils.getCommandStatus(conn,
-				"ls .ankush/agent");
+		boolean taskStatus = !SSHUtils.getCommandStatus(conn, "ls "
+				+ agentInstallDir + ".ankush/agent");
 		if (taskStatus) {
 			return new Status("AnkushAgent directory existence", OK);
 		} else {
@@ -633,7 +632,9 @@ public class ClusterPreValidator {
 
 			logger.debug("Checking .ankush folder existance");
 			// checking .ankush folder existance.
-			map.put(AGENT_METADATA_NOT_EXISTS, checkDotAnkushAgentFolder(conn));
+			map.put(AGENT_METADATA_NOT_EXISTS,
+					checkDotAnkushAgentFolder(conn, String.valueOf(params
+							.get(Constant.Agent.Key.AGENT_INSTALL_DIR))));
 
 			// cheking ip tables.
 			logger.debug("checking ip tables." + params);

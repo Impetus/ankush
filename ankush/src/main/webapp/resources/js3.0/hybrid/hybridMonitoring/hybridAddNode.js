@@ -410,7 +410,7 @@ com.impetus.ankush.hybridAddNode = {
 			}
 		},
 	
-		 //this will populate delve add node page
+		 //this will populate  add node page
 		getDefaultValue : function() {
 			jsonDataHybrid={};
 				 var url = baseUrl + '/app/metadata/hybrid';

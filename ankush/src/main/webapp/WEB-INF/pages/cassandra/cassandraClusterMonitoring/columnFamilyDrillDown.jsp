@@ -22,7 +22,6 @@
 <html>
 <head>
 <%@ include file="../../layout/header.jsp"%>
-<link rel="stylesheet" type="text/css" href="<c:out value="${baseUrl}" />/public/css3.0/main.css" media="all"/>
 <%@ include file="../../layout/navigation.jsp"%>
 <style>
 td.expanded-group > ins{

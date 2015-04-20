@@ -58,8 +58,6 @@
 						com.impetus.ankush.commonMonitoring.clusterTechnology = monitoringClusterTechnology;
 						com.impetus.ankush.commonMonitoring.clusterName = monitoringClusterName;
 						$("#monitoring-page").text(monitoringClusterName);
-						
-						//com.impetus.ankush.changeWidth('monitoringPageRightDiv', -2);
 						com.impetus.ankush.createCommonTiles();
 						/* function will create heatmaps on the basis of cluster id */
 						com.impetus.ankush.commonMonitoring.commonHeatMaps(com.impetus.ankush.commonMonitoring.clusterId);
@@ -240,11 +238,6 @@
 											<a class="mrgl10 pull-right mrgr10 mrgtneg20" data-toggle="tooltip" data-placement="top" style="font-size: 16px;"href="#" id="legend-tooltip">Legend</a>
 											<div class="pull-right" style="margin-top:-22px;">
 													<div class="btn-group" data-toggle="buttons-radio" >
-														<!-- <button type="button" class="btn btn-default active"
-															id="cpuHeatMap" onclick="commonHeatMapTypeSelect('CPU');">CPU</button>
-														<button type="button" class="btn btn-default"
-															id="memoryHeatMap"
-															onclick="commonHeatMapTypeSelect('Memory');">Memory</button> -->
 															<a href="#" class="btn btn-default btn-sm active" id="cpuHeatMap" onclick="commonHeatMapTypeSelect('CPU');">CPU</a>
             												<a href="#" class="btn btn-default btn-sm" id="memoryHeatMap"
 															onclick="commonHeatMapTypeSelect('Memory');">Memory</a>
@@ -259,14 +252,9 @@
 									</div>
 									</div>
 								</div>
-								<!-- <div class="thumbnail heatmap_block col-md-12 pad10"> -->
-						
-						<!-- <div class="heat_map_line_break"></div> -->
 						
 						<div class="clear"></div>
 					</div>
-					
-				
 		</div>
 		<div id="commonLinks"></div>
 	</div>

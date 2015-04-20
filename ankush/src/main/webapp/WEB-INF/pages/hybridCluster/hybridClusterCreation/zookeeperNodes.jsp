@@ -58,30 +58,15 @@
 		<!-- header section -->
 		<div class="">
 			<div class="">
-				<div class="col-md-4">
-					<%-- <h2 id="zookeeperNodeHeader1">${technology}/Node Mapping</h2>
-						<h2 id="zookeeperNodeHeader" style="display: none;">${technology}/Node Mapping</h2> --%>
-				</div>
-				<div class="col-md-1">
-					<!-- <button class="btn-error" id="validateErrorZookeeper"
-						onclick="com.impetus.ankush.common.focusError();"
-						style="display: none; padding: 0 15px; left: 15px; position: relative"></button> -->
-				</div>
-				<div class="col-md-7 text-right mrgt20 padr45">
-					<!-- 	<button id="zookeeperNodesRevert" class="btn headerright-setting btn-default"
-						onclick="com.impetus.ankush.hybridClusterCreation.dynamicRowRemove();">Cancel</button>
-					<button class="btn btn-default" id="zookeeperNodesApply"
-						onclick="com.impetus.ankush.hybrid_Zookeeper.zookeeperNodesPopulateApplyValidate();">Apply</button> -->
-				</div>
+				<div class="col-md-4"></div>
+				<div class="col-md-1"></div>
+				<div class="col-md-7 text-right mrgt20 padr45"></div>
 			</div>
 		</div>
 
 		<div class="" id="main-content">
 			<div class="container-fluid mrgnlft8">
-				<div class="row">
-					<!-- 	<div id="errorDivZookeeperNodes" class="col-md-12 errorDiv"
-						style="display: none;"></div> -->
-				</div>
+				<div class="row"></div>
 				<div class="panel">
 					<div class="panel-heading">
 						<div class="">

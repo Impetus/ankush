@@ -24,12 +24,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.impetus.ankush.common.constant.Constant;
+import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush.common.domain.NodeMonitoring;
 import com.impetus.ankush.common.framework.TechnologyData;
 import com.impetus.ankush.common.service.MonitoringListener;
 import com.impetus.ankush.common.service.MonitoringManager;
-import com.impetus.ankush.common.tiles.TileInfo;
 import com.impetus.ankush2.cassandra.utils.CassandraConstants;
 import com.impetus.ankush2.cassandra.utils.CassandraUtils;
 import com.impetus.ankush2.framework.config.ClusterConfig;
@@ -43,32 +42,10 @@ public class CassandraJMXData implements TechnologyData {
 	/** The logger. */
 	private static AnkushLogger LOG = new AnkushLogger(CassandraJMXData.class);
 
-	/** The tiles. */
-	private List<TileInfo> tiles = new ArrayList<TileInfo>();
-
 	/** The datacenters. */
 	private List<Datacenter> datacenters = new ArrayList<Datacenter>();
 
 	public CassandraJMXData() {
-	}
-
-	/**
-	 * Gets the tiles.
-	 * 
-	 * @return the tiles
-	 */
-	public List<TileInfo> getTiles() {
-		return tiles;
-	}
-
-	/**
-	 * Sets the tiles.
-	 * 
-	 * @param tiles
-	 *            the tiles to set
-	 */
-	public void setTiles(List<TileInfo> tiles) {
-		this.tiles = tiles;
 	}
 
 	/**
@@ -110,15 +87,15 @@ public class CassandraJMXData implements TechnologyData {
 						if (!ignoreStatus) {
 							// Cassandra service status
 							Map<String, Boolean> serviceStatus = nodeMonitoring
-									.getServiceStatus(Constant.Technology.CASSANDRA);
+									.getServiceStatus(Constant.Component.Name.CASSANDRA);
 
 							if (serviceStatus
 									.containsKey(CassandraConstants.Node_Type.CASSANDRA_SEED)
 									&& serviceStatus
 											.get(CassandraConstants.Node_Type.CASSANDRA_SEED)) {
 								techData = (CassandraJMXData) nodeMonitoring
-										.getTechnologyData().get(
-												Constant.Technology.CASSANDRA);
+										.getTechnologyData()
+										.get(Constant.Component.Name.CASSANDRA);
 								if (!techData.getDatacenters().isEmpty()) {
 									return techData;
 								}
@@ -126,7 +103,7 @@ public class CassandraJMXData implements TechnologyData {
 						} else {
 							techData = (CassandraJMXData) nodeMonitoring
 									.getTechnologyData().get(
-											Constant.Technology.CASSANDRA);
+											Constant.Component.Name.CASSANDRA);
 							if (!techData.getDatacenters().isEmpty()) {
 								return techData;
 							}
@@ -160,7 +137,7 @@ public class CassandraJMXData implements TechnologyData {
 
 	@Override
 	public String getTechnologyName() {
-		return Constant.Technology.CASSANDRA;
+		return Constant.Component.Name.CASSANDRA;
 	}
 
 	@Override

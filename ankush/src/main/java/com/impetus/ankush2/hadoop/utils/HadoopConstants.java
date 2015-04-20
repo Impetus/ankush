@@ -23,7 +23,7 @@ package com.impetus.ankush2.hadoop.utils;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.impetus.ankush.common.constant.Constant;
+import com.impetus.ankush2.constant.Constant;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -174,7 +174,7 @@ public interface HadoopConstants {
 
 		/** The ha active namenode. */
 		String HA_ACTIVE_NAMENODE = "activeNamenode";
-		
+
 		String HA_NAMENODE_HOSTS = "haNameNodeHosts";
 
 		/** The ha standby namenode. */
@@ -344,9 +344,9 @@ public interface HadoopConstants {
 				String NAMENODE_ACTIVE = "Active NameNode";
 
 				String NAMENODE_STANDBY = "StandBy NameNode";
-				
+
 				String NAMENODE_ID1 = "NameNode ID 1";
-				
+
 				String NAMENODE_ID2 = "NameNode ID 2";
 			}
 
@@ -952,7 +952,7 @@ public interface HadoopConstants {
 					HadoopConstants.FileName.ScriptFile.DAEMON_FILE_HADOOP);
 			procesFileMap.put(Constant.Role.JOURNALNODE.toLowerCase(),
 					HadoopConstants.FileName.ScriptFile.DAEMON_FILE_HADOOP);
-			
+
 			JAVAPROCESSSCRIPTFILE = procesFileMap;
 		}
 

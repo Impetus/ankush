@@ -62,8 +62,7 @@ com.impetus.ankush.configurationParam = {
 									var thirdColumn = null;
 									if(result.output.params[key][prop][1]){
 										thirdColumn = '<span class="edit-param-cassandra" id="'+key.replace('.','_')+'">'+result.output.params[key][prop][0]+'</span>';
-										
-											fourthColumn = '<a class="deleteParameter" href="#" onclick="com.impetus.ankush.configurationParam.postParamObjDialog(this,\'DELETE\')" id="'+key.replace('.','_')+'"><ins></ins></a>';
+										fourthColumn = '<a class="deleteParameter" href="#" onclick="com.impetus.ankush.configurationParam.postParamObjDialog(this,\'DELETE\')" id="'+key.replace('.','_')+'"><ins></ins></a>';
 									}
 									else{
 										thirdColumn = '<span class="">'+result.output.params[key][prop][0]+'</span>';
@@ -206,11 +205,6 @@ com.impetus.ankush.configurationParam = {
 			},500)
 			$('#addParamCassandra').bind('click',function(){ com.impetus.ankush.configurationParam.postParamObj($('#fileNameValueAddParam').val(),com.impetus.ankush.constants.typeAdd); });
 			
-		},
-		//this function will do necessary things on page removal
-		removePage : function(){
-			$('#div_addParameter').remove();
-			$('#deleteParameterDialogCassandra').remove();
 		},
 		//this function will post data for edit parameters
 		applyChangesPostParamObj : function(){

@@ -21,10 +21,10 @@
 package com.impetus.ankush2.db;
 
 import com.impetus.ankush.AppStoreWrapper;
-import com.impetus.ankush.common.constant.Constant;
+import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush.common.domain.Node;
 import com.impetus.ankush.common.service.GenericManager;
-import com.impetus.ankush.common.utils.AnkushLogger;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 public class DBNodeManager {
 	private GenericManager<Node, Long> nodeManager = AppStoreWrapper

@@ -20,6 +20,8 @@
  ******************************************************************************/
 package com.impetus.ankush2.db;
 
+import static java.lang.Integer.MAX_VALUE;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -32,7 +34,6 @@ import com.impetus.ankush.common.service.GenericManager;
 import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush2.framework.config.ClusterConfig;
 import com.impetus.ankush2.logger.AnkushLogger;
-import static java.lang.Integer.MAX_VALUE;
 
 public class DBOperationManager {
 	private static AnkushLogger logger = new AnkushLogger(

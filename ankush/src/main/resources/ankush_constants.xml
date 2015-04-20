@@ -85,35 +85,6 @@
 	</property>
 	
 	<property>
-		<name>hadoop.conf.topology.data</name>
-		<value>topology.data</value>
-		<description>Contains host IP address to rack mapping</description>
-	</property>
-	<property>
-		<name>hadoop.conf.topology.script</name>
-		<value>topology.sh</value>
-		<description>Script used for Rack-awareness implementation
-		</description>
-	</property>
-
-	<property>
-		<name>hadoop.conf.topology.script.relpath</name>
-		<value>/Hadoop/topology.sh</value>
-		<description>Resource relative path for Script used for Rack-awareness
-			implementation(hadoop.conf.topology.script)
-		</description>
-	</property>
-	<property>
-		<name>hadoop.conf.propname.topology.script</name>
-		<value>topology.script.file.name</value>
-	</property>
-	
-	<property>
-		<name>hadoop2.conf.propname.topology.script</name>
-		<value>net.topology.script.file.name</value>
-	</property>
-
-	<property>
 		<name>hadoop2.javahome.yarnenv.targettext</name>
 		<value># export JAVA_HOME=/home/y/libexec/jdk1.6.0/</value>
 	</property>

@@ -21,8 +21,8 @@
 package com.impetus.ankush.common.mail;
 
 import com.impetus.ankush.AppStoreWrapper;
-import com.impetus.ankush.common.constant.Constant;
-import com.impetus.ankush.common.utils.AnkushLogger;
+import com.impetus.ankush2.constant.Constant;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 /**
  * MailManager is class used at high level to access mail sending related

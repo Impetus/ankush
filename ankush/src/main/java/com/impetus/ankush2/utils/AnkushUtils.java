@@ -31,7 +31,6 @@ import java.util.Set;
 
 import net.neoremind.sshxcute.core.Result;
 import net.neoremind.sshxcute.core.SSHExec;
-import net.neoremind.sshxcute.exception.TaskExecFailException;
 import net.neoremind.sshxcute.task.CustomTask;
 import net.neoremind.sshxcute.task.impl.ExecCommand;
 
@@ -47,7 +46,6 @@ import com.impetus.ankush2.framework.config.AuthConfig;
 import com.impetus.ankush2.framework.config.ClusterConfig;
 import com.impetus.ankush2.framework.config.ComponentConfig;
 import com.impetus.ankush2.framework.config.NodeConfig;
-import com.impetus.ankush2.framework.config.ProgressConfig;
 import com.impetus.ankush2.framework.utils.DatabaseUtils;
 import com.impetus.ankush2.logger.AnkushLogger;
 

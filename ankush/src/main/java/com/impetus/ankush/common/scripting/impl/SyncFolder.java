@@ -31,44 +31,49 @@ import com.impetus.ankush.common.utils.FileUtils;
 
 /**
  * @author Akhil
- *
+ * 
  */
 public class SyncFolder extends AnkushTask {
-	
+
 	/** The destinationIp. */
 	private String destinationIp;
-	
+
 	/** The folderPath. */
 	private String folderPath;
-	
-	private List<String> excludeFileList; 
-	
-	public SyncFolder(String destinationIp, String folderPath){
+
+	private List<String> excludeFileList;
+
+	public SyncFolder(String destinationIp, String folderPath) {
 		this.destinationIp = destinationIp;
 		this.folderPath = FileUtils.getSeparatorTerminatedPathEntry(folderPath);
 		this.excludeFileList = new ArrayList<String>();
-	} 
-	
-	public SyncFolder(String destinationIp, String folderPath, List<String> excludeFileList){
+	}
+
+	public SyncFolder(String destinationIp, String folderPath,
+			List<String> excludeFileList) {
 		this.destinationIp = destinationIp;
 		this.folderPath = FileUtils.getSeparatorTerminatedPathEntry(folderPath);
 		this.excludeFileList = excludeFileList;
-	} 
-	
-	/* (non-Javadoc)
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.neoremind.sshxcute.task.CustomTask#getCommand()
 	 */
 	@Override
 	public String getCommand() {
-		if((this.excludeFileList != null) && (this.excludeFileList.size() > 0)) {
-			StringBuilder command = new StringBuilder("cd " + this.folderPath + ";scp -r $(ls " + this.folderPath + " | grep -v"); 
-			for(String excludeFile : this.excludeFileList) {
+		if ((this.excludeFileList != null) && (this.excludeFileList.size() > 0)) {
+			StringBuilder command = new StringBuilder("cd " + this.folderPath
+					+ ";scp -r $(ls " + this.folderPath + " | grep -v");
+			for (String excludeFile : this.excludeFileList) {
 				command.append(" -e " + excludeFile);
 			}
 			command.append(") " + this.destinationIp + ":" + this.folderPath);
 			return command.toString();
 		} else {
-			return ("scp -r " + this.folderPath + "* " + this.destinationIp + ":" + this.folderPath);	
+			return ("scp -r " + this.folderPath + "* " + this.destinationIp
+					+ ":" + this.folderPath);
 		}
 	}
 

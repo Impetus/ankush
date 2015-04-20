@@ -119,15 +119,6 @@ public class AgentConf {
 	}
 
 	/**
-	 * Gets the hadoop jars path.
-	 * 
-	 * @return the hadoop jars path
-	 */
-	public String getHadoopJarsPath() {
-		return properties.getProperty(Constant.PROP_NAME_HADOOP_JAR_PATH);
-	}
-
-	/**
 	 * Gets the jar path.
 	 * 
 	 * @return the jar path

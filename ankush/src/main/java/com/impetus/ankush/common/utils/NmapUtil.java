@@ -42,14 +42,13 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.FileUtils;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.impetus.ankush.common.constant.Constant;
-import com.impetus.ankush.common.exception.AnkushException;
+import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush.common.exception.RegisterClusterException;
 import com.impetus.ankush2.constant.Constant.Strings;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 /**
  * It is used to get the hash map of nodes with rechanbility status as values.
@@ -69,7 +68,7 @@ public class NmapUtil {
 	 * Instantiates a new nmap util.
 	 * 
 	 * @param nodePattern
-	 *            the node pattern	
+	 *            the node pattern
 	 */
 	public NmapUtil(String nodePattern) {
 		this.nodePattern = nodePattern;
@@ -80,15 +79,15 @@ public class NmapUtil {
 	 * 
 	 * @return the node list with status
 	 */
-	public Map<String, Boolean> getNodeListWithStatus(){
+	public Map<String, Boolean> getNodeListWithStatus() {
 		// create result hash map.
 		Map<String, Boolean> result = new HashMap<String, Boolean>();
 
 		if ((nodePattern != null) && !nodePattern.isEmpty()
-				&& !nodePattern.equals(Constant.STR_SPACE)) {
+				&& !nodePattern.equals(Constant.Strings.SPACE)) {
 			// split the nodePattern on Comma
 			String[] splittedNodeArray = this.nodePattern
-					.split(Constant.STR_SPACE);
+					.split(Constant.Strings.SPACE);
 			Boolean isReachable = false;
 			for (String host : splittedNodeArray) {
 				try {

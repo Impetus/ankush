@@ -88,7 +88,6 @@ com.impetus.ankush.register_Hadoop={
 					$('#reverthadoop').attr('disabled', 'disabled');
 					$('#applyHadoop').attr('disabled', 'disabled');
 				}
-				//if (Object.keys(hadoopObjReg.Defaults).length<1 ){
 				if(undefined == hadoopObjReg.vendor){
 					hadoopObjReg=jsonDataHybrid.hybrid.Hadoop;
 					com.impetus.ankush.register_Hadoop.redeployDataPrepare();

@@ -27,7 +27,6 @@
 
 		<class>com.impetus.ankush.common.domain.Node</class>
 		<class>com.impetus.ankush.common.domain.Cluster</class>
-		<class>com.impetus.ankush.common.domain.Tile</class>
 		<class>com.impetus.ankush.common.domain.Log</class>
 		<class>com.impetus.ankush.common.domain.User</class>
 		<class>com.impetus.ankush.common.domain.Role</class>

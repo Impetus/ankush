@@ -63,7 +63,6 @@ import com.impetus.ankush.common.scripting.impl.UnTarArchive;
 import com.impetus.ankush.common.service.GenericManager;
 import com.impetus.ankush.common.service.MonitoringManager;
 import com.impetus.ankush.common.service.UserManager;
-import com.impetus.ankush.common.tiles.TileInfo;
 import com.impetus.ankush.common.utils.FileUtils;
 import com.impetus.ankush.common.utils.JsonMapperUtil;
 import com.impetus.ankush.common.utils.LogViewHandler;
@@ -1004,77 +1003,6 @@ public abstract class AbstractMonitor {
 		} catch (Exception e) {
 			addAndLogError(e.getMessage());
 			logger.error(e.getMessage(), e);
-		}
-	}
-
-	/**
-	 * Gets the service tiles.
-	 * 
-	 * @param technology
-	 *            the technology
-	 * @return the service tiles
-	 */
-	protected List<TileInfo> getServiceTiles(String technology) {
-
-		try {
-			// list of tile
-			List<TileInfo> tiles = new ArrayList<TileInfo>();
-			// event manager object.
-			DBEventManager eventManager = new DBEventManager();
-			// event list.
-			List<Event> events = eventManager.getAlerts(dbCluster.getId(),
-					null, null, technology, null);
-
-			// roles string
-			// String rolesString = Constant.ComponentName
-			// .getComponentRoleMap(technology);
-			// // split roles string by comma
-			// String[] serviceNameArray = rolesString.split(",");
-			// // converting array as string list.
-			// List<String> roles = Arrays.asList(serviceNameArray);
-
-			Set<String> rolesList = ObjectFactory.getServiceObject(technology)
-					.getServiceList(this.clusterConf);
-
-			// tile info
-			TileInfo tileInfo = null;
-			// if events is not null and not empty
-			if (events != null && events.size() > 0 && !events.isEmpty()) {
-				// iterating over the roles.
-				for (String role : rolesList) {
-					int count = 0;
-
-					// iterating over the events
-					for (Event event : events) {
-						// if event sub type is same as role
-						if (event.getCategory().equals(role)) {
-							count += 1;
-						}
-					}
-					// if count is > 0
-					if (count > 0) {
-						// tile object.
-						tileInfo = new TileInfo();
-						// set line1
-						tileInfo.setLine1(role);
-						// set line2
-						tileInfo.setLine2(Constant.Service.State.DOWN);
-						// set line3
-						tileInfo.setLine3(count
-								+ AbstractMonitor.getDisplayNameForNode(count));
-						// set status
-						tileInfo.setStatus(Constant.Tile.Status.CRITICAL);
-						// adding tiles.
-						tiles.add(tileInfo);
-					}
-				}
-			}
-			// return tiles.
-			return tiles;
-		} catch (Exception e) {
-			// TODO: handle exception
-			this.addAndLogError("Could not process request to fetch service tiles.");
-			return null;
 		}
 	}
 

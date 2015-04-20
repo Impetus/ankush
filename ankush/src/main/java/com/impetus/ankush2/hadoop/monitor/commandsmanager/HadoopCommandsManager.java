@@ -27,7 +27,6 @@ import com.impetus.ankush2.framework.config.ClusterConfig;
 import com.impetus.ankush2.framework.config.ComponentConfig;
 import com.impetus.ankush2.hadoop.config.ComponentConfigContext;
 import com.impetus.ankush2.hadoop.deployer.servicemanager.HadoopBundleServiceManager;
-import com.impetus.ankush2.logger.AnkushLogger;
 
 // TODO: Auto-generated Javadoc
 /**

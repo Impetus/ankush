@@ -32,16 +32,14 @@ import net.neoremind.sshxcute.core.SSHExec;
 import net.neoremind.sshxcute.task.CustomTask;
 
 import com.impetus.ankush.AppStoreWrapper;
-import com.impetus.ankush.common.agent.ComponentService;
-import com.impetus.ankush.common.agent.ServiceConfiguration;
 import com.impetus.ankush.common.config.ConfigurationReader;
 import com.impetus.ankush.common.domain.Cluster;
 import com.impetus.ankush.common.domain.Node;
+import com.impetus.ankush.common.exception.AnkushException;
 import com.impetus.ankush.common.scripting.AnkushTask;
 import com.impetus.ankush.common.scripting.impl.AppendFileUsingEcho;
 import com.impetus.ankush.common.scripting.impl.ClearFile;
 import com.impetus.ankush.common.scripting.impl.Remove;
-import com.impetus.ankush.common.utils.CommonUtil;
 import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush2.framework.config.ClusterConfig;
 
@@ -195,4 +193,65 @@ public class AgentUtils {
 			return false;
 		}
 	}
+	
+	/**
+	 * Method to add the taskable class names in taskable conf file.
+	 * 
+	 * @param connection
+	 * @param className
+	 * @return
+	 */
+	public static boolean addTaskables(SSHExec connection, List<String> classes)
+			throws AnkushException {
+		try {
+			// empty buffer string for taskable.
+			StringBuffer taskFileContent = new StringBuffer();
+			// appending the line separator.
+			taskFileContent.append(Constant.Strings.LINE_SEPERATOR);
+			for (String className : classes) {
+				// appending class name and line separator.
+				taskFileContent.append(className)
+						.append(Constant.Strings.LINE_SEPERATOR);
+			}
+			// add task information in taskable conf.
+			AnkushTask task = new AppendFileUsingEcho(
+					taskFileContent.toString(),
+					Constant.Agent.AGENT_TASKABLE_FILE_PATH);
+			return connection.exec(task).rc == 0;
+		} catch (Exception e) {
+			throw new AnkushException("Could not add taskable classes to "
+					+ Constant.Agent.AGENT_TASKABLE_FILE_PATH);
+		}
+	}
+
+	/**
+	 * Method to add the taskable class names in taskable conf file.
+	 * 
+	 * @param connection
+	 * @param className
+	 * @return
+	 */
+	public static boolean addTaskables(SSHExec connection,
+			List<String> classes, String agentHomeDir) throws AnkushException {
+		try {
+			// empty buffer string for taskable.
+			StringBuffer taskFileContent = new StringBuffer();
+			// appending the line separator.
+			taskFileContent.append(Constant.Strings.LINE_SEPERATOR);
+			for (String className : classes) {
+				// appending class name and line separator.
+				taskFileContent.append(className)
+						.append(Constant.Strings.LINE_SEPERATOR);
+			}
+			// add task information in taskable conf.
+			AnkushTask task = new AppendFileUsingEcho(
+					taskFileContent.toString(), agentHomeDir
+							+ AgentConstant.Relative_Path.TASKABLE_FILE);
+			return connection.exec(task).rc == 0;
+		} catch (Exception e) {
+			throw new AnkushException("Could not add taskable classes to "
+					+ Constant.Agent.AGENT_TASKABLE_FILE_PATH);
+		}
+	}
+
 }

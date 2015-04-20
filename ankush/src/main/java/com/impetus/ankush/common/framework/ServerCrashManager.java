@@ -27,14 +27,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.impetus.ankush.AppStoreWrapper;
-import com.impetus.ankush.common.constant.Constant;
+import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush.common.domain.Cluster;
 import com.impetus.ankush.common.domain.Node;
 import com.impetus.ankush.common.domain.Operation;
-import com.impetus.ankush.common.framework.config.ClusterConf;
 import com.impetus.ankush.common.service.GenericManager;
-import com.impetus.ankush.common.utils.AnkushLogger;
 import com.impetus.ankush2.framework.config.ClusterConfig;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 /**
  * @author hokam
@@ -95,7 +94,8 @@ public class ServerCrashManager {
 			// getting clusterable object.
 			try {
 				// setting state as crashed.
-				cluster.setState(Constant.Cluster.State.SERVER_CRASHED);
+				cluster.setState(Constant.Cluster.State.SERVER_CRASHED
+						.toString());
 				// getting cluster conf.
 				ClusterConfig conf = cluster.getClusterConfig();
 				// setting id of cluster inside conf.
@@ -112,48 +112,8 @@ public class ServerCrashManager {
 				log.error(e.getMessage());
 				try {
 					// setting server crashed as state.
-					cluster.setState(Constant.Cluster.State.SERVER_CRASHED);
-					// saving in db.
-					clusterManager.save(cluster);
-				} catch (Exception subExe) {
-					log.error(subExe.getMessage());
-				}
-			}
-
-		}
-	}
-
-	/**
-	 * Method to handle deploying and removing state clusters.
-	 */
-	public void handleMaintenanceStateClusters() {
-
-		// list of MAINTENANCE state clusters.
-		List<Cluster> clusters = clusterManager.getAllByPropertyValue(
-				com.impetus.ankush2.constant.Constant.Keys.STATE,
-				Constant.Cluster.State.MAINTENANCE);
-
-		// iterating over the all deploying/removing state clusters.
-		for (Cluster cluster : clusters) {
-			// getting clusterable object.
-			try {
-				// setting state as crashed.
-				cluster.setState(Constant.Cluster.State.DEPLOYED);
-				// getting cluster conf.
-				ClusterConf conf = cluster.getClusterConf();
-				// setting id of cluster inside conf.
-				conf.setClusterId(cluster.getId());
-				// setting state as error.
-				conf.setState(Constant.Cluster.State.DEPLOYED);
-				// saving cluster conf.
-				cluster.setClusterConf(conf);
-				// saving cluster.
-				clusterManager.save(cluster);
-			} catch (Exception e) {
-				log.error(e.getMessage());
-				try {
-					// setting server crashed as state.
-					cluster.setState(Constant.Cluster.State.DEPLOYED);
+					cluster.setState(Constant.Cluster.State.SERVER_CRASHED
+							.toString());
 					// saving in db.
 					clusterManager.save(cluster);
 				} catch (Exception subExe) {
@@ -197,7 +157,7 @@ public class ServerCrashManager {
 					.getAllByDisjunctionveNormalQuery(maps);
 			// setting node state as Server_Crashed
 			for (Node node : nodes) {
-				node.setState(Constant.Node.State.SERVER_CRASHED);
+				node.setState(Constant.Node.State.SERVER_CRASHED.toString());
 				nodeManager.save(node);
 			}
 		} catch (Exception e) {

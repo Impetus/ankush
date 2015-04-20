@@ -29,7 +29,6 @@ pageContext.setAttribute("baseUrl",baseUrl);
 		<link rel="stylesheet" type="text/css" href="<c:out value="${baseUrl}" />/public/bootstrap-3.2.0-dist/css/bootstrap.css" media="all"/>
         <link rel="stylesheet" type="text/css" href="<c:out value="${baseUrl}" />/public/bootstrap-3.2.0-dist/css/bootstrap-theme.css" media="all"/>
         <link rel="stylesheet" type="text/css" href="<c:out value="${baseUrl}" />/public/libcss3.0/bootstrap-toggle-buttons.css" media="all"/>
-        <link rel="stylesheet" type="text/css" href="<c:out value="${baseUrl}" />/public/font-awesome-4.1.0/css/font-awesome.css" media="all"/>
         <link rel="stylesheet" type="text/css" href="<c:out value="${baseUrl}" />/public/font-awesome-4.1.0/css/font-awesome.min.css" media="all"/>
         <link rel="stylesheet" type="text/css" href="<c:out value="${baseUrl}" />/public/css3.0/ankush.expandable.css" media="all"/>
         <link rel="stylesheet" type="text/css" href="<c:out value="${baseUrl}" />/public/css3.0/ankush.css" media="all"/>
@@ -51,7 +50,6 @@ pageContext.setAttribute("baseUrl",baseUrl);
 		<script src="<c:out value='${baseUrl}' />/public/js3.0/ankush.common.js" type="text/javascript"></script> 
 		<script src="<c:out value='${baseUrl}' />/public/libjs3.0/jquery.toggle.buttons.js" type="text/javascript"></script>	
 		<script src="<c:out value='${baseUrl}' />/public/libjs3.0/bootstrap-button.js" type="text/javascript"></script>
-		<script src="<c:out value='${baseUrl}' />/public/libjs3.0/jquery.dataTables.js" type="text/javascript"></script>
    		<script src="<c:out value='${baseUrl}' />/public/libjs3.0/jquery.dataTables.min.js" type="text/javascript"></script>
    		<script src="<c:out value='${baseUrl}' />/public/libjs3.0/jquery.dataTables.rowGrouping.js" type="text/javascript"></script>
    		<script src="<c:out value='${baseUrl}' />/public/libjs3.0/jquery.navgoco.js" type="text/javascript"></script>

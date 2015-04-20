@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,12 +39,10 @@ import java.util.concurrent.TimeUnit;
 
 import net.neoremind.sshxcute.core.Result;
 import net.neoremind.sshxcute.core.SSHExec;
-import net.neoremind.sshxcute.exception.TaskExecFailException;
 import net.neoremind.sshxcute.task.CustomTask;
 import net.neoremind.sshxcute.task.impl.ExecCommand;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.json.simple.JSONObject;
@@ -55,25 +52,14 @@ import com.impetus.ankush.AppStore;
 import com.impetus.ankush.AppStoreWrapper;
 import com.impetus.ankush.common.exception.AnkushException;
 import com.impetus.ankush.common.exception.RegisterClusterException;
-import com.impetus.ankush.common.framework.config.ClusterConf;
-import com.impetus.ankush.common.framework.config.NodeConf;
 import com.impetus.ankush.common.scripting.AnkushTask;
-import com.impetus.ankush.common.scripting.impl.AppendFileUsingEcho;
-import com.impetus.ankush.common.scripting.impl.EchoEnvVariableValue;
-import com.impetus.ankush.common.scripting.impl.ExecSudoCommand;
 import com.impetus.ankush.common.service.ConfigurationManager;
-import com.impetus.ankush2.logger.AnkushLogger;
 import com.impetus.ankush.common.utils.AnkushRestClient;
-import com.impetus.ankush.common.utils.FileUtils;
 import com.impetus.ankush.common.utils.JsonMapperUtil;
 import com.impetus.ankush.common.utils.ReflectionUtil;
-import com.impetus.ankush.common.utils.SSHUtils;
 import com.impetus.ankush.common.utils.XmlUtil;
-
 import com.impetus.ankush2.common.scripting.impl.AddConfProperty;
 import com.impetus.ankush2.constant.Constant;
-import com.impetus.ankush2.constant.Constant.AppStore.CompConfigXmlMapping;
-import com.impetus.ankush2.constant.Constant.Component;
 import com.impetus.ankush2.framework.config.ClusterConfig;
 import com.impetus.ankush2.framework.config.ComponentConfig;
 import com.impetus.ankush2.framework.config.NodeConfig;
@@ -90,6 +76,7 @@ import com.impetus.ankush2.hadoop.monitor.HadoopDFSManager;
 import com.impetus.ankush2.hadoop.monitor.HadoopMonitor;
 import com.impetus.ankush2.hadoop.monitor.commandsmanager.HadoopCommandsManager;
 import com.impetus.ankush2.hadoop.utils.HadoopConstants.ConfigXmlKeys.Attributes;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -217,34 +204,6 @@ public class HadoopUtils {
 		clusterConfig.addError(componentName, warnMsg);
 	}
 
-	/**
-	 * Gets the path variable value.
-	 * 
-	 * @param nodeConfig
-	 *            the node config
-	 * @return the path variable value
-	 * @throws Exception
-	 *             the exception
-	 */
-	public static String getPathVariableValue(NodeConfig nodeConfig)
-			throws Exception {
-		String pathValue = "";
-		try {
-			AnkushTask getPathValue = new EchoEnvVariableValue("PATH");
-			Result res = nodeConfig.getConnection().exec(getPathValue);
-			if (res.rc != 0) {
-				throw (new Exception("Could not get value of PATH variable"));
-			} else {
-				pathValue = res.sysout;
-			}
-		} catch (Exception e) {
-			LOG.error("Could not get value of PATH variable",
-					Constant.Component.Name.HADOOP, nodeConfig.getHost(), e);
-			throw (new Exception("Could not get value of PATH variable"));
-		}
-		return pathValue.trim();
-	}
-
 	/** The Constant TOPOLOGY_SCRIPT_FILE. */
 	private static final String TOPOLOGY_SCRIPT_FILE = AppStoreWrapper
 			.getAnkushConfReader()
@@ -264,30 +223,6 @@ public class HadoopUtils {
 	/** The Constant DEFAULT_NODE_IP. */
 	public static final String DEFAULT_NODE_IP = "0.0.0.0";
 
-	/**
-	 * Validate node addition to set.
-	 * 
-	 * @param nodeConfs
-	 *            the node confs
-	 * @param node
-	 *            the node
-	 * @return true, if successful
-	 */
-	public static boolean validateNodeAdditionToSet(Set<NodeConf> nodeConfs,
-			NodeConf node) {
-		if (node == null) {
-			return false;
-		}
-		for (NodeConf tmpNode : nodeConfs) {
-			if (tmpNode.getPublicIp().equals(node.getPublicIp())) {
-				return false;
-			}
-			if (tmpNode.getPrivateIp().equals(node.getPrivateIp())) {
-				return false;
-			}
-		}
-		return true;
-	}
 
 	/**
 	 * Adds the property to xml file.
@@ -1189,41 +1124,6 @@ public class HadoopUtils {
 	}
 
 	/**
-	 * Are nodes equal.
-	 * 
-	 * @param node1
-	 *            the node1
-	 * @param node2
-	 *            the node2
-	 * @return true, if successful
-	 */
-	public static boolean areNodesEqual(NodeConf node1, NodeConf node2) {
-		if (node1 == null || node2 == null) {
-			return true;
-		}
-		if (node1.getPublicIp().equals(node2.getPublicIp())) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	/**
-	 * Status.
-	 * 
-	 * @param nodeConfs
-	 *            the node confs
-	 * @return true, if successful
-	 */
-	public static boolean status(Set<NodeConf> nodeConfs) {
-		boolean status = true;
-		for (NodeConf nodeConf : nodeConfs) {
-			status = nodeConf.getStatus() && status;
-		}
-		return status;
-	}
-
-	/**
 	 * Gets the json from rm rest api.
 	 * 
 	 * @param rmHost
@@ -1518,9 +1418,8 @@ public class HadoopUtils {
 						.loadHadoopConfigXMLParameters(filePath,
 								HadoopConstants.ConfigXmlKeys.CLASS, subItems);
 				AppStore.setObject(
-						com.impetus.ankush2.constant.Constant.AppStore.CompConfigXmlMapping.HADOOP,
+						Constant.AppStore.CompConfigXmlMapping.HADOOP,
 						hadoopConfigXmlSet);
-				System.out.println("hadoopConfigXmlSet: " + hadoopConfigXmlSet);
 			} catch (Exception e) {
 				System.err.println(e.getMessage());
 			}
@@ -1719,19 +1618,6 @@ public class HadoopUtils {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * Sets the node type for node.
-	 * 
-	 * @param nodeConf
-	 *            the node conf
-	 * @param nodePublicIpTypeMapping
-	 *            the node public ip type mapping
-	 */
-	public static void setNodeTypeForNode(NodeConf nodeConf,
-			Map<String, String> nodePublicIpTypeMapping) {
-		nodeConf.setType(nodePublicIpTypeMapping.get(nodeConf.getPublicIp()));
 	}
 
 	/**

@@ -34,11 +34,9 @@ import java.util.Set;
 import org.json.simple.JSONObject;
 
 import com.impetus.ankush.common.exception.AnkushException;
-import com.impetus.ankush.common.utils.JsonMapperUtil;
 import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush2.framework.config.ClusterConfig;
 import com.impetus.ankush2.framework.config.ComponentConfig;
-import com.impetus.ankush2.hadoop.config.Hadoop2Application;
 import com.impetus.ankush2.hadoop.utils.HadoopConstants;
 import com.impetus.ankush2.hadoop.utils.HadoopUtils;
 

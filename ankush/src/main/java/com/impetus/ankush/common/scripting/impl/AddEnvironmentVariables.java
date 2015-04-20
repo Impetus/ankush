@@ -25,9 +25,8 @@ package com.impetus.ankush.common.scripting.impl;
 
 import java.util.LinkedHashMap;
 
-import com.impetus.ankush.common.constant.Constant;
+import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush.common.scripting.AnkushTask;
-import com.sun.mail.imap.AppendUID;
 
 /**
  * @author Akhil
@@ -38,11 +37,11 @@ public class AddEnvironmentVariables extends AnkushTask {
 	LinkedHashMap<String, String> envPropertiesMap = new LinkedHashMap<String, String>();
 
 	/** The file path. */
-	private String filePath = Constant.ETCENV_FILE;
+	private String filePath = Constant.Strings.ETCENV_FILE;
 
-	private String startTag = Constant.TEXT_COMMENT_START;
+	private String startTag = Constant.Strings.TEXT_COMMENT_START;
 
-	private String endTag = Constant.TEXT_COMMENT_END;
+	private String endTag = Constant.Strings.TEXT_COMMENT_END;
 
 	/**
 	 * @param envPropertiesMap
@@ -79,11 +78,13 @@ public class AddEnvironmentVariables extends AnkushTask {
 		}
 		text.append(endTag);
 
-		AnkushTask appendUsingSed = new AppendFileUsingSed(text.toString(), this.filePath);
+		AnkushTask appendUsingSed = new AppendFileUsingSed(text.toString(),
+				this.filePath);
 		return appendUsingSed.getCommand();
-//		return "sed -i '/"
-//				+ com.impetus.ankush2.constant.Constant.Strings.TEXT_COMMENT_END_ENV_SETTINGS
-//				+ "/i \\" + text.toString() + "' " + filePath;
+		// return "sed -i '/"
+		// +
+		// com.impetus.ankush2.constant.Constant.Strings.TEXT_COMMENT_END_ENV_SETTINGS
+		// + "/i \\" + text.toString() + "' " + filePath;
 		// return "sed -i '$ a\'\""+ text.toString() + "\" " + filePath;
 	}
 }

@@ -30,7 +30,6 @@ import java.util.Set;
 import com.impetus.ankush.common.exception.AnkushException;
 import com.impetus.ankush.common.utils.LogViewHandler;
 import com.impetus.ankush2.constant.Constant;
-import com.impetus.ankush2.hadoop.deployer.configurator.Hadoop1Configurator;
 import com.impetus.ankush2.hadoop.deployer.servicemanager.HdpRoleLogsDirPath;
 import com.impetus.ankush2.hadoop.utils.HadoopUtils;
 

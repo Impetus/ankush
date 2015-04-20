@@ -21,9 +21,8 @@
 package com.impetus.ankush2.hadoop.deployer.configurator;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +36,6 @@ import com.impetus.ankush.common.exception.AnkushException;
 import com.impetus.ankush.common.scripting.AnkushTask;
 import com.impetus.ankush.common.scripting.impl.AddEnvironmentVariables;
 import com.impetus.ankush.common.scripting.impl.AppendFileUsingEcho;
-import com.impetus.ankush.common.scripting.impl.ExecSudoCommand;
 import com.impetus.ankush.common.scripting.impl.Move;
 import com.impetus.ankush.common.scripting.impl.ReplaceText;
 import com.impetus.ankush.common.scripting.impl.SourceFile;

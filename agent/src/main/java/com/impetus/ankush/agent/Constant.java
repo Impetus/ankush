@@ -61,21 +61,6 @@ public interface Constant {
 	/** The prop name service url last. */
 	String PROP_NAME_SERVICE_URL_LAST = "SERVICE_URL_LAST";
 
-	/** The prop name hadoop conf dir. */
-	String PROP_NAME_HADOOP_CONF_DIR = "HADOOP_CONF_DIR";
-
-	/** The prop name hadoop pid dir. */
-	String PROP_NAME_HADOOP_PID_DIR = "HADOOP_PID_DIR";
-
-	/** The prop name hadoop log dir. */
-	String PROP_NAME_HADOOP_LOG_DIR = "HADOOP_LOG_DIR";
-
-	/** The prop name hadoop home. */
-	String PROP_NAME_HADOOP_HOME = "HADOOP_HOME";
-
-	/** The prop name hadoop jar path. */
-	String PROP_NAME_HADOOP_JAR_PATH = "HADOOP_JAR_PATH";
-
 	/** The prop name service status update time. */
 	String PROP_NAME_SERVICE_STATUS_UPDATE_TIME = "SERVICE_STATUS_UPDATE_TIME";
 
@@ -94,9 +79,6 @@ public interface Constant {
 	/** The prop name process port list. */
 	String PROP_NAME_PROCESS_PORT_MAP = "PROCESS_PORT_MAP";
 
-	/** The technology hadoop. */
-	String TECHNOLOGY_HADOOP = "Hadoop";
-
 	/** The technology linux. */
 	String TECHNOLOGY_LINUX = "Linux";
 
@@ -105,36 +87,6 @@ public interface Constant {
 
 	/** The technology cassandra. */
 	String TECHNOLOGY_CASSANDRA = "Cassandra";
-
-	/** The technology hadoop vendor. */
-	String TECHNOLOGY_HADOOP_VENDOR = "HADOOP_VENDOR";
-
-	/** The prop name job status update time. */
-	String PROP_NAME_HADOOP_DATA_UPDATE_TIME = "HADOOP_DATA_UPDATE_TIME";
-
-	/** The prop name job url part. */
-	String PROP_NAME_JOB_URL_PART = "JOB_URL_PART";
-
-	/** The prop name job url status. */
-	String PROP_NAME_JOB_URL_STATUS = "URL_JOB_STATUS";
-
-	String PROP_NAME_NAMENODE_ROLE = "URL_NAMENODE_ROLE";
-
-	/** The prop namenode port. */
-	String PROP_NAMENODE_RPC_PORT = "NAMENODE_RPC_PORT";
-	
-	String PROP_JOBTRACKER_RPC_PORT = "JOBTRACKER_RPC_PORT";
-
-	/** The prop dfs port. */
-	String PROP_DFS_PORT = "DFS_PORT";
-
-	String PROP_JOBTRACKER_HOST = "JOBTRACKER_HOST";
-	
-	/** The prop namenode host. */
-	String PROP_NAMENODE_HOST = "NAMENODE_HOST";
-
-	/** The prop namenode host. */
-	String PROP_RESOURCEMANAGER_HOST = "RESOURCEMANAGER_HOST";
 
 	/** The prop jarpath. */
 	String PROP_JARPATH = "JARPATH";
@@ -169,18 +121,6 @@ public interface Constant {
 	/** The rpc_port. */
 	String RPC_PORT = "RPC_PORT";
 
-	/** The prop name storm topology period. */
-	String PROP_NAME_STORM_TOPOLOGY_PERIOD = "STORM_TOPOLOGY_PERIOD";
-
-	/** The storm home. */
-	String STORM_HOME = "STORM_HOME";
-
-	/** The storm jar. */
-	String STORM_JAR = "STORM_JAR";
-
-	/** The storm lib. */
-	String STORM_LIB = "STORM_LIB";
-
 	/** The storm lib. */
 	String DATA_DIR_LIST = "DATA_DIR_LIST";
 
@@ -197,10 +137,6 @@ public interface Constant {
 	String AGENT_INSTALL_DIR = "agent.install.dir";
 	/** rrd dir group **/
 	String RRD_GROUP = "RRD_GROUP";
-
-	String PROP_HADOOP_REST_PORT = "HADOOP_REST_PORT";
-
-	String PROP_NAMENODE_HTTP_PORT = "NAMENODE_HTTP_PORT";
 
 	String PROP_SERVICE_CONF_DIR = "SERVICE_CONF_DIR";
 

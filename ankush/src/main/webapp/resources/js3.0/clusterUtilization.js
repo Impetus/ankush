@@ -51,6 +51,7 @@ com.impetus.ankush.clusterUtilization = {
                 com.impetus.ankush.clusterUtilization.loadGraphRedraw(loadClusterLevelGraphsStartTime, 'packet', 'pkts_.*\\.rrd');
             }
         },
+        //this function will populate graph
         loadGraph : function(startTime, key, value,autorefresh) {
             var graphUrl =  baseUrl + '/monitor/'+clusterId+'/graphs?startTime='+startTime+'&pattern=' + value;
             if(autorefresh != 'autorefresh')
@@ -146,6 +147,7 @@ com.impetus.ankush.clusterUtilization = {
             	
             });   
         },
+        //this function will populate graph on autorefresh
         loadGraphRedraw : function(startTime, key, value) {
         	 var graphUrl =  baseUrl + '/monitor/'+clusterId+'/graphs?startTime='+startTime+'&pattern=' + value;
         	 var graphWidth = $("#graph_"+key).width();

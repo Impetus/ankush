@@ -21,7 +21,6 @@
 package com.impetus.ankush.common.controller.rest;
 
 import java.security.Principal;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,11 +36,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.service.AppConfService;
 import com.impetus.ankush.common.utils.ResponseWrapper;
 import com.impetus.ankush.common.utils.UploadHandler;
-import com.impetus.ankush2.constant.Constant.Strings;
 
 /**
  * The Class FileUploadController.

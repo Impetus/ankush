@@ -31,7 +31,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
-import com.impetus.ankush.common.constant.Constant;
+import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush.common.domain.User;
 import com.impetus.ankush.common.service.AppConfService;
 import com.impetus.ankush.common.service.UserManager;
@@ -91,12 +91,12 @@ public class AjaxAuthenticationSuccessHandler extends
 			if (usr != null) {
 				Object obj = usr.getForcePasswordChange();
 				if ((obj != null) && (obj instanceof Boolean)) {
-					boolean b = (Boolean)obj;
+					boolean b = (Boolean) obj;
 					if (b)
 						state = Constant.App.State.CHANGE_PASSWORD;
 				}
 			}
-				
+
 			if (state == null)
 				state = appConfService.getState();
 

@@ -55,7 +55,6 @@ com.impetus.ankush.keyspaceDrilldown = {
 							                           	navigation
 							                           ]);
 						}
-						com.impetus.ankush.keyspaceDrilldown.tileCreateColumnFamilies();
 					}else{
 						columnFamiliesTables.fnSettings().oLanguage.sEmptyTable = result.output.error[0];
 						columnFamiliesTables.fnClearTable();
@@ -63,51 +62,5 @@ com.impetus.ankush.keyspaceDrilldown = {
 			},function(){
 				$("#showLoading").addClass('element-hide');
 			});
-		},
-		//this function will populate tiles in keyspace drilldown page
-		tileCreateColumnFamilies : function(){
-			var clusterTiles = {};
-			clusterTiles = com.impetus.ankush.tileReordring(columnFamilyDetailData.output.tiles);
-			$('#tilesColumnFamilies').empty();
-			var tile = '';
-			tile = document.getElementById('tilesColumnFamilies');
-			for(var i = 0 ; i < clusterTiles.length ; i++){
-				switch (clusterTiles[i].status) {
-				case 'Error':
-					tile.innerHTML += '<div class="item grid-1c2text errorbox">'+
-					'<div class="tile-1c2text thumbnail">'+
-					'<div class="redTitle">'+
-					'<div class="clip tile-innerdiv" data-original-title="'+clusterTiles[i].line1+'" data-placement="bottom">'+clusterTiles[i].line1+'</div></div>'+
-					'<div class="descTitle"><span>'+clusterTiles[i].line2+'</span><br/><span>'+clusterTiles[i].line3+'</span></div></div></div>';
-					break;
-				case 'Critical':
-					tile.innerHTML += '<div class="item grid-1c2text errorbox">'+
-					'<div class="tile-1c2text thumbnail">'+
-					'<div class="redTitle">'+
-					'<div class="clip tile-innerdiv" data-original-title="'+clusterTiles[i].line1+'" data-placement="bottom">'+clusterTiles[i].line1+'</div></div>'+
-					'<div class="descTitle"><span>'+clusterTiles[i].line2+'</span><br/><span>'+clusterTiles[i].line3+'</span></div></div></div>';
-					break;
-				case 'Warning':
-					tile.innerHTML += '<div class="item grid-1c2text warningbox">'+
-					'<div class="tile-1c2text thumbnail">'+
-					'<div class="yellowTitle">'+
-					'<div class="clip tile-innerdiv" data-original-title="'+clusterTiles[i].line1+'" data-placement="bottom">'+clusterTiles[i].line1+'</div></div>'+
-					'<div class="descTitle"><span>'+clusterTiles[i].line2+'</span><br/><span>'+clusterTiles[i].line3+'</span></div></div></div>';
-					break;
-				case 'Normal':
-					tile.innerHTML += '<div class="item grid-1c2text infobox">'+
-					'<div class="tile-1c2text thumbnail">'+
-					'<div class="greenTitle">'+
-					'<div class="clip tile-innerdiv" data-original-title="'+clusterTiles[i].line1+'" data-placement="bottom">'+clusterTiles[i].line1+'</div></div>'+
-					'<div class="descTitle">'+clusterTiles[i].line2+'</div></div></div>';
-					break;
-				}
-				
-			}
-			var tileId = '';
-			tileId = 'tilesColumnFamilies';
-			$('.clip').tooltip();
-			$('#'+tileId).masonry({ itemSelector : '.item',
-				columnWidth : 100 });
-	},
+		}
 };

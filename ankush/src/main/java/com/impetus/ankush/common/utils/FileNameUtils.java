@@ -34,10 +34,9 @@ import java.util.zip.ZipFile;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 
 import com.impetus.ankush.AppStoreWrapper;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 /**
  * The Class FileNameUtils.

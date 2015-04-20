@@ -31,7 +31,6 @@ import com.impetus.ankush.common.domain.Cluster;
 import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush2.db.DBClusterManager;
 import com.impetus.ankush2.framework.config.ClusterConfig;
-import com.impetus.ankush2.framework.monitor.AbstractMonitor;
 import com.impetus.ankush2.framework.utils.ObjectFactory;
 
 public class ClusterMonitor extends AbstractMonitor {

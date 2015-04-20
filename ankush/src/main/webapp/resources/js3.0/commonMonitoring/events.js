@@ -19,6 +19,7 @@
 * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 *******************************************************************************/
 com.impetus.ankush.events = {
+		//this function will populate events page
 		commonEvents : function(){
 			var eventsUrl = baseUrl + '/monitor/' + clusterId + "/events";
 			com.impetus.ankush.placeAjaxCall(eventsUrl, 'GET', true,null,function(eventsData){

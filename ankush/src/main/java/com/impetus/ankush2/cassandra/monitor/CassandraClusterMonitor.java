@@ -49,13 +49,6 @@ import org.apache.commons.lang3.text.WordUtils;
 import org.yaml.snakeyaml.Yaml;
 
 import com.impetus.ankush.AppStoreWrapper;
-import com.impetus.ankush2.cassandra.utils.ColumnFamily;
-import com.impetus.ankush2.cassandra.utils.CompactionProperty;
-import com.impetus.ankush2.cassandra.utils.CompressionProperty;
-import com.impetus.ankush2.cassandra.utils.GeneralProperty;
-import com.impetus.ankush2.cassandra.utils.Keyspace;
-import com.impetus.ankush2.cassandra.utils.PerformanceTuningProperty;
-import com.impetus.ankush.common.agent.GenericServiceMonitor;
 import com.impetus.ankush.common.domain.Cluster;
 import com.impetus.ankush.common.domain.Node;
 import com.impetus.ankush.common.domain.NodeMonitoring;
@@ -64,7 +57,6 @@ import com.impetus.ankush.common.scripting.AnkushTask;
 import com.impetus.ankush.common.service.ConfigurationManager;
 import com.impetus.ankush.common.service.GenericManager;
 import com.impetus.ankush.common.service.MonitoringManager;
-import com.impetus.ankush.common.tiles.TileInfo;
 import com.impetus.ankush.common.utils.FileNameUtils;
 import com.impetus.ankush.common.utils.JmxUtil;
 import com.impetus.ankush.common.utils.JsonMapperUtil;
@@ -72,6 +64,12 @@ import com.impetus.ankush.common.utils.LogViewHandler;
 import com.impetus.ankush.common.utils.SSHConnection;
 import com.impetus.ankush2.cassandra.utils.CassandraConstants;
 import com.impetus.ankush2.cassandra.utils.CassandraUtils;
+import com.impetus.ankush2.cassandra.utils.ColumnFamily;
+import com.impetus.ankush2.cassandra.utils.CompactionProperty;
+import com.impetus.ankush2.cassandra.utils.CompressionProperty;
+import com.impetus.ankush2.cassandra.utils.GeneralProperty;
+import com.impetus.ankush2.cassandra.utils.Keyspace;
+import com.impetus.ankush2.cassandra.utils.PerformanceTuningProperty;
 import com.impetus.ankush2.common.scripting.impl.AddConfProperty;
 import com.impetus.ankush2.common.scripting.impl.DeleteConfProperty;
 import com.impetus.ankush2.common.scripting.impl.EditConfProperty;
@@ -456,161 +454,6 @@ public class CassandraClusterMonitor extends AbstractMonitor {
 			addAndLogError("Could not get JMX connection");
 		}
 		return null;
-	}
-
-	/**
-	 * Technology tiles.
-	 * 
-	 * This method is called for the Technology-Dashboard of Cassandra in
-	 * Hybrid.
-	 */
-	public void technologyTiles() {
-		List<TileInfo> tiles = new ArrayList<TileInfo>();
-		tiles.addAll(getTechTiles());
-
-		// Gettin Cassandra service tiles.
-		List<TileInfo> serviceTiles = getServiceTiles(Constant.Component.Name.CASSANDRA);
-		if (serviceTiles != null && !serviceTiles.isEmpty()) {
-			// adding service tiles.
-			tiles.addAll(serviceTiles);
-		}
-		// putting the tiles.
-		result.put(Constant.Keys.TILES, tiles);
-	}
-
-	private List<TileInfo> getTechTiles() {
-		List<TileInfo> tiles = new ArrayList<TileInfo>();
-		tiles.addAll(getNodesTile());
-		CassandraJMXData techData = CassandraJMXData
-				.getTechnologyData(clusterConf);
-		if (techData != null) {
-			tiles.addAll(techData.getTiles());
-		}
-		return tiles;
-	}
-
-	/**
-	 * Method to get nodes tile.
-	 * 
-	 * @param conf
-	 *            the conf
-	 * @return the nodes tile
-	 */
-	private List<TileInfo> getNodesTile() {
-
-		Integer seedNodes = ((Set) advanceConf
-				.get(CassandraConstants.ClusterProperties.SEED_NODE_SET))
-				.size();
-		Integer totalNodes = componentConfig.getNodes().size();
-		String nodeString = seedNodes.toString() + "/" + totalNodes.toString();
-
-		// create seedNode tile
-		TileInfo nodeTile = new TileInfo();
-		nodeTile.setLine1(nodeString);
-		nodeTile.setLine2(Constant.Keys.SEEDNODES);
-		nodeTile.setUrl(Constant.Tile.Url.NODE_LIST);
-		nodeTile.setStatus(Constant.Tile.Status.NORMAL);
-
-		// // list object.
-		List<TileInfo> tiles = new ArrayList<TileInfo>();
-		tiles.add(nodeTile);
-
-		return tiles;
-	}
-
-	/**
-	 * node tiles.
-	 */
-	public List<TileInfo> compNodeTiles(Cluster dbCluster, Map parameterMap,
-			String nodeIP) {
-		List<TileInfo> tiles = new ArrayList<TileInfo>();
-		// get node ip
-		String host = (String) parameterMap.get(Constant.Keys.HOST);
-		if (host == null || host.isEmpty()) {
-			addAndLogError("Host is missing.");
-			return null;
-		}
-		// add the event tiles for the node.
-		tiles.addAll(getNodeDetailTile(host));
-		return tiles;
-	}
-
-	private List<TileInfo> getNodeDetailTile(String host) {
-		List<TileInfo> tiles = new ArrayList<TileInfo>();
-		JmxUtil jmxUtil = null;
-		try {
-			NodeMonitoring nodeMonitoring = new MonitoringManager()
-					.getMonitoringData(host);
-			if (nodeMonitoring == null) {
-				throw new AnkushException(
-						"Could not get nodemonitoring object for node " + host);
-			}
-			// Cassandra service status
-			Map<String, Boolean> serviceStatus = nodeMonitoring
-					.getServiceStatus(Constant.Component.Name.CASSANDRA);
-			if (serviceStatus == null) {
-				throw new AnkushException("Could not get service status for "
-						+ Constant.Component.Name.CASSANDRA);
-			}
-			// assigning role to seed or non seed on the basis of type.
-			String role = CassandraUtils.getNodeRole(clusterConf.getNodes()
-					.get(host).getRoles());
-			if (serviceStatus.get(role) == null
-					|| serviceStatus.get(role) == false) {
-				throw new AnkushException("Could not get node details as "
-						+ Constant.Component.Name.CASSANDRA
-						+ "service is down.");
-			}
-			jmxUtil = getJMXConnection(host,
-					(Integer) advanceConf
-							.get(CassandraConstants.ClusterProperties.JMX_PORT));
-			if (jmxUtil == null) {
-				throw new AnkushException("Unable to get JMX connection");
-			}
-			ObjectName mObjNameStorageService = new ObjectName(
-					CassandraConstants.ORG_APACHE_CASSANDRA
-							+ "db:type="
-							+ CassandraConstants.Cassandra_JMX_Attributes.CASSANDRA_JMX_OBJECT_STORAGESERVICE);
-
-			// create ownership tile
-			TileInfo ownershipTile = new TileInfo();
-			ownershipTile.setLine1(getNodeOwnership(jmxUtil,
-					mObjNameStorageService, host) + " %");
-			ownershipTile.setLine2(Constant.Keys.OWNERSHIP);
-			ownershipTile.setStatus(Constant.Tile.Status.NORMAL);
-			tiles.add(ownershipTile);
-
-			// create load tile
-			TileInfo loadTile = new TileInfo();
-			loadTile.setLine1(String.valueOf(getNodeLoad(jmxUtil,
-					mObjNameStorageService, host)));
-			loadTile.setLine2(Constant.Keys.LOAD);
-			loadTile.setStatus(Constant.Tile.Status.NORMAL);
-			tiles.add(loadTile);
-
-			// create tokenCount tile
-			TileInfo tokenCountTile = new TileInfo();
-			tokenCountTile.setLine1(String.valueOf(getNodeTokens(jmxUtil, host,
-					mObjNameStorageService).size()));
-			tokenCountTile
-					.setLine2(com.impetus.ankush2.constant.Constant.Keys.TOKENS);
-			tokenCountTile.setStatus(Constant.Tile.Status.NORMAL);
-			tiles.add(tokenCountTile);
-
-		} catch (Exception e) {
-			addAndLogError(e.getMessage());
-			TileInfo errorTile = new TileInfo();
-			errorTile.setLine1("Could not get node details tile");
-			errorTile.setLine2("");
-			errorTile.setStatus(Constant.Tile.Status.ERROR);
-			tiles = new ArrayList<TileInfo>();
-			tiles.add(errorTile);
-		} finally {
-			if (jmxUtil != null) {
-				jmxUtil.disconnect();
-			}
-		}
-		return tiles;
 	}
 
 	/**
@@ -1106,17 +949,6 @@ public class CassandraClusterMonitor extends AbstractMonitor {
 				confManager.saveConfiguration(dbCluster.getId(), loggedUser,
 						fileName, host, propertyName, newValue);
 			}
-			if (propertyName.equalsIgnoreCase("rpc_port")) {
-				GenericServiceMonitor gsm = new GenericServiceMonitor();
-				gsm.stopagent(connection, null);
-				gsm.startagent(connection, null);
-				// TODO: Code for restarting Cassandra. To be done after
-				// service management framework gets done.
-				// CassandraDeployer cd = new
-				// CassandraDeployer(clusterConf);
-				// cd.stopNode(host);
-				// cd.startNode(host);
-			}
 		} catch (Exception e) {
 			addAndLogError(e.getMessage());
 		} finally {
@@ -1407,40 +1239,12 @@ public class CassandraClusterMonitor extends AbstractMonitor {
 			if (lstKeyspace.isEmpty()) {
 				return;
 			}
-			result.put(Constant.Keys.TILES, getKeyspaceTile(lstKeyspace.size()));
 			result.put(
 					CassandraConstants.Cassandra_JMX_Attributes.CASSANDRA_JMX_ATTRIBUTE_KEYSPACES,
 					lstKeyspace);
 		} catch (Exception e) {
 			addAndLogError("Could not get keyspace details.");
 		}
-	}
-
-	private List<TileInfo> getKeyspaceTile(int keyspaceCount) {
-
-		List<TileInfo> tiles = new ArrayList<TileInfo>();
-		TileInfo ksTile = null;
-		try {
-			String keyspace = "Keyspace";
-			if (keyspaceCount > 1) {
-				keyspace = CassandraConstants.Cassandra_JMX_Attributes.CASSANDRA_JMX_ATTRIBUTE_KEYSPACES;
-			}
-			ksTile = new TileInfo();
-			ksTile.setLine1(String.valueOf(keyspaceCount));
-			ksTile.setLine2(keyspace);
-			ksTile.setStatus(Constant.Tile.Status.NORMAL);
-			ksTile.setUrl("Keyspace");
-			tiles.add(ksTile);
-		} catch (Exception e) {
-			ksTile = new TileInfo();
-			ksTile.setLine1("Could not get Keyspace tile.");
-			ksTile.setLine2("");
-			ksTile.setStatus(Constant.Tile.Status.ERROR);
-			ksTile.setUrl("Keyspace");
-			tiles.add(ksTile);
-		}
-
-		return tiles;
 	}
 
 	private List<Keyspace> getKeyspaceInfo(JmxUtil jmxUtil, String where,
@@ -1737,11 +1541,6 @@ public class CassandraClusterMonitor extends AbstractMonitor {
 					continue;
 				}
 
-				List<TileInfo> tiles = getColumnFamilyTiles(jmxUtil, keyspace,
-						publicIp);
-
-				result.put(Constant.Keys.TILES, tiles);
-
 				Set columnFamilySet = getColumnFamilyList(keyspace, jmxUtil,
 						"*");
 				List<ColumnFamily> lstColumnFamily = new ArrayList<ColumnFamily>();
@@ -1793,45 +1592,6 @@ public class CassandraClusterMonitor extends AbstractMonitor {
 		} catch (AnkushException e) {
 			addAndLogError(e.getMessage());
 		}
-	}
-
-	private List<TileInfo> getColumnFamilyTiles(JmxUtil jmxUtil,
-			String keyspace, String hostname) throws AnkushException {
-		List<TileInfo> tiles = new ArrayList<TileInfo>();
-
-		List<Keyspace> lstKeyspace = getKeyspaceInfo(jmxUtil,
-				"where keyspace_name='" + keyspace + "'", hostname);
-		if (lstKeyspace.isEmpty()
-				|| !lstKeyspace.get(0).getKeyspaceName()
-						.equalsIgnoreCase(keyspace)) {
-			throw new AnkushException("Could not get Column fammily details.");
-		}
-		Integer columnFamilyCount = lstKeyspace.get(0).getCfCount();
-		String columnFamily = "Column Family";
-		if (columnFamilyCount > 1) {
-			columnFamily = "Column Families";
-		}
-		tiles.add(getColumnFamilyTile(columnFamilyCount.toString(),
-				columnFamily));
-		tiles.add(getColumnFamilyTile(lstKeyspace.get(0).getDurableWrites(),
-				"Durable writes"));
-		tiles.add(getColumnFamilyTile(lstKeyspace.get(0)
-				.getReplicationStrategy(), "Strategy Class"));
-		return tiles;
-	}
-
-	private TileInfo getColumnFamilyTile(String line1, String line2) {
-		// create tile
-		TileInfo keyspaceCountTile = null;
-		try {
-			keyspaceCountTile = new TileInfo();
-			keyspaceCountTile.setLine1(line1);
-			keyspaceCountTile.setLine2(line2);
-			keyspaceCountTile.setStatus(Constant.Tile.Status.NORMAL);
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-		}
-		return keyspaceCountTile;
 	}
 
 	private void columnfamilydetails() {

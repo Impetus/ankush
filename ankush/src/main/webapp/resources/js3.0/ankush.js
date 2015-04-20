@@ -24,8 +24,7 @@ var com = {
 		impetus : {
 			ankush : {
 				tooltip:{},
-				init : function(){},
-			  uploadFile : function(uploadUrl, fileId, callback, context) {
+				uploadFile : function(uploadUrl, fileId, callback, context) {
 				  	$.ajaxFileUpload({
 				    	url : uploadUrl,
 				    	secureuri : false,
@@ -201,7 +200,7 @@ var com = {
   					$('#'+id).jstree('close_all');
   					com.impetus.ankush.nodeUtilizationTrend.changeBorder();
   				},
-  			//this will create common tiles for common monitoring page
+  				//this will create common tiles for common monitoring page
   		        createCommonTiles : function(lastUrl){
   		        	if(lastUrl === undefined){
   		        		lastUrl = '';
@@ -371,230 +370,9 @@ var com = {
   					}
   					return tiles;
   				},
-  				 //this will create common tiles for common monitoring page @zubair
-  		        ankushTiles : function(currentClusterId){
-  		        	$('#tileSection').append('<div class="masonry col-md-12" id="tilesAnkush"></div>');
-  		        	if(undefined == currentClusterId)
-  		                return;
-  		            var tileUrl = baseUrl + '/monitor/' + currentClusterId + '/clustertiles';
-  		            if((hybridTechnology !== undefined) && (hybridTechnology !== ''))
-  		            	tileUrl = baseUrl + '/monitor/' + currentClusterId + '/technologyTiles?component='+hybridTechnology;
-  		            var clusterTiles = {};
-  		            com.impetus.ankush.placeAjaxCall(tileUrl, "GET", true, null, function(tileData){
-  		            	
-  		            	//this object variable will set css passing by refrence
-  		                var tileVar = {
-  		                        'leftCss' : 0,
-  		                        'topCss' : 0,
-  		                        'lineCounter' : 1,
-  		                        'tyleType' : 'bigTile',
-  		                };
-  		                $('#tilesAnkush').empty();
-  		                if(tileData.output.status == false){
-  		                	$('#tilesAnkush').parent().hide();
-  		                    return ;
-  		                }
-  		                else{
-  		                	if((tileData.output.tiles == null) || (tileData.output.tiles.length == 0)){
-  		                		$('#tilesAnkush').parent().hide();
-  		                		return;
-  		                	}
-  		                    clusterTiles = com.impetus.ankush.tileReordring(tileData.output.tiles);
-  		                }
-  		                if(clusterTiles === null || clusterTiles.length === 0){
-  		                	$('#tilesAnkush').parent().hide();
-  		                	return;
-  		                }
-  		                $('#ankushTiles').parent().show();
-  		                //this var will set whether tile is 2*2 or 1*2
-  		                var tileFlag = false;
-  		                for(var j = 0 ; j < clusterTiles.length ; j++){
-  		                    if(clusterTiles[j].tileType == 'big_text'){
-  		                        tileFlag = true;
-  		                        break;
-  		                    }
-  		                }
-  		                var tile = document.getElementById('tilesAnkush');
-  		                for(var i = 0 ; i < clusterTiles.length ; i++){
-  		                    if((tileVar.leftCss+200) > ($('#tilesAnkush').width())){
-  		                        tileVar.leftCss = 0;
-  		                        tileVar.topCss = tileVar.lineCounter*200;
-  		                        tileVar.lineCounter++;
-  		                    }
-  		                    // && ((clusterTiles[i].tileType == 'small_text') && (clusterTiles[i].tileType == undefined))
-  		                    if((i == 0) && ((clusterTiles[i].tileType == 'small_text') || (clusterTiles[i].tileType == undefined)))
-  		                        tileVar.tyleType = 'smallTileOdd';
-  		                    com.impetus.ankush.createTyleUsingType(tileVar,i,clusterTiles,tile,'common-id-for-tile');
-  		                }
-  		                if(tileFlag == false){
-  		                    $('#tilesAnkush').masonry('destroy');
-  		                    $('#tilesAnkush').masonry({
-  		                        itemSelector : '.item',
-  		                        columnWidth : 100,
-  		                        isAnimated : true
-  		                    });
-  		                }else
-  		                    setTimeout(function(){$('#tilesAnkush').css('height',(tileVar.lineCounter)*200+'px');},50);
-  		                $('.clip').tooltip();
-  		            });
-  		           
-  		        },
-  				//tile creation tileVar is an object(pass by refrence to change css for tiles) i is index of tile, tile is html element of parent div anidForTile is id @Zubair
-  				createTyleUsingType : function(tileVar,i,clusterTiles,tile,idForTile){
-  					if(tile == null)
-  						return;
-  					var linesFun = function(){
-  					var lineString = '';
-  					if((Object.keys(clusterTiles[i].data).length != 0) && (clusterTiles[i].data != null)){
-  						for(var lineIndex = 0 ; lineIndex < clusterTiles[i].data.tileLines.length ; lineIndex++){
-  								lineString += '<div class="row-fluid"><div class="text-left span6" style="word-wrap:break-word;">'+clusterTiles[i].data.tileLines[lineIndex].text[0]+'</div><div class="text-left span6" style="word-wrap:break-word;">'+clusterTiles[i].data.tileLines[lineIndex].text[1]+'</div></div>';
-  						}
-					return 	lineString;
-  					};
-  					};
-  					var status = {
-  							'ERROR' : 'errorbox',
-  							'CRITICAL' : 'errorbox',
-  							'WARNING' : 'warningbox',
-  							'NORMAL' : 'infobox'
-  					};
-  					var colorClass = {
-  							'ERROR' : 'redTitle',
-  							'CRITICAL' : 'redTitle',
-  							'WARNING' : 'yellowTitle',
-  							'NORMAL' : 'greenTitle'
-  					};
-  					var tileId = 0;
-  					if(clusterTiles[i].tileType == undefined){
-						if (clusterTiles[i].data != null) {
-							tileId = clusterTiles[i].data.tileid;
-						}
-  					}
-					var tileAction = {};
-					if((clusterTiles[i].tileType == 'small_text') || (clusterTiles[i].tileType == undefined)){
-						if(clusterTiles[i].tileType == undefined){
-							tileAction.actionName = clusterTiles[i].line1;
-							tileAction.action =  clusterTiles[i].url;
-							tileAction.data = tileId;
-							tileAction.line3 = clusterTiles[i].line3;
-							if(clusterTiles[i].line3 == null)
-								clusterTiles[i].line3 = '';
-						}else{
-							tileAction.actionName = clusterTiles[i].data.line1;
-							tileAction.action =  clusterTiles[i].url;
-							tileAction.data = tileId;
-							tileAction.line3 = clusterTiles[i].data.line3;
-							if(clusterTiles[i].data.line3 == null)
-								clusterTiles[i].data.line3 = '';
-						}
-					}
-					switch(tileVar.tyleType){
-						case 'smallTileOdd' :
-							if(clusterTiles[i].tileType == undefined){
-								tile.innerHTML += '<div class="item grid-1c2text '+status[clusterTiles[i].status]+'" id="'+idForTile+'-'+i+'" onclick="com.impetus.ankush.actionFunction_ClusterMonitoringTiles(\''+tileAction.actionName+'\', \''+tileAction.action+'\',\''+tileAction.data+'\', \''+tileAction.line3+'\');" style="left:'+tileVar.leftCss+'px;top:'+tileVar.topCss+'px;position:absolute;">'+
-								'<div class="tile-1c2text thumbnail" onclick="">'+
-								'<div class="'+colorClass[clusterTiles[i].status]+'">'+
-								'<div class="clip tile-innerdiv" data-original-title="'+clusterTiles[i].line1+'" data-placement="bottom">'+clusterTiles[i].line1+'</div></div>'+
-								'<div class="descTitle"><span>'+(clusterTiles[i].line2).split('Hybrid').join('Delve')+'</span><br/><span>'+clusterTiles[i].line3+'</span></div></div></div>';
-							}
-							else{
-								tile.innerHTML += '<div class="item grid-1c2text '+status[clusterTiles[i].status]+'" id="'+idForTile+'-'+i+'" onclick="com.impetus.ankush.actionFunction_ClusterMonitoringTiles(\''+tileAction.actionName+'\', \''+tileAction.action+'\',\''+tileAction.data+'\', \''+tileAction.line3+'\');" style="left:'+tileVar.leftCss+'px;top:'+tileVar.topCss+'px;position:absolute;">'+
-								'<div class="tile-1c2text thumbnail" onclick="">'+
-								'<div class="'+colorClass[clusterTiles[i].status]+'">'+
-								'<div class="clip tile-innerdiv" data-original-title="'+clusterTiles[i].data.line1+'" data-placement="bottom">'+clusterTiles[i].data.line1+'</div></div>'+
-								'<div class="descTitle"><span>'+(clusterTiles[i].line2).split('Hybrid').join('Delve')+'</span><br/><span>'+clusterTiles[i].data.line3+'</span></div></div></div>';
-							}
-							if(clusterTiles[i+1] != undefined){
-								if(clusterTiles[i+1].tileType == 'big_text'){
-									tileVar.leftCss += 200; 
-									tileVar.tyleType = 'bigTile';
-								}
-								else if((clusterTiles[i+1].tileType == 'small_text') || (clusterTiles[i+1].tileType == undefined)){
-									tileVar.topCss += 100; 
-									tileVar.tyleType = 'smallTileEven';
-								}
-							}
-							break;
-						case 'smallTileEven' :
-							if(clusterTiles[i].tileType == undefined){
-							tile.innerHTML += '<div class="item grid-1c2text '+status[clusterTiles[i].status]+'" id="'+idForTile+'-'+i+'" onclick="com.impetus.ankush.actionFunction_ClusterMonitoringTiles(\''+tileAction.actionName+'\', \''+tileAction.action+'\',\''+tileAction.data+'\', \''+tileAction.line3+'\');" style="left:'+tileVar.leftCss+'px;top:'+tileVar.topCss+'px;position:absolute;">'+
-								'<div class="tile-1c2text thumbnail" onclick="">'+
-								'<div class="'+colorClass[clusterTiles[i].status]+'">'+
-								'<div class="clip tile-innerdiv" data-original-title="'+clusterTiles[i].line1+'" data-placement="bottom">'+clusterTiles[i].line1+'</div></div>'+
-								'<div class="descTitle"><span>'+(clusterTiles[i].line2).split('Hybrid').join('Delve')+'</span><br/><span>'+clusterTiles[i].line3+'</span></div></div></div>';
-							}
-							else{
-								tile.innerHTML += '<div class="item grid-1c2text '+status[clusterTiles[i].status]+'" id="'+idForTile+'-'+i+'" onclick="com.impetus.ankush.actionFunction_ClusterMonitoringTiles(\''+tileAction.actionName+'\', \''+tileAction.action+'\',\''+tileAction.data+'\', \''+tileAction.line3+'\');" style="left:'+tileVar.leftCss+'px;top:'+tileVar.topCss+'px;position:absolute;">'+
-								'<div class="tile-1c2text thumbnail" onclick="">'+
-								'<div class="'+colorClass[clusterTiles[i].status]+'">'+
-								'<div class="clip tile-innerdiv" data-original-title="'+clusterTiles[i].data.line1+'" data-placement="bottom">'+clusterTiles[i].data.line1+'</div></div>'+
-								'<div class="descTitle"><span>'+(clusterTiles[i].line2).split('Hybrid').join('Delve')+'</span><br/><span>'+clusterTiles[i].data.line3+'</span></div></div></div>';
-							}
-							if(clusterTiles[i+1] != undefined){
-								if(clusterTiles[i+1].tileType == 'big_text'){
-									tileVar.leftCss += 200; 
-									tileVar.topCss -= 100;
-									tileVar.tyleType = 'bigTile';
-								}
-								else if((clusterTiles[i+1].tileType == 'small_text') || (clusterTiles[i+1].tileType == undefined)){
-									tileVar.topCss -= 100; 
-									tileVar.leftCss += 200; 
-									tileVar.tyleType = 'smallTileOdd';
-								}
-							}
-							break;	
-						case 'bigTile' :
-							tile.innerHTML += '<div class="item grid-2c2text '+status[clusterTiles[i].status]+'" id="'+idForTile+'-'+i+'" onclick="com.impetus.ankush.actionFunction_ClusterMonitoringTiles();" style="left:'+tileVar.leftCss+'px;top:'+tileVar.topCss+'px;position:absolute;">'+
-							'<div class="tile-2c2text thumbnail" onclick="">'+
-							'<div class="'+colorClass[clusterTiles[i].status]+'">'+
-							'<div class="clip tile-innerdiv" data-original-title="'+clusterTiles[i].data.header+'" data-placement="bottom">'+clusterTiles[i].data.header+'</div></div>'+
-							'<div class="descTitle">'+linesFun()+'</div></div></div>';
-							tileVar.leftCss += 200; 
-							if(clusterTiles[i+1] != undefined){
-								if((clusterTiles[i+1].tileType == 'small_text') || (clusterTiles[i+1].tileType == undefined)){
-									tileVar.tyleType = 'smallTileOdd';
-								}
-							}
-							break;	
-					}
-					if(tileAction.action != null) {
-						var tileClickCursor = document.getElementById(idForTile+'-'+i);
-						tileClickCursor.style.cursor = "pointer";
-					}
-  				},
-  			//this function will initialize all types of datatable @Zubair
-  				datatableInitialize : function(tableId,newOptions){
-  					var preOptions = {
-  							"bJQueryUI" : false,
-  							"bPaginate" : false,
-  							"bLengthChange" : true,
-  							"bFilter" : true,
-  							"bSort" : false,
-  							"bInfo" : false,
-  							"bAutoWidth" : false,
-  							"sPaginationType" : "full_numbers",
-  							"bAutoWidth" : false,
-  							"bRetrieve" : true,
-  							"bRetrieve" : true,
-  							"aaSorting": [[0,'asc']],
-  							"oLanguage": {
-  								"sEmptyTable": 'Loading...',
-  						    }
-  					  };
-  					$.extend(preOptions, newOptions);
-  					if(("#"+tableId).dataTable == null){
-  						$("#"+tableId).dataTable(preOptions);
-  						$("#"+tableId+"_filter").css({
-  							'display' : 'none'
-  						});
-  						$('#'+tableId+'Search').keyup(function() {
-  							$("#"+tableId).dataTable().fnFilter($(this).val());
-  						});
-  					}else{
-  						$("#"+tableId).dataTable().fnClearTable();
-  					}
-  					
-  				},
+  				
+  				
+  			
   				//this will convert sentence case to camel case   @zubair
   				toCamelCase : function(sentenceCase){
   					var convertedCase = "";
@@ -610,7 +388,7 @@ var com = {
   					camelCase = camelCase.charAt(0).toUpperCase()+camelCase.slice(1);
   					return camelCase;
   				},
-  			//this function will inspect data node
+  				//this function will inspect data node
   				inspectNodesCall : function(data,btnId,retrieveNodeBtn){
 					if(Object.keys(data.nodePorts).length == 0){
 						return ;
@@ -669,93 +447,7 @@ var com = {
   						autorefreshArray[i].varName = window.clearInterval(autorefreshArray[i].varName);
   					}
   				},
-  				//this will add autorefresh as and when page loads
-  				//autorefresharray is array of object consisting autorefreshcallVariable,function and time
-  				//for Slider @Zubair
-  				addAutorefreshCall : function(autoRefreshArray,key){
-  					autoRefreshCallTestVariable++;
-  					autoRefreshCallsObject[key] = [];
-  					autoRefreshCallsObject[key] = autoRefreshArray;
-  					for(var i = 0 ; i < autoRefreshCallsObject[key-1].length ; i++)
-  						autoRefreshCallsObject[key-1][i].varName = window.clearInterval(autoRefreshCallsObject[key-1][i].varName);
-  					for(var i = 0 ; i < autoRefreshCallsObject[key].length ; i++){
-  						autoRefreshCallsObject[key][i].varName = setInterval(autoRefreshCallsObject[key][i].callFunction,autoRefreshCallsObject[key][i].time);
-  					}
-  					console.log(autoRefreshCallsObject);
-  				},
-  				//this function will remove autorefresh call of slider page which is removed
-  				// for Slider @Zubair
-  				removeAutorefreshCall : function(key,parent){
-  					for(var i = (Object.keys(autoRefreshCallsObject).length - 1) ; i >= key ; i--){
-  						for(var j = 0 ; j < autoRefreshCallsObject[i].length ; j++){
-  	  						autoRefreshCallsObject[i][j].varName = window.clearInterval(autoRefreshCallsObject[i][j].varName);
-  						}
-  						delete autoRefreshCallsObject[i];
-  					}
-  					if(parent != 'parent'){
-	  					for(var i = 0 ; i < autoRefreshCallsObject[key-1].length ; i++){
-	  						autoRefreshCallsObject[key-1][i].varName = setInterval(autoRefreshCallsObject[key-1][i].callFunction,autoRefreshCallsObject[key-1][i].time);
-		  				}
-  					}
-  				},
-  				//this function will be called on slide out
-  				previousCallbackCall : function(key){
-  					var objLength = (Object.keys(prePagePopulateCallsObject).length);
-  					for(var i = 0 ; i < prePagePopulateCallsObject[key].length ; i++)
-  						eval(prePagePopulateCallsObject[key][i]);
-  					for(var j = key ; j < (objLength -1) ; j++){
-  						delete prePagePopulateCallsObject[j+1];
-  					}
-  					console.log(prePagePopulateCallsObject);
-  				},
-  				//add previous call back function
-  				addPreviousCallbackCall : function(arrayOfFunction){
-  					prePagePopulateCallsTestvar++;
-  					prePagePopulateCallsObject[$.data(document, "panels").children.length] = arrayOfFunction;
-  				},
-  				
-  				actionFunction_ClusterMonitoringTiles : function(name, key, data, line3) {
-  					if (key == '' || key == null) {
-  						return;
-  					}
-  					else {
-  						if (typeof String.prototype.startsWith != 'function') {
-  							// see below for better implementation!
-  							String.prototype.startsWith = function (str){
-  								return this.indexOf(str) == 0;
-  							};
-  						}
-  						if ((key == 'Adding Nodes|progress') || (key == 'Adding Nodes|error')) {
-  							com.impetus.ankush.commonMonitoring.loadAddNodeProgress();
-  						} else if (key == 'Adding Nodes|success') {
-  							var clusterDetailUrl = baseUrl + '/monitor/'+ currentClusterId + '/nodeprogress';
-  							com.impetus.ankush.commonMonitoring.loadAddNodeProgress();
-  						}
-  						else if(key == 'Node List') {
-  							com.impetus.ankush.commonMonitoring.loadChild(baseUrl + '/commonMonitoring/nodes','get','Nodes',com.impetus.ankush.commonMonitoring.clusterName,null,'com.impetus.ankush.commonMonitoring.removeChildPreviousNodesPageLoad(1);');
-  						}
-  						else if(key == 'Ecosystem') {
-  							com.impetus.ankush.commonMonitoring.loadChild(baseUrl + '/hadoop-cluster-monitoring/configurations/hadoopEcosystem','get','Hadoop Ecosystem',com.impetus.ankush.commonMonitoring.clusterName,null,'com.impetus.ankush.commonMonitoring.removeChildPreviousNodesPageLoad(1);','com.impetus.ankush.hadoopMonitoring.loadHadoopEcosystemInfo('+com.impetus.ankush.commonMonitoring.clusterId+')');
-  						}
-  						else if(key == 'Job Monitoring') {
-  							com.impetus.ankush.hadoopMonitoring.jobMonitoringPage(com.impetus.ankush.commonMonitoring.clusterId);
-  						}
-  						else if(key.startsWith('NodeDrillDown|')) {
-  							var nodeId = (key.split('|'))[1];
-  							if(nodeId == null)
-  								return;
-  							var nodeIp = line3;
-  							com.impetus.ankush.commonMonitoring.graphOnClick(nodeId, nodeIp);
-  						}
-  						else if(key == 'AutoProvision') {
-  							com.impetus.ankush.hadoopMonitoring.configurationAutoProvision(com.impetus.ankush.commonMonitoring.clusterId);
-  						}
-  						else if(key == 'Keyspace') {
-  							com.impetus.ankush.commonMonitoring.loadChild(baseUrl + '/cassandraMonitoring/keyspaces','get','Keyspaces',com.impetus.ankush.commonMonitoring.clusterName,null,'com.impetus.ankush.commonMonitoring.removeChildPreviousNodesPageLoad();');
-  						}
-  						
-  					}
-  				},
+  				//this function will chech hadoop version and populate pages accordingly
   				isHadoop2 : function(clusterId){
   					var flag = false;
   					var url = baseUrl+'/monitor/'+clusterId+'/hadoopversion?component=Hadoop';
@@ -979,55 +671,6 @@ var com = {
 				closeDialog : function(dialogId){
 					$("#"+dialogId).dialog('destroy');
 				},
-				addpanel : function(addpannel,type,newUrl){
-					$('#content-panel').sectionSlider(addpannel, {
-		    		    current : 'login-panel',
-				        url : baseUrl+"/"+newUrl,
-				        method : type,
-		       			params : {
-		       			}
-		     		});
-				},
-				nodeRetrieve:function(userName,password,uploadFilePath,ipPattern,radioVal,uploadPathSharedKey,radioAuth,functionCall,buttonId,rackCheck,uploadRackFilePath,inspectNodeBtn){
-					var nodeData = {};
-					var clusterId=$('#clusterDeploy').val();
-					if(clusterId !=''){
-						nodeData.clusterId = clusterId;
-					}
-					$('#'+inspectNodeBtn).attr('disabled','disabled');
-					nodeData.userName = userName;
-					nodeData.password = password;
-			        nodeData.isRackEnabled=false;
-			    	nodeData.authTypePassword=true;
-			        	 if(rackCheck==1){
-			                 nodeData.isRackEnabled=true;
-			                 nodeData.filePathRackMap = uploadRackFilePath;
-			            }
-		            	 if(radioAuth==1){
-			                 nodeData.authTypePassword=false;
-			                 nodeData.password = uploadPathSharedKey;
-			            }
-					if(radioVal==1){
-						nodeData.isFileUploaded = true;
-						nodeData.nodePattern=uploadFilePath;
-						
-					}else{
-						nodeData.nodePattern =ipPattern;
-						nodeData.isFileUploaded = false;
-					}
-					var nodeUrl = baseUrl + '/cluster/detectNodes';
-					com.impetus.ankush.placeAjaxCall(nodeUrl,'POST',true,nodeData,function(result){
-						
-							$('#'+inspectNodeBtn).removeAttr('disabled');
-							$('#'+buttonId).button('reset');
-							functionCall.call(this,result);
-					},function(){
-						$('#'+inspectNodeBtn).removeAttr('disabled');
-						$('#'+buttonId).button('reset');
-					});
-				},
-				
-				
 			}
 		
 		},
@@ -1154,8 +797,6 @@ $(document).ready(function() {
 	       window.location = baseUrl;
 	    };
 	});
-	
-    com.impetus.ankush.init();
 });
 Array.prototype.remove = function() {
     var what, a = arguments, L = a.length, ax;

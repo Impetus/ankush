@@ -23,7 +23,6 @@
  */
 package com.impetus.ankush.common.framework;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -31,14 +30,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.impetus.ankush.AppStoreWrapper;
-import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.domain.Template;
-import com.impetus.ankush.common.framework.config.ClusterConf;
-import com.impetus.ankush.common.framework.config.NodeConf;
 import com.impetus.ankush.common.service.GenericManager;
 import com.impetus.ankush.common.utils.JsonMapperUtil;
-import com.impetus.ankush2.constant.Constant.Component;
-import com.impetus.ankush2.hadoop.utils.HadoopUtils;
+import com.impetus.ankush2.constant.Constant;
 
 /**
  * Class to Manage the cluster templates.
@@ -124,50 +119,7 @@ public class TemplateManager {
 			map = JsonMapperUtil.mapFromObject(template);
 			// getting data from template.
 			Map data = (HashMap) map.get("data");
-			
-			// Special Handling is added for Hadoop 2 Templates
-			// Node.Type field in Hadoop 2 Nodes is missing in POST JSON for
-			// Template and is required while loading the template
-			// This can be deleted only if Node.Type field is sent from the UI
-//			ClusterConf clusterConf = template.getData();
-//			if (clusterConf.getClusterComponents().containsKey(
-//					Component.Name.HADOOP2)) {
-//				Hadoop2Conf h2Conf = (Hadoop2Conf) template.getData()
-//						.getClusterComponents()
-//						.get(Component.Name.HADOOP2);
-//				if (h2Conf.isHaEnabled()) {
-//					h2Conf.setHaNameNodes(new ArrayList<NodeConf>());
-//					if (h2Conf.getNamenode() != null) {
-//						h2Conf.getHaNameNodes().add(h2Conf.getNamenode());
-//					}
-//					if (h2Conf.getStandByNamenode() != null) {
-//						h2Conf.getHaNameNodes()
-//								.add(h2Conf.getStandByNamenode());
-//					}
-//				}
-//				HadoopUtils.setNodeTypesForTemplate(h2Conf);
-//				clusterConf.getClusterComponents().put(
-//						Component.Name.HADOOP2, h2Conf);
-//				template.setData(clusterConf);
-//			}
 
-			// getting cluster nodes.
-//			List<NodeConf> nodes = template.getData().getNodeConfs();
-
-			// creating copy of cluster nodes.
-//			List<NodeConf> finalNodes = new ArrayList<NodeConf>(nodes);
-
-			// iterating over the nodes to remove nodes which dont have values
-			// in public and private ip.
-//			for (NodeConf node : nodes) {
-//				if ((node.getPublicIp() == null || node.getPublicIp().isEmpty())
-//						&& (node.getPrivateIp() == null || node.getPrivateIp()
-//								.isEmpty())) {
-//					finalNodes.remove(node);
-//				}
-//			}
-//			data.put("nodes", finalNodes);
-			// putting false status
 			map.put("status", true);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -21,72 +21,68 @@
 
 <!-- Fields showing Hadoop Cluster Details & link to its Advanced Settings on Cluster Monitoring main page  -->
 <script>
-var nodeOverviewTable = null;
-$(document).ready(function(){
-	nodeOverviewTable=	$('#nodeOverviewTable').dataTable({
-		"bJQueryUI" : false,
-		"bPaginate" : false,
-		"bLengthChange" : true,
-		"bFilter" : false,
-		"bSort" : false,
-		"bInfo" : false,
-		"bAutoWidth" : false,
-		"sPaginationType" : "full_numbers",
-		"bAutoWidth" : false,
-		"bRetrieve" : true,
-		"oLanguage": {
-			"sEmptyTable": 'Loading...',
-	    }
+	var nodeOverviewTable = null;
+	$(document).ready(function() {
+		nodeOverviewTable = $('#nodeOverviewTable').dataTable({
+			"bJQueryUI" : false,
+			"bPaginate" : false,
+			"bLengthChange" : true,
+			"bFilter" : false,
+			"bSort" : false,
+			"bInfo" : false,
+			"bAutoWidth" : false,
+			"sPaginationType" : "full_numbers",
+			"bAutoWidth" : false,
+			"bRetrieve" : true,
+			"oLanguage" : {
+				"sEmptyTable" : 'Loading...',
+			}
+		});
 	});
-	
-});
-
-
 </script>
 
-	<div id="confirmationDialogsNode" class="modal hide fade"
-			style="display: none;">
-			<div class="modal-header text-center">
-				<h4>Confirmation</h4>
+<div id="confirmationDialogsNode" class="modal hide fade"
+	style="display: none;">
+	<div class="modal-header text-center">
+		<h4>Confirmation</h4>
+	</div>
+	<div class="modal-body">
+		<div class="row">
+			<div class="col-md-12" style="text-align: left; font-size: 14px;"
+				id="Node-message">MASSAGE</div>
+		</div>
+	</div>
+	<br>
+	<div class="modal-footer">
+		<a href="#" data-dismiss="modal" class="btn">Cancel</a> <a href="#"
+			id="confirmationDialogsOKNode" class="btn">OK</a>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12 text-left">
+		<div class="panel">
+			<div class="panel-heading">
+				<h3 class="panel-title">Node Overview</h3>
 			</div>
-			<div class="modal-body">
-				<div class="row">
-					<div class="col-md-12" style="text-align: left; font-size: 14px;" id="Node-message">
-						MASSAGE</div>
+			<div class="row panel-body">
+				<div class="col-md-12 text-left">
+					<table class="table" id="nodeOverviewTable">
+						<thead class="text-left">
+							<tr>
+								<th>Key</th>
+								<th>Value</th>
+								<th></th>
+							</tr>
+						</thead>
+					</table>
 				</div>
 			</div>
-			<br>
-			<div class="modal-footer">
-				<a href="#" data-dismiss="modal" class="btn">Cancel</a> <a href="#"
-					id="confirmationDialogsOKNode"
-					class="btn">OK</a>
-			</div>
 		</div>
-	<div class="row">
-		<div class="col-md-12 text-left">
-		<div class="panel">
-						<div class="panel-heading">
-				<h3 class="panel-title">Node Overview</h3>
-		</div>
-		<div class="row panel-body">
-			<div class="col-md-12 text-left">
-				<table class="table"id="nodeOverviewTable">
-					<thead class="text-left">
-						<tr>
-							<th>Key</th>
-							<th>Value</th>
-							<th></th>
-						</tr>
-					</thead>
-				</table>
-			</div>
-		</div>
+	</div>
 </div>
-	</div>
-	</div>
 
 <script>
-	$(document).ready(function(){
+	$(document).ready(function() {
 		com.impetus.ankush.nodeOverview.nodeOverviewPopulate();
 	})
 </script>

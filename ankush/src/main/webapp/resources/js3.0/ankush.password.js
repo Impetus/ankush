@@ -21,7 +21,6 @@
 com.impetus.ankush.password={
 		mainFlag : true,
 		errorCount : 0,
-		
 		//method to change password and called when user click on Apply button on changePassword page.
 		//This method first checks for client-side validation before going to server-end and in order to do that it makes a call to validate().
 		changePassword : function(){

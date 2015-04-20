@@ -28,35 +28,34 @@ com.impetus.ankush.register_Ganglia = {
 			$('#registerLevel').html('');
 			
 			if (setupDetailData == null || undefined == setupDetailData.components.Ganglia) {
-				
-			var gangliaData = jsonDataHybrid.hybrid.Ganglia;
-			for ( var key in gangliaData.Defaults.RegisterLevel){
-				$("#registerLevel").append("<option value=\"" + key + "\">" + key + "</option>");
-			}
-			if(undefined != gangliaObjReg.Defaults.gmetadHost){
-					gangliaData.Defaults.register=gangliaObjReg.Defaults.register;
-					gangliaData.Defaults.gmetadHost=gangliaObjReg.Defaults.gmetadHost;
-					gangliaData.Defaults.gmondConfPath=gangliaObjReg.Defaults.gmondConfPath;
-					gangliaData.Defaults.gmetadConfPath=gangliaObjReg.Defaults.gmetadConfPath;
-					gangliaData.Defaults.gangliaPort=gangliaObjReg.Defaults.gangliaPort;
-					$("#registerLevel").val(gangliaObjReg.Defaults.registerLevel);
+				var gangliaData = jsonDataHybrid.hybrid.Ganglia;
+				for ( var key in gangliaData.Defaults.RegisterLevel){
+					$("#registerLevel").append("<option value=\"" + key + "\">" + key + "</option>");
 				}
-						$('#gmetadHost').val(gangliaData.Defaults.gmetadHost);
-						$('#gmondConfPath').val(gangliaData.Defaults.gmondConfPath);
-						$('#gmetadConfPath').val(gangliaData.Defaults.gmetadConfPath);
-						$('#gangliaPort').val(gangliaData.Defaults.gangliaPort);
-						
-						var user = $.trim($('#inputUserName').val());
-						if (user == '') {
-							return;
-						}
-						var gmondConfPath = $.trim($('#gmondConfPath').val()).split(userName).join('/home/' + user);
-						var gmetadConfPath = $.trim($('#gmetadConfPath').val()).split(userName).join('/home/' + user);
-						var rrdFilePath = $.trim($('#rrdFilePath').val()).split(userName).join('/home/' + user);
-						userName = '/home/' + user;
-						$('#gmondConfPath').empty().val(gmondConfPath);
-						$('#gmetadConfPath').empty().val(gmetadConfPath);
-						$('#rrdFilePath').empty().val(rrdFilePath);
+				if(undefined != gangliaObjReg.Defaults.gmetadHost){
+						gangliaData.Defaults.register=gangliaObjReg.Defaults.register;
+						gangliaData.Defaults.gmetadHost=gangliaObjReg.Defaults.gmetadHost;
+						gangliaData.Defaults.gmondConfPath=gangliaObjReg.Defaults.gmondConfPath;
+						gangliaData.Defaults.gmetadConfPath=gangliaObjReg.Defaults.gmetadConfPath;
+						gangliaData.Defaults.gangliaPort=gangliaObjReg.Defaults.gangliaPort;
+						$("#registerLevel").val(gangliaObjReg.Defaults.registerLevel);
+				}
+				$('#gmetadHost').val(gangliaData.Defaults.gmetadHost);
+				$('#gmondConfPath').val(gangliaData.Defaults.gmondConfPath);
+				$('#gmetadConfPath').val(gangliaData.Defaults.gmetadConfPath);
+				$('#gangliaPort').val(gangliaData.Defaults.gangliaPort);
+				
+				var user = $.trim($('#inputUserName').val());
+				if (user == '') {
+					return;
+				}
+				var gmondConfPath = $.trim($('#gmondConfPath').val()).split(userName).join('/home/' + user);
+				var gmetadConfPath = $.trim($('#gmetadConfPath').val()).split(userName).join('/home/' + user);
+				var rrdFilePath = $.trim($('#rrdFilePath').val()).split(userName).join('/home/' + user);
+				userName = '/home/' + user;
+				$('#gmondConfPath').empty().val(gmondConfPath);
+				$('#gmetadConfPath').empty().val(gmetadConfPath);
+				$('#rrdFilePath').empty().val(rrdFilePath);
 			}else {
 				if (cluster_State != com.impetus.ankush.constants.stateError) {
 					com.impetus.ankush.common.pageStyleChange();

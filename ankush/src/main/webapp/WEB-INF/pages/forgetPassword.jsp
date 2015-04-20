@@ -65,14 +65,17 @@
 				</div>
 				<div class="row">
 					<div class="col-md-10 col-lg-2 text-left form-group">
-						<input type="text" id="userIdTextBox" class="input-large form-control" placeholder="user ID" />
-						<div  id="UserId-error"></div>
+						<input type="text" id="userIdTextBox"
+							class="input-large form-control" placeholder="user ID" />
+						<div id="UserId-error"></div>
 					</div>
-					
+
 				</div>
 				<div class="row">
-					<div class="col-md-10 col-lg-3 form-group text-left">Check
-						your email for password reset instructions. <a href="<c:out value="${baseUrl}" />/auth/login">Click to Login</a></div>
+					<div class="col-md-10 col-lg-3 form-group text-left">
+						Check your email for password reset instructions. <a
+							href="<c:out value="${baseUrl}" />/auth/login">Click to Login</a>
+					</div>
 				</div>
 			</div>
 			<div class="row">
@@ -89,32 +92,32 @@
 				</div>
 				<div class="row">
 					<div class="col-md-10 col-lg-2 text-left form-group">
-						<input type="text" id="emailTextBox" class="input-large form-control" placeholder="Email Address" />
-						<div  id="email-error"></div>
-						
+						<input type="text" id="emailTextBox"
+							class="input-large form-control" placeholder="Email Address" />
+						<div id="email-error"></div>
+
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-md-10 col-lg-3 form-group text-left">Check
-						your email for your user ID. <a href="<c:out value="${baseUrl}" />/auth/login">Click to Login</a></div>
+					<div class="col-md-10 col-lg-3 form-group text-left">
+						Check your email for your user ID. <a
+							href="<c:out value="${baseUrl}" />/auth/login">Click to Login</a>
+					</div>
 				</div>
 			</div>
 			<div class="row">
-				<a href="<c:out value="${baseUrl}" />/auth/login" class="btn btn-default mrgl10">Cancel</a>
-				<button class="btn btn-primary mrgl10" id="continueButton" value="Go" disabled="disabled"
+				<a href="<c:out value="${baseUrl}" />/auth/login"
+					class="btn btn-default mrgl10">Cancel</a>
+				<button class="btn btn-primary mrgl10" id="continueButton"
+					value="Go" disabled="disabled"
 					onclick="com.impetus.ankush.login.getPassword()">Continue</button>
 			</div>
+		</div>
+	</div>
+	<script>
+		$(document).ready(function() {
 
-
-
-</div>
-</div>
-
-
-			<script>
-				$(document).ready(function() {
-
-				});
-			</script>
+		});
+	</script>
 </body>
 </html>

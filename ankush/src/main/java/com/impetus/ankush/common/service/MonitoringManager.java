@@ -45,11 +45,10 @@ import com.impetus.ankush.common.framework.config.NodeOSInfo;
 import com.impetus.ankush.common.framework.config.NodeProcessInfo;
 import com.impetus.ankush.common.framework.config.NodeSwapInfo;
 import com.impetus.ankush.common.framework.config.NodeUpTimeInfo;
-import com.impetus.ankush.common.utils.AnkushLogger;
 import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush2.db.DBEventManager;
 import com.impetus.ankush2.db.DBServiceManager;
-import com.impetus.ankush2.framework.manager.ClusterManager;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 /**
  * The Class MonitoringManager.

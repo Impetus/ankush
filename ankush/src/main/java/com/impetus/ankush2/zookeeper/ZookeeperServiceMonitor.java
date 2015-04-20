@@ -33,7 +33,6 @@ import net.neoremind.sshxcute.task.impl.ExecCommand;
 
 import com.impetus.ankush.AppStoreWrapper;
 import com.impetus.ankush.common.exception.AnkushException;
-import com.impetus.ankush2.agent.AgentUtils;
 import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush2.framework.Serviceable;
 import com.impetus.ankush2.framework.config.ClusterConfig;

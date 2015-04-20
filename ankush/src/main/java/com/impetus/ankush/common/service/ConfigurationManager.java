@@ -39,11 +39,11 @@ import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
 
 import com.impetus.ankush.AppStoreWrapper;
-import com.impetus.ankush.common.constant.Constant;
+import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush.common.domain.Configuration;
-import com.impetus.ankush.common.utils.AnkushLogger;
 import com.impetus.ankush.common.utils.HibernateUtils;
 import com.impetus.ankush.common.utils.JsonMapperUtil;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 /**
  * The Class ConfigurationManager.
@@ -75,8 +75,9 @@ public class ConfigurationManager {
 	 *            the property value
 	 * @return the configuration
 	 */
-	public Configuration saveConfiguration(Long clusterId,String username, String fileName,
-			String host, String propertyName, String propertyValue) {
+	public Configuration saveConfiguration(Long clusterId, String username,
+			String fileName, String host, String propertyName,
+			String propertyValue) {
 
 		// Get old configuration value if null return the empty object.
 		Configuration conf = getOldConfiguration(clusterId, host, fileName,
@@ -92,7 +93,7 @@ public class ConfigurationManager {
 		LOG.debug("Saving Configuration " + conf);
 		return configurationManager.save(conf);
 	}
-	
+
 	/**
 	 * Save configuration.
 	 * 
@@ -120,7 +121,7 @@ public class ConfigurationManager {
 			conf.setUsername(username);
 			conf.setSource(fileName);
 			conf.setPropertyName(key.toString());
-			if(params.get(key) != null){
+			if (params.get(key) != null) {
 				conf.setPropertyValue(params.get(key).toString());
 			}
 			conf.setHost(host);
@@ -137,8 +138,9 @@ public class ConfigurationManager {
 	 */
 	public Configuration saveConfiguration(Configuration conf) {
 		// Saving configuration object.
-		return saveConfiguration(conf.getClusterId(), conf.getUsername(),conf.getSource(),
-				conf.getHost(), conf.getPropertyName(), conf.getPropertyValue());
+		return saveConfiguration(conf.getClusterId(), conf.getUsername(),
+				conf.getSource(), conf.getHost(), conf.getPropertyName(),
+				conf.getPropertyValue());
 	}
 
 	/**

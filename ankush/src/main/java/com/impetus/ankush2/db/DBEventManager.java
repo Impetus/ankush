@@ -32,9 +32,7 @@ import java.util.Map;
 
 import com.impetus.ankush.AppStore;
 import com.impetus.ankush.AppStoreWrapper;
-import com.impetus.ankush.common.alerts.AlertsConf;
-import com.impetus.ankush.common.alerts.ThresholdConf;
-import com.impetus.ankush.common.constant.Constant;
+import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush.common.domain.Cluster;
 import com.impetus.ankush.common.domain.Event;
 import com.impetus.ankush.common.domain.Event.Severity;
@@ -50,8 +48,10 @@ import com.impetus.ankush.common.mail.MailMsg;
 import com.impetus.ankush.common.service.GenericManager;
 import com.impetus.ankush.common.service.MonitoringManager;
 import com.impetus.ankush.common.service.UserManager;
-import com.impetus.ankush.common.utils.AnkushLogger;
+import com.impetus.ankush2.framework.config.AlertsConf;
+import com.impetus.ankush2.framework.config.ThresholdConf;
 import com.impetus.ankush2.ha.HAServiceExecutor;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 /**
  * It generates the alerts and events for the node monitoring.
@@ -610,7 +610,7 @@ public class DBEventManager {
 	 */
 	private Event.Severity getCurrentSeverity(Double value,
 			ThresholdConf threshold) {
-	
+
 		if (threshold != null && threshold.getAlertLevel() != null
 				&& value >= threshold.getAlertLevel()) {
 			return Event.Severity.CRITICAL;
@@ -703,7 +703,7 @@ public class DBEventManager {
 			for (Node node : cluster.getNodes()) {
 				// Check agent down for deployed nodes only.
 				if (!node.getState().equalsIgnoreCase(
-						Constant.Node.State.DEPLOYED)) {
+						Constant.Node.State.DEPLOYED.toString())) {
 					continue;
 				}
 

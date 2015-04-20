@@ -31,8 +31,6 @@ var nodeRole={
 var clusterTechnology="";
 var technologyTable=null;
 var uploadPathSharedKey=null;
-var uploadPathRack=null;
-var uploadFileKerberosPath=null;
 var jsonDataHybrid=null;
 var userName='/home/${user}';
 var agentPath='/home/${user}';
@@ -58,7 +56,6 @@ var cassandraObj={
 var cassandraObjReg={
 		Defaults:{},
 };
-
 var gangliaNodeTable=null;
 var gangliaNodeMap={};
 var gangliaNodesObj={
@@ -71,7 +68,6 @@ var gangliaObjReg={
 		Defaults:{
 		},
 };
-
 var hadoopNodeMap={};
 var hadoopNodesObj={
 		NameNode:{},
@@ -88,7 +84,6 @@ var hadoopNodesObj={
 var hadoopObj={
 		Defaults:{},
 };
-
 var disableNodeCount = 0;
 var ensembleIdMap={};
 ensembleIdMap.Zookeeper_default="default";
@@ -147,15 +142,7 @@ com.impetus.ankush.hybridClusterCreation={
 						$("#oracleBundleFilePath").append("<option value=\"" + result.output.files[i] + "\">" + result.output.files[i] + "</option>");
 			});
 		},
-		isTypeExists:function(typeStr,str){
-			var typeArray=typeStr.split("/");
-			if(typeArray.indexOf(str)==-1){
-				return false;
-			}
-			else{
-				return true;
-			}
-		},
+		
 		checkBoxToggle:function(id,div1,div2){
 			if($('#'+id).is(':checked')){
 				$('#'+div1).removeAttr('disabled');
@@ -168,10 +155,6 @@ com.impetus.ankush.hybridClusterCreation={
 		buttonClick:function(div1,div2){
 			$('#'+div2).hide();
 			$('#'+div1).show();
-		},
-		dialogRemove:function(){
-			$("#templateCreate").remove();
-			$("#confirmTemplate").remove();
 		},
 		 deleteClusterDialog : function(){
 			 	$("#deleteClusterDialogDeploy").appendTo('body').modal('show');
@@ -240,21 +223,7 @@ com.impetus.ankush.hybridClusterCreation={
 				});
 			});
 		},	
-/*Function to Upload file*/
-		rackFileUpload : function() {
-			uploadPathRack=null;
-			var uploadUrl = baseUrl + '/uploadFile';
-			$('#fileBrowse_RackFile').click();
-			$('#fileBrowse_RackFile').change(
-			function(){
-				$('#filePath_RackFile').val($('#fileBrowse_RackFile').val());
-				com.impetus.ankush.uploadFileNew(uploadUrl,"fileBrowse_RackFile",null,function(data){
-					var htmlObject = $(data);
-			        var jsonData = JSON.parse(htmlObject.text());
-			        uploadPathRack= jsonData.output;
-				});
-			});
-		},
+
 		roleStringConvert:function(roleArray){
 			var string="";
 			for (var key in roleArray){
@@ -268,19 +237,6 @@ com.impetus.ankush.hybridClusterCreation={
 			}
 			return string;
 		},
-		 onChangeKerberosUpload:function(){
-			 uploadFileKerberosPath=null;
-			    var uploadUrl = baseUrl + '/uploadFile';
-			    $('#kbLoginInfoFilePath').val($('#kbLoginInfoFileBrowse').val());
-		        com.impetus.ankush.uploadFileNew(uploadUrl,"kbLoginInfoFileBrowse",null,function(data){
-		        var htmlObject = $(data);
-		        var jsonData = JSON.parse(htmlObject.text());
-		        uploadFileKerberosPath=jsonData.output;
-		        });
-		    },
-	    getKerberosUpload : function() {
-		        $('#kbLoginInfoFileBrowse').click();
-	    },
 	    nodeDataClean: function(){
 	    	gangliaNodesObj.gmetadNode={};
 			gangliaNodeMap={};
@@ -718,10 +674,6 @@ com.impetus.ankush.hybridClusterCreation={
 				com.impetus.ankush.hybridClusterCreation.getDefaultValue();
 		},
 		
-		defaultObjectPopulate:function(){
-			hadoopObj=jsonDataHybrid.hybrid.Hadoop;
-			hadoopObjReg=jsonDataHybrid.hybrid.Hadoop;
-		},
 		//function for loading default data
 		getDefaultValue : function(technology,functionName) {
 			jsonDataHybrid={};
@@ -811,7 +763,7 @@ com.impetus.ankush.hybridClusterCreation={
 								"	</h4></div><div id='collapseOne"+tech+"' style=';' class='panel-collapse collapse pageDiv'"+
 						"role='tabpanel' aria-labelledby='headingOne"+tech+"'>"+
 						"<div class='panel-body pageDiv' id='techPage"+tech+"'></div></div>");
-				 
+				 $("#registerToggleCassandra").remove();
 				 if(key=='Zookeeper_default'){
 					 $("#techLabelZookeeper_default").text("Zookeeper");
 				 }
@@ -822,8 +774,6 @@ com.impetus.ankush.hybridClusterCreation={
 					 $("#registerToggleGanglia").removeAttr("disabled");
 					 $("#deployToggleGanglia").removeAttr("disabled");
 				 }
-				
-			
 			 }
 			
 		},
@@ -871,7 +821,7 @@ com.impetus.ankush.hybridClusterCreation={
 				 tech=key;
 				 var zooTech="Zookeeper";
 				 $("#accordion").append("<div class='panel panel-default' style='border:-moz-mac-accentdarkestshadow'><div class='panel-heading' style='border-bottom:none !important;content:none !important;padding-top:3px;padding-bottom:0px;' role='tab' id='headingOne"+tech+"'><h4 class='panel-title'>"+
-						 "<div class='row'><div class='col-xs-1 col-sm-1 col-md-1'><input type='checkbox' name='' value='"+tech+"'  id='nodeCheck"+tech+"' class='nodeCheckBoxTech"+zooTech+"' onclick='com.impetus.ankush.hybridClusterCreation.checkBoxConfirmDialog("+i +",\"accordion\",\"nodeCheckBoxTech\",\"techNodeHead\",\""+tech+"\");'/></div>" +
+						 "<div class='row'><div class='col-xs-1 col-sm-1 col-md-1'><input type='checkbox' name='' value='"+tech+"'  id='nodeCheck"+tech+"' class='nodeCheckBoxTech"+zooTech+"' onclick=''/></div>" +
 						 "<div class='col-md-5'><div class='col-xs-5 col-sm-3 col-md-6'><a>"+tech+"</a></div>"+
 						 "<div class='col-xs-4 col-sm-3 col-md-6'>"+btnGrp+"</div></div>"+
 						 "<div class='col-md-5'><div class='col-xs-6 col-sm-4 col-md-6'><label id='confType"+tech+"' class='' style='min-width:60px;'>"+jsonDataHybrid.hybrid.Zookeeper_default.Defaults.confState+"</label><button data-toggle='collapse' data-parent='#accordion'"+
@@ -1047,14 +997,7 @@ com.impetus.ankush.hybridClusterCreation={
 			
 		},
 		
-		//function for loading default value
-		defaultValue:function(){
-			jsonDataHybrid={};
-				 var url = baseUrl + '/app/metadata/hybrid';
-				 com.impetus.ankush.placeAjaxCall(url, "GET", true,null, function(result){
-				 jsonDataHybrid.hybrid = result.output.hybrid;
-					  });
-		},
+		
 		agentPathOnChange:function(){
 			var agent=$.trim($('#agentInstallDir').val());
 			var gmondConfPath=jsonDataHybrid.hybrid.Ganglia.Defaults.gmondConfPath.split(agentPath).join(agent);
@@ -1078,9 +1021,6 @@ com.impetus.ankush.hybridClusterCreation={
 				jsonDataHybrid.hybrid.Zookeeper_default.Defaults.installationHomePath=installationPathZookeeper;
 				jsonDataHybrid.hybrid.Zookeeper_default.Defaults.dataDir=dataDirZookeeper;
 			}
-			
-		
-			
 			if(jsonDataHybrid.hybrid.Cassandra != undefined){
 				var installationPathCassandra=jsonDataHybrid.hybrid.Cassandra.Defaults.installationPath.split(userName).join('/home/'+user);
 				var logDir=jsonDataHybrid.hybrid.Cassandra.Defaults.logDir.split(userName).join('/home/'+user);
@@ -1109,8 +1049,6 @@ com.impetus.ankush.hybridClusterCreation={
 				jsonDataHybrid.hybrid.Hadoop.Defaults.hadoopTmpDir=hadoopTmpDir;
 				jsonDataHybrid.hybrid.Hadoop.Defaults.journalNodeEditsDir=journalNodeEditsDir;
 			}
-			
-			
 			if(jsonDataHybrid.hybrid.Ganglia != undefined){
 				var gmondConfPath=jsonDataHybrid.hybrid.Ganglia.Defaults.gmondConfPath.split(userName).join('/home/'+user);
 				var gmetadConfPath=jsonDataHybrid.hybrid.Ganglia.Defaults.gmetadConfPath.split(userName).join('/home/'+user);
@@ -1118,7 +1056,6 @@ com.impetus.ankush.hybridClusterCreation={
 				jsonDataHybrid.hybrid.Ganglia.Defaults.gmondConfPath=gmondConfPath;
 				jsonDataHybrid.hybrid.Ganglia.Defaults.gmetadConfPath=gmetadConfPath;
 				jsonDataHybrid.hybrid.Ganglia.Defaults.rrdFilePath=rrdFilePath;
-				
 			}
 			userName='/home/'+user;
 			com.impetus.ankush.hybridClusterCreation.agentPathOnChange();
@@ -1160,12 +1097,7 @@ com.impetus.ankush.hybridClusterCreation={
 				    $('.' + nodeClass).attr('checked', false);
 			}
 		},
-		checkBoxConfirmDialog:function(i,table,nodeCheck,checkHead,value) {
-			
-		},
-		removeNodemappingZookeeper:function(value){
-			
-		},
+		
 /*Function for check/uncheck head check box on click of node checkbox*/
 		 nodeCheckBox : function(i,table,nodeCheck,checkHead,value) {
 		        if ($("#"+table+" ."+nodeCheck+":checked").length == $("#"+table+" ."+nodeCheck).length) {
@@ -1186,7 +1118,6 @@ com.impetus.ankush.hybridClusterCreation={
 					      else{
 					    	  $("#confPage"+value).removeClass("btn-danger btn-primary");
 					      }
-					     
 		        	}else{
 		        		$("#confPage"+value).removeAttr("disabled");
 					      $("#nodeMap"+value).removeAttr("disabled");

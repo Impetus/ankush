@@ -1,1 +1,0 @@
-zypper -q install -y sshpass

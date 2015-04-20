@@ -24,11 +24,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.impetus.ankush.AppStoreWrapper;
-import com.impetus.ankush.common.constant.Constant;
+import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush.common.domain.Cluster;
 import com.impetus.ankush.common.service.ConfigurationManager;
 import com.impetus.ankush.common.service.GenericManager;
-import com.impetus.ankush.common.utils.AnkushLogger;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 public class DBClusterManager {
 	private GenericManager<Cluster, Long> clusterManager = AppStoreWrapper
@@ -78,7 +78,7 @@ public class DBClusterManager {
 		try {
 			// remove the audit trail records.
 			new ConfigurationManager().removeAuditTrail(clusterId);
-			
+
 			// Remove cluster.
 			clusterManager.remove(clusterId);
 		} catch (Exception e) {

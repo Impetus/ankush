@@ -398,7 +398,6 @@ com.impetus.ankush.hybrid_Ganglia = {
 									gangliaNodesObj.gmetadNode.privateIp=aData[0];
 									gangliaNodesObj.gmetadNode.os=aData[aData.length-2];
 									gangliaNodesObj.gmetadNode.type='GangliaMaster';
-									console.log(gangliaNodesObj);
 								}
 						  });
 						

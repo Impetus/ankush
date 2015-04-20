@@ -37,13 +37,13 @@ import com.impetus.ankush.common.scripting.impl.MakeDirectory;
 import com.impetus.ankush.common.scripting.impl.Remove;
 import com.impetus.ankush.common.scripting.impl.RemoveCmpEnvVariables;
 import com.impetus.ankush.common.scripting.impl.SyncFolder;
+import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush2.framework.config.ClusterConfig;
 import com.impetus.ankush2.framework.config.ComponentConfig;
 import com.impetus.ankush2.framework.config.NodeConfig;
 import com.impetus.ankush2.hadoop.utils.HadoopConstants;
 import com.impetus.ankush2.hadoop.utils.HadoopUtils;
 import com.impetus.ankush2.utils.SSHUtils;
-import com.impetus.ankush2.constant.Constant;
 
 /**
  * @author Akhil

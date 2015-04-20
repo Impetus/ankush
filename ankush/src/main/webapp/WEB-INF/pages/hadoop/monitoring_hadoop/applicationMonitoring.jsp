@@ -24,7 +24,6 @@
 <html>
 <head>
 <%@ include file="../../layout/header.jsp"%>
-<link rel="stylesheet" type="text/css" href="<c:out value="${baseUrl}" />/public/css3.0/main.css" media="all"/>
 <%@ include file="../../layout/navigation.jsp"%>
 <script
 	src="<c:out value='${baseUrl}' />/public/js3.0/hadoop/hadoopJobs.js"

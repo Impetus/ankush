@@ -100,25 +100,6 @@ public class AnkushRegisterCluster extends AbstractController {
 		model.addAttribute("title", "gangliaNodes");
 		return "registerCluster/gangliaNodes";
 	}
-
-	@RequestMapping(value = "/cassandraConfig", method = RequestMethod.GET)
-	public String cassandraConfig(ModelMap model,
-			@RequestParam("technology") String technology) {
-		logger.info("Inside cassandraConfig view");
-		model.addAttribute("title", "cassandraConfig");
-		model.addAttribute("technology", technology);
-		return "registerCluster/cassandraConfig";
-	}
-
-	@RequestMapping(value = "/cassandraNodes", method = RequestMethod.GET)
-	public String cassandraNodes(ModelMap model,
-			@RequestParam("technology") String technology) {
-		logger.info("Inside cassandraNodes view");
-		model.addAttribute("title", "cassandraNodes");
-		model.addAttribute("technology", technology);
-		return "registerCluster/cassandraNodes";
-	}
-
 	@Override
 	protected ModelAndView handleRequestInternal(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {

@@ -30,8 +30,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
@@ -44,7 +42,6 @@ import org.apache.commons.lang.SerializationUtils;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.Index;
 
-import com.impetus.ankush.common.framework.config.NodeConf;
 import com.impetus.ankush2.framework.config.NodeConfig;
 
 /**
@@ -319,20 +316,6 @@ public class Node extends BaseObject {
 	}
 
 	/**
-	 * Gets the node conf obj.
-	 * 
-	 * @return the object
-	 */
-	@Transient
-	@JsonIgnore
-	public NodeConf getNodeConf() {
-		if (getConfBytes() == null) {
-			return null;
-		}
-		return (NodeConf) SerializationUtils.deserialize(getConfBytes());
-	}
-
-	/**
 	 * Gets the node config obj.
 	 * 
 	 * @return the object
@@ -344,17 +327,6 @@ public class Node extends BaseObject {
 			return null;
 		}
 		return (NodeConfig) SerializationUtils.deserialize(getConfBytes());
-	}
-
-	/**
-	 * Sets the node conf obj.
-	 * 
-	 * @param nodeConf
-	 *            the new node conf obj
-	 * @return the object
-	 */
-	public void setNodeConf(NodeConf nodeConf) {
-		this.setConfBytes(SerializationUtils.serialize(nodeConf));
 	}
 
 	public void setNodeConfig(NodeConfig nodeConf) {

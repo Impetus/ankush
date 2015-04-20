@@ -40,7 +40,6 @@ import com.impetus.ankush.common.exception.ControllerException;
 import com.impetus.ankush.common.mail.MailConf;
 import com.impetus.ankush.common.service.AppConfService;
 import com.impetus.ankush.common.service.impl.AnkushApplicationConf;
-import com.impetus.ankush.common.utils.ParserUtil;
 import com.impetus.ankush.common.utils.ResponseWrapper;
 
 /**
@@ -63,7 +62,6 @@ public class AppConfController extends BaseController {
 			@Qualifier("appConfService") AppConfService appConfService) {
 		this.appConfService = appConfService;
 	}
-
 
 	/**
 	 * Gets the ankush app conf.
@@ -112,26 +110,6 @@ public class AppConfController extends BaseController {
 		return wrapResponse(result, HttpStatus.OK, HttpStatus.OK.toString(),
 				"Set application configuration.");
 	}
-
-	/**
-	 * Gets the conf.
-	 *
-	 * @param key the key
-	 * @return the conf
-	 */
-	@RequestMapping(value = { "/conf/{key}" }, method = RequestMethod.GET)
-	@ResponseBody
-	public ResponseEntity<ResponseWrapper<Map>> getConf(
-			@PathVariable("key") String key) {
-		Map result = appConfService.getAppConf(key);
-		String error = (String) result.get("error");
-		if (error != null) {
-			throw new ControllerException(HttpStatus.INTERNAL_SERVER_ERROR,
-					HttpStatus.INTERNAL_SERVER_ERROR.toString(), error);
-		}
-		return wrapResponse(result, HttpStatus.OK, HttpStatus.OK.toString(),
-				"Get application configuration.");
-	}
 	
 	@RequestMapping(value = { "/metadata/{file}" }, method = RequestMethod.GET)
 	@ResponseBody
@@ -147,42 +125,6 @@ public class AppConfController extends BaseController {
 				"Get application configuration.");
 	}
 
-	/**
-	 * Sets the conf.
-	 *
-	 * @param key the key
-	 * @param value the value
-	 * @return the response entity
-	 */
-	@RequestMapping(value = { "/conf/{key}" }, method = RequestMethod.POST)
-	@ResponseBody
-	public ResponseEntity<ResponseWrapper<Boolean>> setConf(
-			@PathVariable("key") String key, @RequestBody Object value) {
-
-		if (appConfService.setAppConf(key, value)) {
-			return wrapResponse(true, HttpStatus.OK, HttpStatus.OK.toString(),
-					"Set application configuration.");
-		} else {
-			throw new ControllerException(HttpStatus.INTERNAL_SERVER_ERROR,
-					HttpStatus.INTERNAL_SERVER_ERROR.toString(), key
-							+ " not saved.");
-		}
-	}
-	
-	@RequestMapping(value = { "/conf/keys" }, method = RequestMethod.GET)
-	@ResponseBody
-	public ResponseEntity<ResponseWrapper<Map>> getConfs(
-			HttpServletRequest request) {		
-		Map result = appConfService.getAppConf(request.getParameterNames());
-		String error = (String) result.get("error");
-		if (error != null) {
-			throw new ControllerException(HttpStatus.INTERNAL_SERVER_ERROR,
-					HttpStatus.INTERNAL_SERVER_ERROR.toString(), error);
-		}
-		return wrapResponse(result, HttpStatus.OK, HttpStatus.OK.toString(),
-				"Get application configuration.");
-	}
-	
 	/**
 	 * Tests Mail conf.
 	 *

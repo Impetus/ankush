@@ -182,15 +182,6 @@ com.impetus.ankush.common = {
 			$('#' + div2).removeAttr('disabled');
 		}
 	},
-
-	buttonClick : function(div1, div2, functionCall) {
-		$('#' + div2).hide();
-		$('#' + div1).show();
-		if (undefined != functionCall) {
-			eval(functionCall);
-		}
-
-	},
 	/*
 	 * Function for toggle datatable according to button group of node
 	 * availability
@@ -359,17 +350,6 @@ com.impetus.ankush.common = {
         }
 	},
 
-	/* Function for populating defaul values on cluster creation page */
-	getDefaultValue : function(technology, functionName) {
-		var url = baseUrl + '/app/metadata/' + technology;
-		com.impetus.ankush.placeAjaxCall(url, "GET", true, null, function(result) {
-			jsonResult = JSON.stringify(result);
-			var functionN = 'com.impetus.ankush.' + functionName;
-			if (undefined != functionName || functionName != '') {
-				eval(functionN + '(' + jsonResult + ')');
-			}
-		});
-	},
 
 	/* Function for loading dashboard by removing child page */
 	loadDashboard : function() {

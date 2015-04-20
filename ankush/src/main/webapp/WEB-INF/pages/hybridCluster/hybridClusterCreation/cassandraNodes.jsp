@@ -24,28 +24,13 @@
 	<div class="">
 		<div class="">
 			<div class="">
-				<!-- <div class="col-md-4">
-					<h2 class="">Cassandra</h2>
-				</div> -->
-				<div class="col-md-1">
-				<!-- 	<button class="btn btn-danger" id="validateErrorCassandra"
-						onclick="com.impetus.ankush.common.focusError();"
-						style="display: none; padding: 0 15px; left: 15px; position: relative"></button> -->
-				</div>
+				<div class="col-md-1"></div>
 			</div>
-			<div class="col-md-7 text-right mrgt20">
-				<!-- 	<button id="cassandraNodesRevert" class="btn btn-default"
-					onclick="com.impetus.ankush.hybridClusterCreation.dynamicRowRemove();">Cancel</button>
-				<button class="btn btn-default" id="cassandraNodesApply"
-					onclick="com.impetus.ankush.hybrid_Cassandra.cassandraNodesPopulateApplyValidate();">Apply</button> -->
-			</div>
+			<div class="col-md-7 text-right mrgt20"></div>
 		</div>
 		<div class="" id="main-content">
 			<div class="container-fluid mrgnlft8">
-				<div class="row">
-					<!-- <div id="errorDivCassandraNodes" class="col-md-12 errorDiv"
-						style="display: none;"></div> -->
-				</div>
+				<div class="row"></div>
 				<div class="panel">
 					<div class="panel-heading">
 						<div class="">

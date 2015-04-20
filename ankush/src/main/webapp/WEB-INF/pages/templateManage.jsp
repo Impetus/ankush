@@ -103,15 +103,13 @@
 					</div>
 					<div class="row panel-body">
 						<div class="col-md-12" style="">
-							<table class="table table-striped" id="templateTable"
-								>
+							<table class="table table-striped" id="templateTable">
 								<thead
 									style="text-align: left; border-bottom: 1px solid #E1E3E4">
 									<tr>
 										<th>Template</th>
 										<th>Technology</th>
 										<th>Last Modified By</th>
-										<!-- <th>Email</th> -->
 										<th>Last Updated</th>
 										<th></th>
 									</tr>

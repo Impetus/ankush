@@ -29,11 +29,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import com.impetus.ankush.common.constant.Constant;
 import com.impetus.ankush.common.domain.Cluster;
 import com.impetus.ankush.common.service.ClusterService;
 import com.impetus.ankush.common.service.GenericManager;
-import com.impetus.ankush.common.utils.AnkushLogger;
+import com.impetus.ankush2.constant.Constant;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 /**
  * The Class ClusterServiceImpl.

@@ -19,7 +19,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  ******************************************************************************/
 package com.impetus.ankush2.framework.config;
-import java.io.Serializable;;
+import java.io.Serializable;
 
 public interface Configuration extends Serializable{
 

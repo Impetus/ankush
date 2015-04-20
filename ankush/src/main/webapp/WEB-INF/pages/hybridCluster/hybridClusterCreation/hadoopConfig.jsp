@@ -30,37 +30,18 @@
 		<!-- header section -->
 		<div class="">
 			<div class="">
-				<div class="col-md-4">
-					<!-- 	<h2>Hadoop/Configuration</h2> -->
-
-				</div>
-				<div class="col-md-1">
-					<!-- <button class="btn btn-danger mrgt20" id="validateErrorHadoop"
-						onclick="com.impetus.ankush.common.focusError();"
-						style="display: none;"></button> -->
-				</div>
-				<div class="col-md-7 text-right mrgt20 padr45">
-					<!-- <button id="hadoopRevertBtn" class="btn btn-default"
-						onclick="com.impetus.ankush.hybridClusterCreation.dynamicRowRemove();">Cancel</button>
-					<button class="btn btn-default" id="hadoopApplyBtn"
-						onclick="com.impetus.ankush.hybrid_Hadoop.hadoopConfigValidate();">Apply</button> -->
-				</div>
+				<div class="col-md-4"></div>
+				<div class="col-md-1"></div>
+				<div class="col-md-7 text-right mrgt20 padr45"></div>
 			</div>
 		</div>
 		<div class="" id="main-content">
 			<div class="container-fluid mrgnlft8">
-				<div class="row">
-					<!-- <div id="errorDivMainHadoop" class="col-md-12 errorDiv"
-						style="display: none;"></div> -->
-				</div>
+				<div class="row"></div>
 				<div class="panel ">
 					<div class="panel-heading">
 						<div class="">
 							<h3 class="panel-title col-md-2 mrgt5">Hadoop/Configuration</h3>
-							<!-- 	<button class="btn btn-default btn-danger"
-								id="validateErrorCassandra"
-								onclick="com.impetus.ankush.common.focusError();"
-								style="display: none;"></button> -->
 							<button id="hadoopRevertBtn" class="btn btn-default"
 								onclick="com.impetus.ankush.hybridClusterCreation.dynamicRowRemove();">Cancel</button>
 							<button class="btn btn-default" id="hadoopApplyBtn"
@@ -189,112 +170,11 @@
 								data-placement="right">
 						</div>
 					</div>
-					<!-- <div class="row">
-					<div class=" col-md-2 text-right">
-						<label class=" form-label"></label>
-					</div>
-					<div class="col-md-10 col-lg-2 form-group" style="padding-top: 12px">
-						<input id="includes3Check" type="checkbox"
-							onclick="com.impetus.ankush.hybrid_Hadoop.checkBoxClick('includes3Check','includes3Div')">Include
-						S3 Support</input>
-					</div>
-				</div>
-				<div class="" id="includes3Div" style="display: none;">
-					<div class="row">
-						<div class="col-md-2 text-right">
-							<label class=" form-label">Access Key</label>
-						</div>
-						<div class="col-md-10 col-lg-2 form-group">
-							<input type="text" value="" id="s3AccessKey" class="input-xlarge"
-								placeholder="Access Key" title="Enter access key"
-								data-placement="right">
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-2 text-right">
-							<label class=" form-label">Secret Key:</label>
-						</div>
-						<div class="col-md-10 col-lg-2 form-group">
-							<input type="text" value="" id="s3SecretKey" class="input-xlarge"
-								placeholder="Secret Key" title="Enter secret key"
-								data-placement="right">
-						</div>
-					</div>
-				</div>
-				<div class="row">
-					<div class=" col-md-2 text-right">
-						<label class=" form-label"></label>
-					</div>
-					<div class="col-md-10 col-lg-2 form-group" style="padding-top: 12px">
-						<input id="includes3nCheck" type="checkbox"
-							onclick="com.impetus.ankush.hybrid_Hadoop.checkBoxClick('includes3nCheck','includes3nDiv')">Include
-						S3n Support</input>
-					</div>
-				</div>
-				<div class="" id="includes3nDiv" style="display: none;">
-					<div class="row">
-						<div class="col-md-2 text-right">
-							<label class=" form-label">Access Key</label>
-						</div>
-						<div class="col-md-10 col-lg-2 form-group">
-							<input type="text" value="" id="s3nAccessKey"
-								class="input-xlarge" placeholder="Access Key"
-								title="Enter access key" data-placement="right">
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-2 text-right">
-							<label class=" form-label">Secret Key:</label>
-						</div>
-						<div class="col-md-10 col-lg-2 form-group">
-							<input type="text" value="" id="s3nSecretKey"
-								class="input-xlarge" placeholder="Secret Key"
-								title="Enter secret key" data-placement="right">
-						</div>
-					</div>
-				</div> -->
 
 
 
 					<!--------------- For Hadoop 2.0 ----------------->
 					<div id="hadoop2Config">
-						<!-- <div class="row">
-						<div class="col-md-2 text-right">
-							<label class=" form-label">Web Application Proxy:</label>
-						</div>
-						<div class="col-md-10 col-lg-2 form-group ">
-							<div style="margin-top: 8px; margin-bottom: 15px"
-								id="webAppProxyGroupBtn" data-toggle="buttons-radio"
-								class="btn-group">
-								<button
-									onclick="com.impetus.ankush.hybrid_Hadoop.divToggle('webAppProxyDiv','Enable');"
-									id="webAppProxyEnable" data-value="0" class="btn btn-default active btnGrp">Enable</button>
-								<button
-									onclick="com.impetus.ankush.hybrid_Hadoop.divToggle('webAppProxyDiv','Disable');"
-									id="webAppProxyDisable" data-value="1" class="btn btn-default btnGrp">Disable</button>
-							</div>
-						</div>
-					</div> -->
-
-
-						<!-- 	<div id="webAppProxyDiv">
-
-						<div class="row">
-							<div class="col-md-2 text-right">
-								<label class=" form-label">Web App Proxy Port:</label>
-							</div>
-							<div class="col-md-10 col-lg-2 form-group">
-								<input type="text" id="webAppProxyPort" class="input-mini"
-									placeholder="Web App Proxy Port" data-placement="right"
-									data-toggle="tooltip"
-									data-original-title="Enter port for Web Application Proxy service">
-							</div>
-						</div>
-					</div>
-
- -->
-
-
 						<div class="row">
 							<div class="col-md-2 text-right">
 								<label class=" form-label">High Availability:</label>

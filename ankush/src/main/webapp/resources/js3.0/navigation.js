@@ -79,9 +79,7 @@ com.impetus.ankush.navigation = {
 								var today = new Date();
 								var diff =  Math.abs(today - tempDate);
 								
-								console.log(diff/(1000*60));
 								var date = $.format.date(tempDate, "dd/MM/yyyy hh:mm:ss a");
-								console.log(date)
 								var eventValue = result.output.events[i].value;
 								if(result.output.events[i].type === 'USAGE'){
 									eventValue = eventValue+'%';

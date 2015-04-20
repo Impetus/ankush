@@ -21,8 +21,6 @@
 package com.impetus.ankush2.logger;
 
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 

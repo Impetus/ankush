@@ -190,44 +190,7 @@ com.impetus.ankush.validation = {
 				    		
 				    		return true;	
 				    	},				
-				    	portCheck : function(regPort, adminPort, haPortRangeStart, haPortRangeEnd) {
-				    		regPort = parseInt($.trim(regPort));
-				    		adminPort = parseInt($.trim(adminPort));
-				    		haPortRangeStart = parseInt($.trim(haPortRangeStart));
-				    		haPortRangeEnd = parseInt($.trim(haPortRangeEnd));
-				    		if(regPort == adminPort){
-				    			
-				    			return false;
-				    		}
-				    		if(com.impetus.ankush.validation.between(regPort, haPortRangeStart, haPortRangeEnd)){
-				    			
-				    			return false;
-				    		}
-				    		if(com.impetus.ankush.validation.between(adminPort, haPortRangeStart, haPortRangeEnd)){
-				    			
-				    			return false;
-				    		}
-				    		return true;
-				    	},
-				    	allPortCheck : function(regPort, adminPort, haPortRangeStart, haPortRangeEnd) {
-				    		regPort = parseInt($.trim(regPort));
-				    		adminPort = parseInt($.trim(adminPort));
-				    		haPortRangeStart = parseInt($.trim(haPortRangeStart));
-				    		haPortRangeEnd = parseInt($.trim(haPortRangeEnd));
-				    		if(regPort == adminPort){
-				    			
-				    			return 1;
-				    		}
-				    		if(com.impetus.ankush.validation.between(regPort, haPortRangeStart, haPortRangeEnd)){
-				    			
-				    			return 2;
-				    		}
-				    		if(com.impetus.ankush.validation.between(adminPort, haPortRangeStart, haPortRangeEnd)){
-				    			
-				    			return 3;
-				    		}
-				    		return 0;
-				    	},
+				    
 				    	alphaNumericSpace:function(data){
 				    		var patt= /^[a-zA-Z0-9]+/ ;
 				    		if(!patt.test($.trim(data))) {

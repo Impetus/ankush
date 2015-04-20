@@ -43,6 +43,7 @@ import com.impetus.ankush.common.service.GenericManager;
 import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush2.framework.config.AuthConfig;
 import com.impetus.ankush2.framework.config.ClusterConfig;
+import com.impetus.ankush2.logger.AnkushLogger;
 import com.impetus.ankush2.utils.SSHUtils;
 
 /**

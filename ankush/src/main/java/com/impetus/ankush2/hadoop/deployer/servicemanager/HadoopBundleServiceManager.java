@@ -26,10 +26,10 @@ import java.util.List;
 import net.neoremind.sshxcute.task.CustomTask;
 import net.neoremind.sshxcute.task.impl.ExecCommand;
 
-import com.impetus.ankush.common.agent.ComponentService;
 import com.impetus.ankush.common.scripting.impl.AppendFileUsingEcho;
 import com.impetus.ankush2.agent.AgentConstant;
 import com.impetus.ankush2.agent.AgentUtils;
+import com.impetus.ankush2.agent.ComponentService;
 import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush2.framework.config.ClusterConfig;
 import com.impetus.ankush2.framework.config.ComponentConfig;

@@ -24,9 +24,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.impetus.ankush.AppStore;
-import com.impetus.ankush.common.constant.Constant;
-import com.impetus.ankush.common.utils.AnkushLogger;
 import com.impetus.ankush2.db.DBEventManager;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 /**
  * CommonScheduledExecutor is the class which is used to schedule all such

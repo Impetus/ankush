@@ -66,18 +66,5 @@ com.impetus.ankush.nodeOverview = {
 					}
 			});
 		},
-		loadTokenList : function(tokenList){
-			/*$('#content-panel').sectionSlider('addChildPanel', {
-	            url : baseUrl + '/cassandraMonitoring/tokenList',
-	            method : 'get',
-	            title : 'Token List',
-	            tooltipTitle : com.impetus.ankush.commonMonitoring.nodesData.output.nodes[com.impetus.ankush.commonMonitoring.nodeIndexForAutoRefresh].publicIp,
-	            previousCallBack : "com.impetus.ankush.commonMonitoring.removeChildPreviousNodeUtilizationTrendPageLoad();",
-	            callback : function() {
-	            	$('#tokenListPreTag').append(tokenList);
-	            },
-	            callbackData : {
-	            }
-	        });*/
-		},
+		
 };

@@ -32,7 +32,7 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.xml.sax.InputSource;
 
-import com.impetus.ankush.common.utils.AnkushLogger;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 /**
  * The Class ParameterConfigServiceImpl.

@@ -21,7 +21,6 @@
 package com.impetus.ankush.common.service.impl;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,7 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.impetus.ankush.AppStoreWrapper;
-import com.impetus.ankush.common.constant.Constant;
+import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush.common.domain.AppConf;
 import com.impetus.ankush.common.domain.User;
 import com.impetus.ankush.common.exception.UserExistsException;
@@ -48,9 +47,9 @@ import com.impetus.ankush.common.mail.MailMsg;
 import com.impetus.ankush.common.service.AppConfService;
 import com.impetus.ankush.common.service.GenericManager;
 import com.impetus.ankush.common.service.UserManager;
-import com.impetus.ankush.common.utils.AnkushLogger;
 import com.impetus.ankush.common.utils.JsonMapperUtil;
 import com.impetus.ankush.common.utils.PasswordUtil;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 /**
  * The Class AppConfServiceImpl.

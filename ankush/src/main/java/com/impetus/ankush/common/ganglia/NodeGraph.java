@@ -27,11 +27,10 @@ import net.sf.json.xml.XMLSerializer;
 
 import com.impetus.ankush.AppStoreWrapper;
 import com.impetus.ankush.common.config.ConfigurationReader;
-import com.impetus.ankush.common.constant.Constant.Graph.StartTime;
-import com.impetus.ankush.common.utils.AnkushLogger;
 import com.impetus.ankush.common.utils.CommonUtil;
-import com.impetus.ankush.common.utils.GangliaUtils;
 import com.impetus.ankush.common.utils.SSHConnection;
+import com.impetus.ankush2.constant.Constant.Graph.StartTime;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 /**
  * It is used to get the CPU and memory utilisation graphs for the node.

@@ -34,7 +34,8 @@ import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import com.impetus.ankush.common.constant.Constant;
+import com.impetus.ankush2.constant.Constant;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 /**
  * @author Akhil

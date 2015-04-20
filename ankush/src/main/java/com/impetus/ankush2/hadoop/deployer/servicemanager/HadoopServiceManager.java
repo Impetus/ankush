@@ -21,7 +21,6 @@
 package com.impetus.ankush2.hadoop.deployer.servicemanager;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -29,7 +28,7 @@ import java.util.Set;
 import java.util.concurrent.Semaphore;
 
 import com.impetus.ankush.AppStoreWrapper;
-import com.impetus.ankush.common.agent.AgentUtils;
+import com.impetus.ankush2.agent.AgentUtils;
 import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush2.framework.Serviceable;
 import com.impetus.ankush2.framework.config.ClusterConfig;

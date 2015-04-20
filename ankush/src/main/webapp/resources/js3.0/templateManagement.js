@@ -36,7 +36,6 @@ com.impetus.ankush.template={
 									                  '<a class="" style="text-decoration:underline" href="#" onclick="com.impetus.ankush.template.loadTemplatePage(\''+result.output[i].name+'\',\''+result.output[i].technology+'\')">'+result.output[i].name+'</a>',
 									                  result.output[i].technology,
 									                  result.output[i].user,
-									                 /* '<label>Email</label>',*/
 									                  date,
 									                  '<div  class="deleteTemplate" onclick="com.impetus.ankush.template.confirmDeleteDialog(this)" style="float:right;margin-right:5px;" id="'+ result.output[i].name+'"><ins></ins></div>',
 										]);
@@ -59,10 +58,6 @@ com.impetus.ankush.template={
 		
 		//function for loading home page of cluster creation
 		loadTemplatePage:function(templateName,techName){
-			//com.impetus.ankush.removeCurrentParent();
 			com.impetus.ankush.selectTechnology.createCluster('hybrid-cluster',templateName,techName);
-			/*$("#templateIcon").removeClass("selected");
-			$("#dashboardIcon").addClass("selected");*/
-			//com.impetus.ankush.hybridSetupDetail.loadTemplate(templateName);
 		}				
 };

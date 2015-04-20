@@ -33,7 +33,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import com.impetus.ankush.common.utils.AnkushLogger;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 /**
  * MailClient is the class that is used to for sending mails. It uses java mail

@@ -19,21 +19,24 @@
 - Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ------------------------------------------------------------------------------->
 
-<div class="modal fade" id="termsOfUse" tabindex="-1"
-			role="dialog" aria-labelledby="" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h4>Terms Of Use</h4>
-					</div>
-					<div class="modal-body">
-						Your use of this software is governed by the terms and conditions of the Impetus Software License and Services Agreement between your company and Impetus Technologies, Inc. Additionally, please refer to III party software licensing 
-	 <span><a target="notice" href="<c:out value='${baseUrl}'/>/public/NOTICE.txt"> here</a></span>
-		
-					</div>
-					<div class="modal-footer">
-						<a href="#" data-dismiss="modal" class="btn btn-default">Ok</a> 
-					</div>
-				</div>
+<div class="modal fade" id="termsOfUse" tabindex="-1" role="dialog"
+	aria-labelledby="" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4>Terms Of Use</h4>
+			</div>
+			<div class="modal-body">
+				Your use of this software is governed by the terms and conditions of
+				the Impetus Software License and Services Agreement between your
+				company and Impetus Technologies, Inc. Additionally, please refer to
+				III party software licensing <span><a target="notice"
+					href="<c:out value='${baseUrl}'/>/public/NOTICE.txt"> here</a></span>
+
+			</div>
+			<div class="modal-footer">
+				<a href="#" data-dismiss="modal" class="btn btn-default">Ok</a>
 			</div>
 		</div>
+	</div>
+</div>

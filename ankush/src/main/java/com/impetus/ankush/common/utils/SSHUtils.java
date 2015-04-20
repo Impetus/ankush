@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import net.neoremind.sshxcute.core.ConnBean;
 import net.neoremind.sshxcute.core.Result;
@@ -37,16 +36,11 @@ import net.neoremind.sshxcute.exception.TaskExecFailException;
 import net.neoremind.sshxcute.task.CustomTask;
 import net.neoremind.sshxcute.task.impl.ExecCommand;
 
-import com.impetus.ankush.common.constant.Constant;
-import com.impetus.ankush.common.framework.config.AuthConf;
-import com.impetus.ankush.common.framework.config.GenericConfiguration;
-import com.impetus.ankush.common.framework.config.NodeConf;
+import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush.common.scripting.AnkushTask;
 import com.impetus.ankush.common.scripting.impl.AppendFileUsingEcho;
 import com.impetus.ankush.common.scripting.impl.ExecSudoCommand;
-import com.impetus.ankush.common.scripting.impl.Untar;
-import com.impetus.ankush.common.scripting.impl.Unzip;
-import com.impetus.ankush.common.scripting.impl.Wget;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 /**
  * The Class SSHUtils.
@@ -80,129 +74,7 @@ public class SSHUtils {
 		}
 		return true;
 	}
-	
-	/**
-	 * Setup paswwordless ssh.
-	 * 
-	 * @param source
-	 *            the source
-	 * @param destinations
-	 *            the destinations
-	 * @param username
-	 *            the username
-	 * @param password
-	 *            the password
-	 * @param privateKey
-	 *            the private key
-	 * @return true, if successful
-	 * @throws Exception
-	 *             the exception
-	 */
-	public static boolean setupPaswwordlessSSH(NodeConf source,
-			Set<NodeConf> destinations, String username, String password,
-			String privateKey) throws Exception {
 
-		SSHExec connection = null;
-		try {
-			if (!destinations.contains(source)) {
-				destinations.add(source);
-			}
-
-			for (NodeConf node : destinations) {
-				boolean status = SSHUtils.generateRSAKeyFiles(
-						node.getPublicIp(), username, password, privateKey);
-				if (!status) {
-					return false;
-				}
-			}
-
-			// connect with from/master node
-			connection = SSHUtils.connectToNode(source.getPublicIp(), username,
-					password, privateKey);
-
-			String passwordOrKeyForSSH = password;
-			boolean authUsingPassword = true;
-			if (privateKey != null && !privateKey.isEmpty()) {
-				authUsingPassword = false;
-				passwordOrKeyForSSH = privateKey;
-			}
-
-			String pubKey = SSHUtils.getFileContents("~/.ssh/id_rsa.pub",
-					source.getPublicIp(), username, passwordOrKeyForSSH,
-					authUsingPassword);
-
-			if (pubKey == null) {
-				logger.error(source,
-						"Error : Unable to read ~/.ssh/id_rsa.pub file.");
-				return false;
-			}
-			
-			// add host entry in know host.
-			for (NodeConf destination : destinations) {
-				String cmdAddToKnowHost = "ssh -o ConnectTimeout=15 -o ConnectionAttempts=5 -o StrictHostKeyChecking=no "
-						+ username
-						+ "@"
-						+ destination.getPrivateIp() + " ls";
-
-//						+ HostOperation.getAnkushHostName(destination
-//								.getPrivateIp()) + " ls";
-
-				CustomTask task = new ExecCommand(cmdAddToKnowHost);
-				connection.exec(task);
-
-				SSHExec conn = SSHUtils.connectToNode(
-						destination.getPublicIp(), username, password,
-						privateKey);
-
-				task = new ExecCommand("echo \"" + pubKey
-						+ "\" >> ~/.ssh/authorized_keys",
-						"chmod 0600 ~/.ssh/authorized_keys");
-
-				if (conn.exec(task).rc != 0) {
-					logger.error(destination,
-							"Error : Unable to update authorized keys.");
-					conn.disconnect();
-					connection.disconnect();
-					return false;
-				} else {
-					conn.disconnect();
-				}
-			}
-		} catch (Exception e) {
-			logger.error("Error while Passwordless SSH setup, please view ankush server logs for more information.");
-			logger.debug(e.getMessage());
-			return false;
-		} finally {
-			if (connection != null) {
-				connection.disconnect();
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Connect to node.
-	 * 
-	 * @param host
-	 *            the host
-	 * @param authConf
-	 *            the auth conf
-	 * @return SSHExec Connection
-	 */
-	public static SSHExec connectToNode(String host, AuthConf authConf) {
-		SSHExec connection;
-		if (authConf.isAuthTypePassword()) {
-			logger.debug("Type " + authConf.getType());
-			connection = connectToNode(host, authConf.getUsername(),
-					authConf.getPassword(), null);
-		} else {
-			logger.debug("Type " + authConf.getType());
-			connection = connectToNode(host, authConf.getUsername(), null,
-					authConf.getPassword());
-		}
-		return connection;
-	}
-	
 	/**
 	 * Connect to node.
 	 * 
@@ -244,104 +116,6 @@ public class SSHUtils {
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			return null;
-		}
-	}
-
-	/**
-	 * Gets the and extract component.
-	 * 
-	 * @param connection
-	 *            the connection
-	 * @param conf
-	 *            the conf
-	 * @param componentName
-	 *            the component name
-	 * @return the and extract component
-	 */
-	public static boolean getAndExtractComponent(SSHExec connection,
-			GenericConfiguration conf, String componentName) {
-		logger.setLoggerConfig(conf);
-		String componentPath = new String();
-		String componentExtension = null;
-
-		try {
-			// upload from server to master node
-			if (conf.getServerTarballLocation() != null
-					&& !conf.getServerTarballLocation().isEmpty()) {
-
-				logger.info("Uploading tarball from server to master node...");
-
-				componentExtension = FileNameUtils.getFileExtension(conf
-						.getServerTarballLocation());
-
-				componentPath = conf.getInstallationPath()
-						+ FileNameUtils
-								.getName(conf.getServerTarballLocation());
-
-				connection.uploadSingleDataToServer(
-						conf.getServerTarballLocation(), componentPath);
-				logger.info("Uploading tarball from server to master node is done...");
-			}
-
-			// tarball exists locally
-			if (conf.getLocalBinaryFile() != null
-					&& !conf.getLocalBinaryFile().isEmpty()) {
-
-				logger.debug("getting local tarball path...");
-
-				componentExtension = FileNameUtils.getFileExtension(conf
-						.getLocalBinaryFile());
-				componentPath = conf.getLocalBinaryFile();
-			}
-
-			// download through wget
-			if (conf.getTarballUrl() != null && !conf.getTarballUrl().isEmpty()) {
-
-				logger.debug("Downloading tarball from the given Url...");
-
-				componentExtension = FileNameUtils.getFileExtension(conf
-						.getTarballUrl());
-
-				componentPath = conf.getInstallationPath()
-						+ FileNameUtils.getName(conf.getTarballUrl());
-
-				// Wget tarball
-				AnkushTask wgetTask = new Wget(conf.getTarballUrl(),
-						componentPath);
-				connection.exec(wgetTask);
-			}
-
-			CustomTask task = null;
-
-			if (FileNameUtils.isTarGz(componentExtension)) {
-				// untar binary
-				task = new Untar(componentPath, conf.getInstallationPath());
-			}
-
-			if (FileNameUtils.isZip(componentExtension)) {
-				// unzip binary
-				task = new Unzip(componentPath, conf.getInstallationPath());
-			}
-
-			if (FileNameUtils.isUnsupported(componentExtension)) {
-				logger.error("Invalid component file ");
-				return false;
-			}
-
-			Result res = connection.exec(task);
-			if (!res.isSuccess) {
-				logger.debug("Could not get/extract tarball ...");
-			} else {
-				logger.debug("Downloading tarball is completed...");
-			}
-			return res.isSuccess;
-
-		} catch (TaskExecFailException e) {
-			logger.error(e.getMessage(), e);
-			return false;
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-			return false;
 		}
 	}
 
@@ -450,13 +224,15 @@ public class SSHUtils {
 		}
 		return output;
 	}
-	public static String getFileContents(SSHExec connection, String filePath) throws Exception {
+
+	public static String getFileContents(SSHExec connection, String filePath)
+			throws Exception {
 		String output = null;
 		Result res = connection.exec(new ExecCommand("cat " + filePath));
 		output = res.sysout;
 		return output;
 	}
-	
+
 	public static String getFileContents(String filePath, String hostname,
 			String username, String password, String privateKeyFilePath)
 			throws Exception {
@@ -508,8 +284,8 @@ public class SSHUtils {
 		SSHConnection connection = null;
 		try {
 			/* Making connection to the node. */
-			connection = new SSHConnection(hostname, username,
-					authInfo, authUsingPassword);
+			connection = new SSHConnection(hostname, username, authInfo,
+					authUsingPassword);
 
 			// if connected.
 			if (connection.isConnected()) {
@@ -536,13 +312,13 @@ public class SSHUtils {
 						}
 					}
 				}
-				
-			}	
+
+			}
 		} catch (Exception e) {
-			return osName; 
+			return osName;
 		}
 		return osName;
-		
+
 	}
 
 	/**
@@ -612,7 +388,7 @@ public class SSHUtils {
 		}
 		return null;
 	}
-	
+
 	public static Map getCommandOutputAndError(String command, String hostname,
 			String username, String authInfo, boolean authUsingPassword) {
 		Map map = new HashMap();
@@ -681,7 +457,7 @@ public class SSHUtils {
 		/* Returning the output of command. */
 		return output;
 	}
-	
+
 	/**
 	 * Check command.
 	 * 

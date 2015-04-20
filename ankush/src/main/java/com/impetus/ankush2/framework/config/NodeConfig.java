@@ -27,9 +27,9 @@ import java.util.Set;
 
 import javax.persistence.Transient;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
 import net.neoremind.sshxcute.core.SSHExec;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.impetus.ankush.common.domain.NodeMonitoring;
 import com.impetus.ankush.common.service.MonitoringManager;

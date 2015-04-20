@@ -28,5 +28,4 @@ com.impetus.ankush.tooltip.commonClusterCreation={
 				sharedKey:"Shared Key to authenticate Nodes",
 				ipRange:"Comma seperated list of Host Name to choose Nodes from.",
 				ipFile:"Text file with list of Host Name to choose Nodes from.",
-				rackFile:"Text file that Maps Racks to IPs",
 };

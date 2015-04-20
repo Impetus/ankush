@@ -45,7 +45,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import com.impetus.ankush.AppStore;
 import com.impetus.ankush.AppStoreWrapper;
 import com.impetus.ankush.common.config.ConfigurationReader;
-import com.impetus.ankush.common.constant.Constant;
+import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush.common.domain.AppConf;
 import com.impetus.ankush.common.domain.Operation;
 import com.impetus.ankush.common.framework.ServerCrashManager;
@@ -54,9 +54,9 @@ import com.impetus.ankush.common.service.AsyncExecutorService;
 import com.impetus.ankush.common.service.GenericManager;
 import com.impetus.ankush.common.service.UserManager;
 import com.impetus.ankush.common.service.impl.AsyncExecutorServiceImpl;
-import com.impetus.ankush.common.utils.AnkushLogger;
 import com.impetus.ankush2.agent.AgentDeployer;
 import com.impetus.ankush2.agent.AgentUpgrader;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 /**
  * <p>
@@ -104,7 +104,7 @@ public class StartupListener implements ServletContextListener {
 			// setting ankush config reader and config properties reader.
 			setAnkushConfigurator();
 			// set ankush confiration classes.
-//			AppStoreWrapper.setAnkushConfigurableClassNames();
+			// AppStoreWrapper.setAnkushConfigurableClassNames();
 
 			AppStoreWrapper.setComponentConfiguration();
 
@@ -155,8 +155,9 @@ public class StartupListener implements ServletContextListener {
 		if (operationList != null && operationList.size() != 0) {
 			Operation operation = operationList.get(0);
 			if (operation.getStatus().equals(
-					Constant.Operation.Status.IN_PROGRESS)) {
-				operation.setStatus(Constant.Operation.Status.FAILED);
+					Constant.Operation.Status.INPROGRESS.toString())) {
+				operation
+						.setStatus(Constant.Operation.Status.FAILED.toString());
 				operationManager.save(operation);
 			}
 		}
@@ -310,9 +311,6 @@ public class StartupListener implements ServletContextListener {
 
 		// server crash manager.
 		final ServerCrashManager serverCrashManager = new ServerCrashManager();
-		// handle maintenance state clusters.(Set the cluster state as deployed
-		// if any cluster is in maintenance state)
-		serverCrashManager.handleMaintenanceStateClusters();
 
 		Runnable r = new Runnable() {
 

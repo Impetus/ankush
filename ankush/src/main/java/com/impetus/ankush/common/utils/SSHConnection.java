@@ -31,6 +31,7 @@ import ch.ethz.ssh2.Session;
 import ch.ethz.ssh2.StreamGobbler;
 
 import com.impetus.ankush.AppStoreWrapper;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 /**
  * The Class SSHConnection.

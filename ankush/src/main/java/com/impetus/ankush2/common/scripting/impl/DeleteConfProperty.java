@@ -23,9 +23,9 @@
  */
 package com.impetus.ankush2.common.scripting.impl;
 
-import com.impetus.ankush2.agent.AgentUtils;
-import com.impetus.ankush.common.constant.Constant;
+import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush.common.scripting.AnkushTask;
+import com.impetus.ankush2.agent.AgentUtils;
 
 /**
  * The Class DeleteConfProperty.

@@ -39,16 +39,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.impetus.ankush.AppStoreWrapper;
-import com.impetus.ankush.common.alerts.AlertsConf;
-import com.impetus.ankush.common.constant.Constant;
+import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush.common.domain.Cluster;
 import com.impetus.ankush.common.domain.User;
-import com.impetus.ankush.common.framework.ClusterMonitor;
 import com.impetus.ankush.common.service.ConfigurationManager;
 import com.impetus.ankush.common.service.GenericManager;
-import com.impetus.ankush.common.utils.AnkushLogger;
 import com.impetus.ankush.common.utils.ResponseWrapper;
 import com.impetus.ankush2.db.DBEventManager;
+import com.impetus.ankush2.framework.config.AlertsConf;
+import com.impetus.ankush2.logger.AnkushLogger;
 
 /**
  * The Class MonitorController.
@@ -83,25 +82,6 @@ public class MonitorController extends BaseController {
 
 		Map map = new com.impetus.ankush2.framework.monitor.ClusterMonitor()
 				.getMap(clusterId, action, request.getParameterMap());
-		return wrapResponse(map, HttpStatus.OK, HttpStatus.OK.toString(),
-				"Cluster details.");
-	}
-
-	/**
-	 * Monitor.
-	 * 
-	 * @param clusterId
-	 *            the cluster id
-	 * @param action
-	 *            the action
-	 * @param request
-	 *            the request
-	 * @return the response entity
-	 */
-	@RequestMapping(method = RequestMethod.GET, value = "/maintenancedetails")
-	@ResponseBody
-	public ResponseEntity<ResponseWrapper<Map>> monitor() {
-		Map map = new ClusterMonitor().maintenanceDetails();
 		return wrapResponse(map, HttpStatus.OK, HttpStatus.OK.toString(),
 				"Cluster details.");
 	}

@@ -20,7 +20,6 @@
  ******************************************************************************/
 package com.impetus.ankush2.zookeeper;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,18 +27,16 @@ import java.util.Map;
 import net.neoremind.sshxcute.core.Result;
 import net.neoremind.sshxcute.core.SSHExec;
 
-import com.impetus.ankush.common.agent.ComponentService;
 import com.impetus.ankush.common.exception.AnkushException;
 import com.impetus.ankush.common.scripting.AnkushTask;
 import com.impetus.ankush.common.scripting.impl.AppendFileUsingEcho;
 import com.impetus.ankush.common.scripting.impl.MakeDirectory;
 import com.impetus.ankush.common.scripting.impl.Remove;
-import com.impetus.ankush.common.scripting.impl.RunInBackground;
 import com.impetus.ankush.common.utils.JmxMonitoringUtil;
 import com.impetus.ankush2.agent.AgentUtils;
+import com.impetus.ankush2.agent.ComponentService;
 import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush2.constant.Constant.Component;
-import com.impetus.ankush2.constant.Constant.Strings;
 import com.impetus.ankush2.framework.config.ClusterConfig;
 import com.impetus.ankush2.framework.config.ComponentConfig;
 import com.impetus.ankush2.framework.config.NodeConfig;

@@ -37,7 +37,6 @@ import com.impetus.ankush.common.utils.FileNameUtils;
 import com.impetus.ankush2.agent.AgentConstant;
 import com.impetus.ankush2.constant.Constant;
 import com.impetus.ankush2.db.DBOperationManager;
-import com.impetus.ankush2.logger.AnkushLogger;
 
 public class ClusterConfig implements Configuration {
 	/**

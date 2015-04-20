@@ -21,8 +21,6 @@
 
 <head>
 <%@ include file="../../layout/header.jsp"%>
-<link rel="stylesheet" type="text/css"
-	href="<c:out value="${baseUrl}" />/public/css3.0/main.css" media="all" />
 <%@ include file="../../layout/navigation.jsp"%>
 <script
 	src="<c:out value='${baseUrl}' />/public/js3.0/hybrid/hybridClusterCreation.js/"
@@ -488,53 +486,7 @@
 						</form>
 					</div>
 				</div>
-				<!-- Function for rack mapping of nodes
-<div class="row">
-		<div class="col-md-2 text-right">
-			<label class=" form-label">Rack Mapping:</label>
-		</div>
-		<div class="col-md-10 col-lg-2 form-group">
-					<div class="input-prepend">
-						<span class="add-on" style="height: 28px;float: left;margin-top: 5px;"><input
-							type="checkbox" class="inputSelect" name="" id="rackMapCheck" onclick="com.impetus.ankush.hybridClusterCreation.checkBoxToggle('rackMapCheck','filePath_RackFile');"
-							style="margin-left: 0px;"></span>
-						<iframe style="width: 1px; height: 1px; border: 0px;float: left;"
-							id="uploadframeRackFile" name="uploadframeRackFile"
-							style="float:left;"></iframe>
-						<form action="" id="uploadframeRackFile_Form"
-							target="uploadframeRackFile" enctype="multipart/form-data"
-							method="post">
-							<input type="text" class="inputText" disabled="disabled" name="" onclick="com.impetus.ankush.hybridClusterCreation.rackFileUpload();"
-								title="Bundle Path" id="filePath_RackFile" placeholder="Bundle Path" /> <input
-								id='fileBrowse_RackFile' type='file'
-								style="visibility: hidden; float: right" class='' name='file'></input>
-						</form>
-					</div>
-		</div>
-	</div> -->
-
-				<!-- <div class="row" id="rackMappingDiv">
-		<div class="col-md-2 text-right">
-			<label class=" form-label">Rack Mapping:</label>
-		</div>
-		<div class="col-md-2">
-			<iframe id="rackMap" name="rackMap" class="iframe-display"></iframe>
-			<form action="" id="rackMapUpload" target="rackMap"
-				style="height: 1px;" enctype="multipart/form-data" method="post"
-				class="iframe-formclass">
-				<input type="text" id="rackMapping" readonly="readonly"
-					class="file-sharekey input-medium" data-toggle="tooltip"
-					placeholder="Upload File"
-					title="A text file (*.txt) that contains a node or set of nodes specified in the form of 192.168.100-101.10-50 or 192.168.100,105.10,20 or 192.168.10.2,5;kvstore-test. Each unique pattern / IP should be in a new line. For more options refer the User Guide"
-					data-placement="right" onclick=""></input> <input id='rackBrowse'
-					type='file' style="visibility: hidden;" name='file'></input>
-			</form>
-		</div>
-		<div class="col-md-5" style="padding: 10px;">
-			<button data-loading-text="" id="clearMapping" class="btn"
-				type="button" onclick="">Clear Mapping</button>
-		</div>
-	</div> -->
+			
 				<div class="row">
 					<div class="col-md-2"></div>
 					<div class="col-md-10 col-lg-2 form-group">
@@ -550,9 +502,6 @@
 					<div class="panel">
 						<div class="panel-heading">
 							<h3 class="panel-title left mrgt10 mrgl5">Node List</h3>
-							<!-- <button class="btn btn-primary ladda-button" data-style="expand-left"><span class="ladda-label">expand-left</span></button> -->
-							<!-- 	<a href="#" id="form-submit" class="btn btn-primary btn-lg ladda-button" data-style="expand-right" data-size="l"><span class="ladda-label">Submit form</span></a> -->
-
 							<button type="button" class="btn btn-default ladda-button mrgl10"
 								data-style="expand-right" data-size="l" data-color="mint"
 								data-spinner-color="#000000" id="inspectNodeBtn"
@@ -580,7 +529,6 @@
 										<tr>
 											<th class=""></th>
 											<th>Host Name</th>
-											<!-- <th>Rack</th> -->
 											<th>OS</th>
 											<th>CPU</th>
 											<th>Disk Count</th>
@@ -604,81 +552,11 @@
 				<div class="panel" id="techPanel">
 					<div class="panel-heading" id="techPanHead">
 						<h3 class="panel-title">Technologies</h3>
-						<div class="col-md-2">
-							<button data-loading-text="" id="addZookeeperRow"
-								style="display: none;" class="btn mrgt10 mrgb10" type="button"
-								onclick="com.impetus.ankush.hybridClusterCreation.addZookeeperRow()">Add
-								Zookeeper</button>
-						</div>
-						<!-- <div class="pull-right panelSearch">
-							<input type="text" id="techTableSearchBox" placeholder="Search"
-								class="input-medium form-control" />
-						</div> -->
 					</div>
 				</div>
 				<div class="panel-group" id="accordion" role="tablist"
 					aria-multiselectable="true">
-					<!-- <div class="panel panel-default">
-						<div class="panel-heading" role="tab" id="headingOne">
-							<h4 class="panel-title">
-								<a data-toggle="collapse" data-parent="#accordion"
-									href="#collapseOne" aria-expanded="true"
-									aria-controls="collapseOne"> Collapsible Group Item #1 </a>
-							</h4>
-						</div>
-						<div id="collapseOne" class="panel-collapse collapse in"
-							role="tabpanel" aria-labelledby="headingOne">
-							<div class="panel-body">Anim pariatur cliche reprehenderit,
-								enim eiusmod high life accusamus terry richardson ad squid. 3
-								wolf moon officia aute, non cupidatat skateboard dolor brunch.
-								Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon
-								tempor, sunt aliqua put a bird on it squid single-origin coffee
-								nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica,
-								craft beer labore wes anderson cred nesciunt sapiente ea
-								proident. Ad vegan excepteur butcher vice lomo. Leggings
-								occaecat craft beer farm-to-table, raw denim aesthetic synth
-								nesciunt you probably haven't heard of them accusamus labore
-								sustainable VHS.</div>
-						</div>
-					</div> -->
-
 				</div>
-
-
-				<!-- <div class="panel">
-					<div class="panel-heading">
-						<h3 class="panel-title">Technologies</h3>
-						<div class="col-md-2">
-							<button data-loading-text="" id="addZookeeperRow" style=""
-								class="btn mrgt10 mrgb10" type="button"
-								onclick="com.impetus.ankush.hybridClusterCreation.addZookeeperRow()">Add
-								Zookeeper</button>
-						</div>
-						<div class="pull-right panelSearch">
-							<input type="text" id="techTableSearchBox" placeholder="Search"
-								class="input-medium form-control" />
-						</div>
-					</div>
-					<div class="row panel-body">
-						<div class="col-md-12 text-left">
-							<table class="table table-striped tblborder1 technologyTable"
-								id="technologyTable">
-								<thead class="tblborder2">
-									<tr>
-										<th><input type='checkbox' id='techNodeHead' name=""
-											onclick="com.impetus.ankush.hybridClusterCreation.checkAllNodes('techNodeHead','nodeCheckBoxTech')"></th>
-										<th>Technology</th>
-										<th>Action</th>
-										<th>Configuration</th>
-										<th>Nodes</th>
-									</tr>
-								</thead>
-								<tbody>
-								</tbody>
-							</table>
-						</div>
-					</div>
-				</div> -->
 			</div>
 		</div>
 		<script>

@@ -51,15 +51,6 @@ com.impetus.ankush.errorMsg={
 			
 			'RetrieveNode' :'Retrieve some nodes.',
 			
-			'ReplicationFactorVal': 'Replication factor must be equal or less than selected nodes.',
-			
-			'HAPortRange': 'HA port Range End should be greater or equal to HA port Range Start.',
-			
-			'RegistryPort': "Registry port value can't be in between HA port range.",
-			
-			'SamePort' : 'Registry port and Admin Ports are same.',
-			
-			'AdminPort': "Admin port value can't be in between HA port range.",
 		},
 		
 };
