@@ -33,6 +33,7 @@ import net.sf.json.JSON;
 import net.sf.json.xml.XMLSerializer;
 
 import com.impetus.ankush.common.exception.AnkushException;
+import com.impetus.ankush.common.scripting.impl.DirectoryExists;
 import com.impetus.ankush.common.utils.FileNameUtils;
 import com.impetus.ankush.common.utils.SSHConnection;
 import com.impetus.ankush.common.utils.SSHUtils;
@@ -193,6 +194,19 @@ public class Graph {
 		return getMatchingFiles(pattern, getAllFiles(ip), false, true);
 	}
 	
+	private boolean execCommand(String command) throws AnkushException {
+		try {
+			// Create connection
+			SSHConnection connection = new SSHConnection(host,
+					authConf.getUsername(), authConf.getPassword(),
+					authConf.getPrivateKey());
+			return connection.exec(command);
+		} catch (Exception e) {
+			throw new AnkushException("Could not execute command : " + command,
+					e);
+		}
+	}
+	
 	private String exeCommand(String command) throws Exception {
 		// Create connection
 		SSHConnection connection = new SSHConnection(host,
@@ -259,8 +273,24 @@ public class Graph {
 
 	}
 
-	private String getRRDPath(String host) {
-		return rrdpath + (host != null ? host : "__SummaryInfo__");
+	private String getRRDPath(String host) throws AnkushException {
+		return rrdpath
+				+ (host != null ? getRRDHostPath(host) : "__SummaryInfo__");
+	}
+
+	private String getRRDHostPath(String host) throws AnkushException {
+		try {
+			String directoryPath = this.rrdpath + host;
+			if (!this.host.equals(host)
+					|| execCommand((new DirectoryExists(directoryPath))
+							.getCommand())) {
+				return host;
+			} else {
+				return "localhost";
+			}
+		} catch (Exception e) {
+			throw new AnkushException("Could not get rrd path for host", e);
+		}
 	}
 
 	private Map addDataList(String unit, List<Integer> list) {
